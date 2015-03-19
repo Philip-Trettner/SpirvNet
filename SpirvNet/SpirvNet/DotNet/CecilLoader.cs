@@ -12,7 +12,7 @@ namespace SpirvNet.DotNet
     /// <summary>
     /// Static loader for assemblies in cecil
     /// </summary>
-    public static class CecilLoader
+    static class CecilLoader
     {
         /// <summary>
         /// Cache
