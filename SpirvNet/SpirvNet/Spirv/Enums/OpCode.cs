@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace SpirvNet.Spirv
+﻿namespace SpirvNet.Spirv.Enums
 {
     /// <summary>
     /// SPIR-V OpCodes

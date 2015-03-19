@@ -55,16 +55,20 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DotNet\CecilLoader.cs" />
+    <Compile Include="Extensions.cs" />
     <Compile Include="Spirv\Instruction.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Spirv\Module.cs" />
-    <Compile Include="Spirv\OpCode.cs" />
+    <Compile Include="Spirv\Enums\OpCode.cs" />
+    <Compile Include="Spirv\Ops\OpNop.cs" />
+    <Compile Include="Spirv\UnrecognizedInstruction.cs" />
     <Compile Include="Tests\CecilTest.cs" />
     <Compile Include="Tests\InstructionTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using SpirvNet.Spirv.Enums;
 
 namespace SpirvNet.Spirv
 {
@@ -31,16 +32,17 @@ namespace SpirvNet.Spirv
         /// <summary>
         /// Optional instruction type ID (presence determined by opcode, valid if > 0)
         /// </summary>
-        public readonly uint InstructionTypeID = 0;
+        public uint InstructionTypeID = 0;
         /// <summary>
         /// Optional instruction result ID (presence determined by opcode, valid if > 0).
         /// </summary>
-        public readonly uint InstructionResultID = 0;
+        public uint InstructionResultID = 0;
 
         /// <summary>
-        /// Array of operand codes
+        /// List of operand codes
         /// </summary>
-        public readonly uint[] Operands;
+        public readonly List<uint> Operands = new List<uint>();
+        
 
         /// <summary>
         /// Ctor
