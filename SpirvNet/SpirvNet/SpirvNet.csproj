@@ -56,6 +56,15 @@
   <ItemGroup>
     <Compile Include="DotNet\CecilLoader.cs" />
     <Compile Include="Extensions.cs" />
+    <Compile Include="Spirv\DependsOnAttribute.cs" />
+    <Compile Include="Spirv\Enums\AddressingModel.cs" />
+    <Compile Include="Spirv\Enums\ExecutionMode.cs" />
+    <Compile Include="Spirv\Enums\ExecutionModel.cs" />
+    <Compile Include="Spirv\Enums\LanguageCapability.cs" />
+    <Compile Include="Spirv\Enums\OperandType.cs" />
+    <Compile Include="Spirv\Enums\MemoryModel.cs" />
+    <Compile Include="Spirv\Enums\SourceLanguage.cs" />
+    <Compile Include="Spirv\ExtraOperandAttribute.cs" />
     <Compile Include="Spirv\Instruction.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Spirv\Module.cs" />
