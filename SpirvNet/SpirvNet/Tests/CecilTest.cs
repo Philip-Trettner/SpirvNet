@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,6 +23,8 @@ namespace SpirvNet.Tests
             Assert.AreEqual("Double", def1.ReturnType.Name);
             Assert.AreEqual(1, def1.Parameters.Count);
             Assert.AreEqual("Double", def1.Parameters[0].ParameterType.Name);
+
+            //File.WriteAllLines(@"C:\Temp\testdump.csv", CecilLoader.CsvDump((Action)MethodTest));
         }
     }
 }
