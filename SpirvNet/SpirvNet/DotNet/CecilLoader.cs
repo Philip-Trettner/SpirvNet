@@ -129,13 +129,14 @@ namespace SpirvNet.DotNet
         {
             var type = method.DeclaringType;
             var mname = method.Name;
-            var rettypename = method.ReturnType.FullName;
-            var paratypename = method.GetParameters().Select(p => p.ParameterType.FullName).ToArray();
+            var rettypename = method.ReturnType.FullName.CecilFullType();
+            var paratypename = method.GetParameters().Select(p => p.ParameterType.FullName.CecilFullType()).ToArray();
             var defs = DefinitionFor(type?.Assembly);
-
+            var tfullname = type?.FullName.CecilFullType();
+            
             foreach (var def in defs)
                 foreach (var module in def.Modules)
-                    foreach (var func in module.GetType(type?.FullName)?.Methods ?? new Collection<MethodDefinition>())
+                    foreach (var func in module.GetType(tfullname)?.Methods ?? new Collection<MethodDefinition>())
                         if (func.Name == mname &&
                             func.ReturnType.FullName == rettypename &&
                             paratypename.SequenceEqual(func.Parameters.Select(p => p.ParameterType.FullName)))
@@ -153,10 +154,9 @@ namespace SpirvNet.DotNet
         /// <summary>
         /// Creates a CSV Dump of the specified method
         /// </summary>
-        public static IEnumerable<string> CsvDump(MethodInfo method)
+        public static IEnumerable<string> CsvDump(MethodDefinition method)
         {
-            var def = DefinitionFor(method);
-            var body = def.Body;
+            var body = method.Body;
 
             yield return string.Format("Method;{0};{1}", method.Name, method.DeclaringType);
             yield return "";
@@ -196,6 +196,10 @@ namespace SpirvNet.DotNet
             }
         }
 
+        /// <summary>
+        /// Creates a CSV Dump of the specified method
+        /// </summary>
+        public static IEnumerable<string> CsvDump(MethodInfo method) => CsvDump(DefinitionFor(method));
         /// <summary>
         /// Creates a CSV Dump of the specified method
         /// </summary>

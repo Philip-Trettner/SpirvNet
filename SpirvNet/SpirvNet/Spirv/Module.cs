@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -59,6 +60,35 @@ namespace SpirvNet.Spirv
             foreach (var instruction in Instructions)
                 instruction.Generate(code);
             return code;
+        }
+
+        /// <summary>
+        /// Creates a module from file by name
+        /// </summary>
+        public static Module FromFile(string filename) => FromFile(new FileStream(filename, FileMode.Open));
+        /// <summary>
+        /// Creates a module from file by stream
+        /// </summary>
+        public static Module FromFile(Stream stream)
+        {
+            var bytes = new List<byte>();
+            byte[] buffer = new byte[1024];
+            do
+            {
+                var rc = stream.Read(buffer, 0, buffer.Length);
+
+                if (rc <= 0)
+                    break;
+
+                for (var i = 0; i < rc; ++i)
+                    bytes.Add(buffer[i]);
+
+            } while (true);
+
+            if (bytes.Count < 5 * sizeof(uint))
+                throw new FormatException("Less than 5 words can");
+
+            throw new NotImplementedException();
         }
     }
 }

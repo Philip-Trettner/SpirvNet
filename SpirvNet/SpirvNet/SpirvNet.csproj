@@ -30,6 +30,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="GlmSharp">
+      <HintPath>..\packages\GlmSharp.0.9.5\lib\Net45\GlmSharp.dll</HintPath>
+    </Reference>
     <Reference Include="Mono.Cecil">
       <HintPath>..\packages\Mono.Cecil.0.9.5.4\lib\net40\Mono.Cecil.dll</HintPath>
     </Reference>
@@ -360,6 +363,7 @@
     <Compile Include="Spirv\Ops\OpUnknown.cs" />
     <Compile Include="Tests\CecilTest.cs" />
     <Compile Include="Tests\InstructionTest.cs" />
+    <Compile Include="Tests\ShaderTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

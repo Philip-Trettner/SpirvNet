@@ -10,6 +10,11 @@ namespace SpirvNet
 {
     public static class Extensions
     {
+        public static string CecilFullType(this string s)
+        {
+            return string.IsNullOrEmpty(s) ? "" : s.Replace("+", "/");
+        }
+
         /// <summary>
         /// Returns true iff code is a removable (debug) instruction
         /// </summary>
@@ -88,7 +93,7 @@ namespace SpirvNet
                     return false;
             }
         }
-        
+
         /// <summary>
         /// Returns true iff opcode is a decoration
         /// </summary>
