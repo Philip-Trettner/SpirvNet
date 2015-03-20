@@ -19,5 +19,7 @@ namespace SpirvNet.Spirv.Ops.Annotation
         public ID StructureType;
         public LiteralNumber Member;
         public Decoration Decoration;
+
+        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + StructureType + ", " + Member + ", " + Decoration + ')';
     }
 }

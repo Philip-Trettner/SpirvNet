@@ -20,5 +20,7 @@ namespace SpirvNet.Spirv.Ops.Function
         public ID Result;
         public ID Function;
         public ID[] Arguments;
+
+        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + ResultType + ", " + Result + ", " + Function + ", " + Arguments + ')';
     }
 }

@@ -20,5 +20,7 @@ namespace SpirvNet.Spirv.Ops.FlowControl
         public ID TrueLabel;
         public ID FalseLabel;
         public LiteralNumber[] BranchWeights;
+
+        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + Condition + ", " + TrueLabel + ", " + FalseLabel + ", " + BranchWeights + ')';
     }
 }

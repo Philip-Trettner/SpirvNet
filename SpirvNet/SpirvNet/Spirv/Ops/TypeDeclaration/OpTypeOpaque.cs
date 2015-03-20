@@ -19,5 +19,7 @@ namespace SpirvNet.Spirv.Ops.TypeDeclaration
         public override OpCode OpCode => OpCode.TypeOpaque;
         public ID Result;
         public LiteralString OpaqueType;
+
+        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + Result + ", " + OpaqueType + ')';
     }
 }

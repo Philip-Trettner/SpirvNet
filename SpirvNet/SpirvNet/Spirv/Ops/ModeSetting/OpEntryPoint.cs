@@ -18,5 +18,7 @@ namespace SpirvNet.Spirv.Ops.ModeSetting
         public override OpCode OpCode => OpCode.EntryPoint;
         public ExecutionModel ExecutionModel;
         public ID EntryPoint;
+
+        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + ExecutionModel + ", " + EntryPoint + ')';
     }
 }

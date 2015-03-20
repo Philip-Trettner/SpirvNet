@@ -20,5 +20,7 @@ namespace SpirvNet.Spirv.Ops.TypeDeclaration
         public ID Result;
         public ID Type;
         public AccessQualifier AccessQualifier;
+
+        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + Result + ", " + Type + ", " + AccessQualifier + ')';
     }
 }

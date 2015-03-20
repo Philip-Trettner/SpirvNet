@@ -21,5 +21,7 @@ namespace SpirvNet.Spirv.Ops.RelationalLogical
         public ID Condition;
         public ID Object1;
         public ID Object2;
+
+        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + ResultType + ", " + Result + ", " + Condition + ", " + Object1 + ", " + Object2 + ')';
     }
 }

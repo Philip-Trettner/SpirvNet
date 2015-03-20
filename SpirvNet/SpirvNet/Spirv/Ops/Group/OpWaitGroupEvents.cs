@@ -22,5 +22,7 @@ namespace SpirvNet.Spirv.Ops.Group
         public ExecutionScope Scope;
         public ID NumEvents;
         public ID EventsList;
+
+        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + ResultType + ", " + Result + ", " + Scope + ", " + NumEvents + ", " + EventsList + ')';
     }
 }

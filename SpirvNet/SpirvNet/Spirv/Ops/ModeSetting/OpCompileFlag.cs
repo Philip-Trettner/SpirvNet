@@ -18,5 +18,7 @@ namespace SpirvNet.Spirv.Ops.ModeSetting
         public override bool IsModeSetting => true;
         public override OpCode OpCode => OpCode.CompileFlag;
         public LiteralString Flag;
+
+        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + Flag + ')';
     }
 }

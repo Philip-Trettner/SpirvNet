@@ -19,5 +19,7 @@ namespace SpirvNet.Spirv.Ops.TypeDeclaration
         public ID Result;
         public ID ComponentType;
         public LiteralNumber ComponentCount;
+
+        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + Result + ", " + ComponentType + ", " + ComponentCount + ')';
     }
 }

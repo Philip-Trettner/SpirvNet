@@ -18,5 +18,7 @@ namespace SpirvNet.Spirv.Ops.FlowControl
         public override OpCode OpCode => OpCode.LifetimeStop;
         public ID Object;
         public LiteralNumber Literal;
+
+        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + Object + ", " + Literal + ')';
     }
 }

@@ -20,5 +20,7 @@ namespace SpirvNet.Spirv.Ops.Texture
         public ID Result;
         public ID Sampler;
         public ID Filter;
+
+        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + ResultType + ", " + Result + ", " + Sampler + ", " + Filter + ')';
     }
 }

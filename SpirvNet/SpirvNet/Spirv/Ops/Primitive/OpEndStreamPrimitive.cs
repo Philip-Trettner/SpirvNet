@@ -18,5 +18,7 @@ namespace SpirvNet.Spirv.Ops.Primitive
         public override bool IsPrimitive => true;
         public override OpCode OpCode => OpCode.EndStreamPrimitive;
         public ID Stream;
+
+        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + Stream + ')';
     }
 }

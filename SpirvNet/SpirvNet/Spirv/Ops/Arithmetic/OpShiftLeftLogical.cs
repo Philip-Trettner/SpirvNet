@@ -20,5 +20,7 @@ namespace SpirvNet.Spirv.Ops.Arithmetic
         public ID Result;
         public ID Operand1;
         public ID Operand2;
+
+        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + ResultType + ", " + Result + ", " + Operand1 + ", " + Operand2 + ')';
     }
 }

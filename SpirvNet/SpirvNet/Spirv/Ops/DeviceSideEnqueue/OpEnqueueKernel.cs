@@ -30,5 +30,7 @@ namespace SpirvNet.Spirv.Ops.DeviceSideEnqueue
         public ID ParamSize;
         public ID ParamAlign;
         public ID[] LocalSize;
+
+        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + ResultType + ", " + Result + ", " + q + ", " + Flags + ", " + NDRange + ", " + NumEvents + ", " + WaitEvents + ", " + RetEvent + ", " + Invoke + ", " + Param + ", " + ParamSize + ", " + ParamAlign + ", " + LocalSize + ')';
     }
 }

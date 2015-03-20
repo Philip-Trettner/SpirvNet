@@ -21,5 +21,7 @@ namespace SpirvNet.Spirv.Ops.Memory
         public ID Result;
         public ID Structure;
         public LiteralNumber ArrayMember;
+
+        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + ResultType + ", " + Result + ", " + Structure + ", " + ArrayMember + ')';
     }
 }

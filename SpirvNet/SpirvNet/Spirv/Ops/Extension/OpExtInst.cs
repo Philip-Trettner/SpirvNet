@@ -20,5 +20,7 @@ namespace SpirvNet.Spirv.Ops.Extension
         public ID Result;
         public ID Set;
         public LiteralNumber Instruction;
+
+        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + ResultType + ", " + Result + ", " + Set + ", " + Instruction + ')';
     }
 }

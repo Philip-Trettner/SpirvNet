@@ -19,5 +19,7 @@ namespace SpirvNet.Spirv.Ops.TypeDeclaration
         public ID Result;
         public StorageClass StorageClass;
         public ID Type;
+
+        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + Result + ", " + StorageClass + ", " + Type + ')';
     }
 }

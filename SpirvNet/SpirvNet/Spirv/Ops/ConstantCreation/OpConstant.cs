@@ -19,5 +19,7 @@ namespace SpirvNet.Spirv.Ops.ConstantCreation
         public ID ResultType;
         public ID Result;
         public LiteralNumber Value;
+
+        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + ResultType + ", " + Result + ", " + Value + ')';
     }
 }

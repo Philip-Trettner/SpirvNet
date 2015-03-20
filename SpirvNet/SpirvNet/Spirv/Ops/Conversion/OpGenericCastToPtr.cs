@@ -20,5 +20,7 @@ namespace SpirvNet.Spirv.Ops.Conversion
         public ID ResultType;
         public ID Result;
         public ID SourcePointer;
+
+        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + ResultType + ", " + Result + ", " + SourcePointer + ')';
     }
 }

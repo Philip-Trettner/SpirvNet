@@ -21,5 +21,7 @@ namespace SpirvNet.Spirv.Ops.DeviceSideEnqueue
         public ID Result;
         public ID NDRange;
         public ID Invoke;
+
+        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + ResultType + ", " + Result + ", " + NDRange + ", " + Invoke + ')';
     }
 }

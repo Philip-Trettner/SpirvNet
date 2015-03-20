@@ -18,5 +18,7 @@ namespace SpirvNet.Spirv.Ops.ConstantCreation
         public override OpCode OpCode => OpCode.ConstantComposite;
         public ID ResultType;
         public ID Result;
+
+        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + ResultType + ", " + Result + ')';
     }
 }

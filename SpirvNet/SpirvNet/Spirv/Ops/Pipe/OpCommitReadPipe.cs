@@ -19,5 +19,7 @@ namespace SpirvNet.Spirv.Ops.Pipe
         public override OpCode OpCode => OpCode.CommitReadPipe;
         public ID P;
         public ID ReserveId;
+
+        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + P + ", " + ReserveId + ')';
     }
 }

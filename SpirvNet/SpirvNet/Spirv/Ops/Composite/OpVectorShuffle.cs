@@ -21,5 +21,7 @@ namespace SpirvNet.Spirv.Ops.Composite
         public ID Vector1;
         public ID Vector2;
         public LiteralNumber[] Components;
+
+        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + ResultType + ", " + Result + ", " + Vector1 + ", " + Vector2 + ", " + Components + ')';
     }
 }

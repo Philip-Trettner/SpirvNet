@@ -19,5 +19,7 @@ namespace SpirvNet.Spirv.Ops.FlowControl
         public ID ResultType;
         public ID Result;
         public ID[] IDs;
+
+        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + ResultType + ", " + Result + ", " + IDs + ')';
     }
 }

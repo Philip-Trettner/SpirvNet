@@ -19,5 +19,7 @@ namespace SpirvNet.Spirv.Ops.DeviceSideEnqueue
         public override OpCode OpCode => OpCode.GetDefaultQueue;
         public ID ResultType;
         public ID Result;
+
+        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + ResultType + ", " + Result + ')';
     }
 }

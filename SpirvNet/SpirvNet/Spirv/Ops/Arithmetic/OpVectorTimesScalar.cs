@@ -20,5 +20,7 @@ namespace SpirvNet.Spirv.Ops.Arithmetic
         public ID Result;
         public ID Vector;
         public ID Scalar;
+
+        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + ResultType + ", " + Result + ", " + Vector + ", " + Scalar + ')';
     }
 }

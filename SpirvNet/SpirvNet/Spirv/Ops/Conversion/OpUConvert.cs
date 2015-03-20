@@ -19,5 +19,7 @@ namespace SpirvNet.Spirv.Ops.Conversion
         public ID ResultType;
         public ID Result;
         public ID UnsignedValue;
+
+        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + ResultType + ", " + Result + ", " + UnsignedValue + ')';
     }
 }

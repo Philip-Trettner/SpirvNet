@@ -17,5 +17,7 @@ namespace SpirvNet.Spirv.Ops.Extension
         public override bool IsExtension => true;
         public override OpCode OpCode => OpCode.Extension;
         public LiteralString Name;
+
+        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + Name + ')';
     }
 }

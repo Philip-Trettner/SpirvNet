@@ -22,5 +22,7 @@ namespace SpirvNet.Spirv.Ops.DeviceSideEnqueue
         public ID GlobalWorkSize;
         public ID LocalWorkSize;
         public ID GlobalWorkOffset;
+
+        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + ResultType + ", " + Result + ", " + GlobalWorkSize + ", " + LocalWorkSize + ", " + GlobalWorkOffset + ')';
     }
 }

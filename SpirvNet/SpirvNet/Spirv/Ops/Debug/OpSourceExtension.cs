@@ -17,5 +17,7 @@ namespace SpirvNet.Spirv.Ops.Debug
         public override bool IsDebug => true;
         public override OpCode OpCode => OpCode.SourceExtension;
         public LiteralString Extension;
+
+        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + Extension + ')';
     }
 }

@@ -23,5 +23,7 @@ namespace SpirvNet.Spirv.Ops.DeviceSideEnqueue
         public ID NumEvents;
         public ID WaitEvents;
         public ID RetEvent;
+
+        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + ResultType + ", " + Result + ", " + q + ", " + NumEvents + ", " + WaitEvents + ", " + RetEvent + ')';
     }
 }

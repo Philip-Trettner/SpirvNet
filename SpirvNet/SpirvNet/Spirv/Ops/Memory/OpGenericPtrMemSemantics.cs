@@ -20,5 +20,7 @@ namespace SpirvNet.Spirv.Ops.Memory
         public ID ResultType;
         public ID Result;
         public ID Ptr;
+
+        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + ResultType + ", " + Result + ", " + Ptr + ')';
     }
 }

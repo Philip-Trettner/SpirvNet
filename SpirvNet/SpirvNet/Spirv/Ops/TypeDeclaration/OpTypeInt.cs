@@ -19,5 +19,7 @@ namespace SpirvNet.Spirv.Ops.TypeDeclaration
         public ID Result;
         public LiteralNumber Width;
         public LiteralNumber Signedness;
+
+        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + Result + ", " + Width + ", " + Signedness + ')';
     }
 }

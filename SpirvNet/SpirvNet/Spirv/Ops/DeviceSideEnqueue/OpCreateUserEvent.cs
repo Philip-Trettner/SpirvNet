@@ -19,5 +19,7 @@ namespace SpirvNet.Spirv.Ops.DeviceSideEnqueue
         public override OpCode OpCode => OpCode.CreateUserEvent;
         public ID ResultType;
         public ID Event;
+
+        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + ResultType + ", " + Event + ')';
     }
 }

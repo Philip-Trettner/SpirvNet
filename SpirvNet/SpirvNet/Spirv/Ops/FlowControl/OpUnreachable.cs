@@ -16,5 +16,7 @@ namespace SpirvNet.Spirv.Ops.FlowControl
     {
         public override bool IsFlowControl => true;
         public override OpCode OpCode => OpCode.Unreachable;
+
+        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ')';
     }
 }

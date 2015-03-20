@@ -18,5 +18,7 @@ namespace SpirvNet.Spirv.Ops.FlowControl
         public override OpCode OpCode => OpCode.SelectionMerge;
         public ID Label;
         public SelectionControl SelectionControl;
+
+        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + Label + ", " + SelectionControl + ')';
     }
 }

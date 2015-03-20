@@ -18,5 +18,7 @@ namespace SpirvNet.Spirv.Ops.ModeSetting
         public override OpCode OpCode => OpCode.MemoryModel;
         public AddressingModel AddressingModel;
         public MemoryModel MemoryModel;
+
+        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + AddressingModel + ", " + MemoryModel + ')';
     }
 }

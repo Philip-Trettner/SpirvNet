@@ -13,5 +13,7 @@ namespace SpirvNet.Spirv
     public struct LiteralNumber
     {
         public uint Value;
+
+        public override string ToString() => Value.ToString();
     }
 }

@@ -18,5 +18,7 @@ namespace SpirvNet.Spirv.Ops.Extension
         public override OpCode OpCode => OpCode.ExtInstImport;
         public ID Result;
         public LiteralString Name;
+
+        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + Result + ", " + Name + ')';
     }
 }

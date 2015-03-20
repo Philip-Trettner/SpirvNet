@@ -22,5 +22,7 @@ namespace SpirvNet.Spirv.Ops.Group
         public ExecutionScope Scope;
         public ID Value;
         public ID LocalId;
+
+        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + ResultType + ", " + Result + ", " + Scope + ", " + Value + ", " + LocalId + ')';
     }
 }

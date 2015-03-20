@@ -18,5 +18,7 @@ namespace SpirvNet.Spirv.Ops.Annotation
         public override OpCode OpCode => OpCode.Decorate;
         public ID Target;
         public Decoration Decoration;
+
+        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + Target + ", " + Decoration + ')';
     }
 }

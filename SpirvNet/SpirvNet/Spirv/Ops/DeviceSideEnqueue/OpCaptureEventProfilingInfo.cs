@@ -20,5 +20,7 @@ namespace SpirvNet.Spirv.Ops.DeviceSideEnqueue
         public ID Event;
         public KernelProfilingInfo Info;
         public ID Value;
+
+        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + Event + ", " + Info + ", " + Value + ')';
     }
 }

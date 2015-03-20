@@ -18,5 +18,7 @@ namespace SpirvNet.Spirv.Ops.Misc
         public override OpCode OpCode => OpCode.Undef;
         public ID ResultType;
         public ID Result;
+
+        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + ResultType + ", " + Result + ')';
     }
 }

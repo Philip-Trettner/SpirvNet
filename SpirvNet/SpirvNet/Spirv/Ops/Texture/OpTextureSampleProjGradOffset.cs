@@ -24,5 +24,7 @@ namespace SpirvNet.Spirv.Ops.Texture
         public ID dx;
         public ID dy;
         public ID Offset;
+
+        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + ResultType + ", " + Result + ", " + Sampler + ", " + Coordinate + ", " + dx + ", " + dy + ", " + Offset + ')';
     }
 }

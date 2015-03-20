@@ -17,5 +17,7 @@ namespace SpirvNet.Spirv.Ops.FlowControl
         public override bool IsFlowControl => true;
         public override OpCode OpCode => OpCode.ReturnValue;
         public ID Value;
+
+        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + Value + ')';
     }
 }

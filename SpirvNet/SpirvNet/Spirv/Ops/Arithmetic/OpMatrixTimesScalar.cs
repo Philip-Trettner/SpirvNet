@@ -21,5 +21,7 @@ namespace SpirvNet.Spirv.Ops.Arithmetic
         public ID Result;
         public ID Matrix;
         public ID Scalar;
+
+        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + ResultType + ", " + Result + ", " + Matrix + ", " + Scalar + ')';
     }
 }

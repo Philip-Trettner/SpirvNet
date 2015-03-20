@@ -19,5 +19,7 @@ namespace SpirvNet.Spirv.Ops.Composite
         public ID ResultType;
         public ID Result;
         public ID[] Constituents;
+
+        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + ResultType + ", " + Result + ", " + Constituents + ')';
     }
 }

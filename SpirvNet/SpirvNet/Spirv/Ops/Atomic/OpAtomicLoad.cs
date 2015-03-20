@@ -21,5 +21,7 @@ namespace SpirvNet.Spirv.Ops.Atomic
         public ID Pointer;
         public ExecutionScope Scope;
         public MemorySemantics Semantics;
+
+        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + ResultType + ", " + Result + ", " + Pointer + ", " + Scope + ", " + Semantics + ')';
     }
 }

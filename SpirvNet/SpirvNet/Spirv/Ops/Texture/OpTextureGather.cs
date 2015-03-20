@@ -22,5 +22,7 @@ namespace SpirvNet.Spirv.Ops.Texture
         public ID Sampler;
         public ID Coordinate;
         public ID Component;
+
+        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + ResultType + ", " + Result + ", " + Sampler + ", " + Coordinate + ", " + Component + ')';
     }
 }

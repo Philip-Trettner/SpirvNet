@@ -18,5 +18,7 @@ namespace SpirvNet.Spirv.Ops.TypeDeclaration
         public override OpCode OpCode => OpCode.TypeFunction;
         public ID Result;
         public ID ReturnType;
+
+        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + Result + ", " + ReturnType + ')';
     }
 }

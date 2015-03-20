@@ -21,5 +21,7 @@ namespace SpirvNet.Spirv.Ops.Arithmetic
         public ID Result;
         public ID LeftMatrix;
         public ID RightMatrix;
+
+        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + ResultType + ", " + Result + ", " + LeftMatrix + ", " + RightMatrix + ')';
     }
 }

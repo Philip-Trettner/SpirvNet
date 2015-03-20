@@ -19,5 +19,7 @@ namespace SpirvNet.Spirv.Ops.Memory
         public ID Target;
         public ID Source;
         public MemoryAccess[] MemoryAccess;
+
+        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + Target + ", " + Source + ", " + MemoryAccess + ')';
     }
 }

@@ -18,5 +18,7 @@ namespace SpirvNet.Spirv.Ops.Debug
         public override OpCode OpCode => OpCode.Source;
         public SourceLanguage SourceLanguage;
         public LiteralNumber Version;
+
+        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + SourceLanguage + ", " + Version + ')';
     }
 }

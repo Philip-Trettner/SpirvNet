@@ -19,5 +19,7 @@ namespace SpirvNet.Spirv.Ops.TypeDeclaration
         public ID Result;
         public ID ElementType;
         public ID Length;
+
+        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + Result + ", " + ElementType + ", " + Length + ')';
     }
 }

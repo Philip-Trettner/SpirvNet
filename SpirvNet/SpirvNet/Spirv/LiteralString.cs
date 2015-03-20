@@ -51,5 +51,7 @@ namespace SpirvNet.Spirv
                 code.Add(val);
             }
         }
+
+        public override string ToString() => '"' + Value + '"';
     }
 }

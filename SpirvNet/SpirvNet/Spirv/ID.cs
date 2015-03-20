@@ -23,5 +23,7 @@ namespace SpirvNet.Spirv
         {
             Value = id;
         }
+
+        public override string ToString() => "#" + Value;
     }
 }

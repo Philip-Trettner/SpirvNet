@@ -18,5 +18,7 @@ namespace SpirvNet.Spirv.Ops.DeviceSideEnqueue
         public override bool IsDeviceSideEnqueue => true;
         public override OpCode OpCode => OpCode.ReleaseEvent;
         public ID Event;
+
+        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + Event + ')';
     }
 }

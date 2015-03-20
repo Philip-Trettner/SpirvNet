@@ -20,5 +20,7 @@ namespace SpirvNet.Spirv.Ops.Pipe
         public ExecutionScope Scope;
         public ID P;
         public ID ReserveId;
+
+        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + Scope + ", " + P + ", " + ReserveId + ')';
     }
 }

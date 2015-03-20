@@ -20,5 +20,7 @@ namespace SpirvNet.Spirv.Ops.Function
         public ID Result;
         public FunctionControlMask FunctionControlMask;
         public ID FunctionType;
+
+        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + ResultType + ", " + Result + ", " + FunctionControlMask + ", " + FunctionType + ')';
     }
 }

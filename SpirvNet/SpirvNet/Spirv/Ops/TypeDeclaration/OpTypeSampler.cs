@@ -23,5 +23,7 @@ namespace SpirvNet.Spirv.Ops.TypeDeclaration
         public LiteralNumber Arrayed;
         public LiteralNumber Compare;
         public LiteralNumber MS;
+
+        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + Result + ", " + SampledType + ", " + Dim + ", " + Content + ", " + Arrayed + ", " + Compare + ", " + MS + ')';
     }
 }

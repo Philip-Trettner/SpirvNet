@@ -18,5 +18,7 @@ namespace SpirvNet.Spirv.Ops.Barrier
         public override OpCode OpCode => OpCode.MemoryBarrier;
         public ExecutionScope Scope;
         public MemorySemantics Semantics;
+
+        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + Scope + ", " + Semantics + ')';
     }
 }

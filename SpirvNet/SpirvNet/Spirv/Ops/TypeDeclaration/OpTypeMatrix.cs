@@ -19,5 +19,7 @@ namespace SpirvNet.Spirv.Ops.TypeDeclaration
         public ID Result;
         public ID ColumnType;
         public LiteralNumber ColumnCount;
+
+        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + Result + ", " + ColumnType + ", " + ColumnCount + ')';
     }
 }

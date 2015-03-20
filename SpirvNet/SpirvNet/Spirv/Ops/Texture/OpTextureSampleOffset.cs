@@ -23,5 +23,7 @@ namespace SpirvNet.Spirv.Ops.Texture
         public ID Coordinate;
         public ID Offset;
         public ID? Bias;
+
+        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + ResultType + ", " + Result + ", " + Sampler + ", " + Coordinate + ", " + Offset + ", " + Bias + ')';
     }
 }

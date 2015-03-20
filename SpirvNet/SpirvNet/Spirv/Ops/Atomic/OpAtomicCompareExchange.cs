@@ -23,5 +23,7 @@ namespace SpirvNet.Spirv.Ops.Atomic
         public MemorySemantics Semantics;
         public ID Value;
         public ID Comparator;
+
+        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + ResultType + ", " + Result + ", " + Pointer + ", " + Scope + ", " + Semantics + ", " + Value + ", " + Comparator + ')';
     }
 }

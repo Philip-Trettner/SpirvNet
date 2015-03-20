@@ -16,5 +16,7 @@ namespace SpirvNet.Spirv.Ops.Misc
     {
         public override bool IsMisc => true;
         public override OpCode OpCode => OpCode.Nop;
+
+        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ')';
     }
 }

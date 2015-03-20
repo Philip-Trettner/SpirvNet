@@ -18,5 +18,7 @@ namespace SpirvNet.Spirv.Ops.FlowControl
         public override OpCode OpCode => OpCode.LoopMerge;
         public ID Label;
         public LoopControl LoopControl;
+
+        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + Label + ", " + LoopControl + ')';
     }
 }

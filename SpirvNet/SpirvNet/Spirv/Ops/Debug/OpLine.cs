@@ -20,5 +20,7 @@ namespace SpirvNet.Spirv.Ops.Debug
         public ID File;
         public LiteralNumber Line;
         public LiteralNumber Column;
+
+        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + Target + ", " + File + ", " + Line + ", " + Column + ')';
     }
 }

@@ -25,5 +25,7 @@ namespace SpirvNet.Spirv.Ops.Group
         public ID NumElements;
         public ID Stride;
         public ID Event;
+
+        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + ResultType + ", " + Result + ", " + Scope + ", " + Destination + ", " + Source + ", " + NumElements + ", " + Stride + ", " + Event + ')';
     }
 }

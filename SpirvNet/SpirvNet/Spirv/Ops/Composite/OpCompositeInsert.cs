@@ -21,5 +21,7 @@ namespace SpirvNet.Spirv.Ops.Composite
         public ID Object;
         public ID Composite;
         public ID[] Indexes;
+
+        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + ResultType + ", " + Result + ", " + Object + ", " + Composite + ", " + Indexes + ')';
     }
 }

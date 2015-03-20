@@ -21,5 +21,7 @@ namespace SpirvNet.Spirv.Ops.Memory
         public ID Result;
         public StorageClass StorageClass;
         public ID N;
+
+        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + ResultType + ", " + Result + ", " + StorageClass + ", " + N + ')';
     }
 }

@@ -18,5 +18,7 @@ namespace SpirvNet.Spirv.Ops.TypeDeclaration
         public override OpCode OpCode => OpCode.TypeFloat;
         public ID Result;
         public LiteralNumber Width;
+
+        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + Result + ", " + Width + ')';
     }
 }

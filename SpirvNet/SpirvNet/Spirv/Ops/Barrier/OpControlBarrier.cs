@@ -17,5 +17,7 @@ namespace SpirvNet.Spirv.Ops.Barrier
         public override bool IsBarrier => true;
         public override OpCode OpCode => OpCode.ControlBarrier;
         public ExecutionScope Scope;
+
+        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + Scope + ')';
     }
 }

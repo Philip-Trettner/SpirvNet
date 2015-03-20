@@ -19,5 +19,7 @@ namespace SpirvNet.Spirv.Ops.RelationalLogical
         public ID ResultType;
         public ID Result;
         public ID Vector;
+
+        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + ResultType + ", " + Result + ", " + Vector + ')';
     }
 }

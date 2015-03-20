@@ -19,5 +19,7 @@ namespace SpirvNet.Spirv.Ops.TypeDeclaration
         public override OpCode OpCode => OpCode.TypeRuntimeArray;
         public ID Result;
         public ID ElementType;
+
+        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + Result + ", " + ElementType + ')';
     }
 }

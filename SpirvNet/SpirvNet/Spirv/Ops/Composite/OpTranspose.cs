@@ -20,5 +20,7 @@ namespace SpirvNet.Spirv.Ops.Composite
         public ID ResultType;
         public ID Result;
         public ID Matrix;
+
+        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + ResultType + ", " + Result + ", " + Matrix + ')';
     }
 }

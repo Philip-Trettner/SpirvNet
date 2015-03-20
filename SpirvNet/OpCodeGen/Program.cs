@@ -377,6 +377,8 @@ namespace OpCodeGen
                 yield return string.Format("        public override OpCode OpCode => OpCode.{0};", Name);
                 foreach (var field in Fields)
                     yield return string.Format("        public {0} {1};", field.Type, field.Name);
+                yield return "";
+                yield return string.Format("        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + \")\"{0} + ')';", Fields.Length == 0 ? "" : Fields.Select(f => f.Name).Aggregate("", (s1, s2) => s1 + " + \", \" + " + s2));
                 yield return "    }";
                 yield return "}";
             }

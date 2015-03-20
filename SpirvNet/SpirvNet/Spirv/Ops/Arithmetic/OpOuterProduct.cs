@@ -21,5 +21,7 @@ namespace SpirvNet.Spirv.Ops.Arithmetic
         public ID Result;
         public ID Vector1;
         public ID Vector2;
+
+        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + ResultType + ", " + Result + ", " + Vector1 + ", " + Vector2 + ')';
     }
 }

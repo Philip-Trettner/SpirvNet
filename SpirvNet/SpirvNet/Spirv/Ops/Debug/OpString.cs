@@ -18,5 +18,7 @@ namespace SpirvNet.Spirv.Ops.Debug
         public override OpCode OpCode => OpCode.String;
         public ID Result;
         public LiteralString Name;
+
+        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + Result + ", " + Name + ')';
     }
 }

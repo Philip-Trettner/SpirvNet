@@ -19,5 +19,7 @@ namespace SpirvNet.Spirv.Ops.Debug
         public ID Target;
         public LiteralNumber Member;
         public LiteralString Name;
+
+        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + Target + ", " + Member + ", " + Name + ')';
     }
 }

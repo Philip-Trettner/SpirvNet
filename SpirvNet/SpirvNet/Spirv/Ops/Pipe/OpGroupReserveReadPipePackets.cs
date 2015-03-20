@@ -22,5 +22,7 @@ namespace SpirvNet.Spirv.Ops.Pipe
         public ExecutionScope Scope;
         public ID P;
         public ID NumPackets;
+
+        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + ResultType + ", " + Result + ", " + Scope + ", " + P + ", " + NumPackets + ')';
     }
 }

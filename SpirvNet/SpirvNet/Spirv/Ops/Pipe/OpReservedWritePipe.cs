@@ -23,5 +23,7 @@ namespace SpirvNet.Spirv.Ops.Pipe
         public ID ReserveId;
         public ID Index;
         public ID Ptr;
+
+        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + ResultType + ", " + Result + ", " + P + ", " + ReserveId + ", " + Index + ", " + Ptr + ')';
     }
 }

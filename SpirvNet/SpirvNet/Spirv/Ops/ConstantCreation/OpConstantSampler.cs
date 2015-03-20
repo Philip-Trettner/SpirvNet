@@ -22,5 +22,7 @@ namespace SpirvNet.Spirv.Ops.ConstantCreation
         public LiteralNumber Mode;
         public LiteralNumber Param;
         public LiteralNumber Filter;
+
+        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + ResultType + ", " + Result + ", " + Mode + ", " + Param + ", " + Filter + ')';
     }
 }

@@ -21,5 +21,7 @@ namespace SpirvNet.Spirv.Ops.Group
         public ID Result;
         public ExecutionScope Scope;
         public ID Predicate;
+
+        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + ResultType + ", " + Result + ", " + Scope + ", " + Predicate + ')';
     }
 }

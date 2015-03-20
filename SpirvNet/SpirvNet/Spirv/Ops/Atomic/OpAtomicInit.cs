@@ -18,5 +18,7 @@ namespace SpirvNet.Spirv.Ops.Atomic
         public override OpCode OpCode => OpCode.AtomicInit;
         public ID Pointer;
         public ID Value;
+
+        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + Pointer + ", " + Value + ')';
     }
 }

@@ -19,5 +19,7 @@ namespace SpirvNet.Spirv.Ops.FlowControl
         public ID Selector;
         public ID Default;
         public Pair<LiteralNumber, ID>[] Target;
+
+        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + Selector + ", " + Default + ", " + Target + ')';
     }
 }

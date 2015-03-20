@@ -17,5 +17,7 @@ namespace SpirvNet.Spirv.Ops.FlowControl
         public override bool IsFlowControl => true;
         public override OpCode OpCode => OpCode.Branch;
         public ID TargetLabel;
+
+        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + TargetLabel + ')';
     }
 }
