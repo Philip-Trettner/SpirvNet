@@ -85,12 +85,17 @@
     <Compile Include="Spirv\Enums\SourceLanguage.cs" />
     <Compile Include="Spirv\Enums\StorageClass.cs" />
     <Compile Include="Spirv\ExtraOperandAttribute.cs" />
+    <Compile Include="Spirv\ID.cs" />
     <Compile Include="Spirv\Instruction.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Spirv\LiteralNumber.cs" />
     <Compile Include="Spirv\Module.cs" />
     <Compile Include="Spirv\Enums\OpCode.cs" />
-    <Compile Include="Spirv\Ops\OpNop.cs" />
-    <Compile Include="Spirv\UnrecognizedInstruction.cs" />
+    <Compile Include="Spirv\Ops\Debug\OpSource.cs" />
+    <Compile Include="Spirv\Ops\Misc\OpNop.cs" />
+    <Compile Include="Spirv\Ops\Misc\OpUndef.cs" />
+    <Compile Include="Spirv\UniversalLimits.cs" />
+    <Compile Include="Spirv\Ops\OpUnknown.cs" />
     <Compile Include="Tests\CecilTest.cs" />
     <Compile Include="Tests\InstructionTest.cs" />
   </ItemGroup>

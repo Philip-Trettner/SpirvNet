@@ -14,57 +14,62 @@ namespace SpirvNet.Spirv
     public abstract class Instruction
     {
         /// <summary>
+        /// Cached information for instruction layout
+        /// </summary>
+        private class LayoutInfo
+        {
+            public uint WordCount;
+        }
+
+        /// <summary>
+        /// Mapping of cached layouts
+        /// </summary>
+        private static readonly Dictionary<Type, LayoutInfo> CachedLayouts = new Dictionary<Type, LayoutInfo>(); 
+
+        /// <summary>
         /// Opcode: The 16 high-order bits are the WordCount of the
         /// instruction.The 16 low-order bits are the opcode enumerant.
         /// </summary>
-        public readonly uint InstructionCode;
+        public uint InstructionCode => (uint)OpCode + (WordCount << 16);
 
         /// <summary>
         /// Returns the number of words in this instruction
+        /// Only valid after first Generate call
         /// </summary>
-        public readonly uint WordCount;
+        public uint WordCount { get; protected set; } = 0;
 
         /// <summary>
         /// OpCode
         /// </summary>
-        public readonly OpCode OpCode;
-
-        /// <summary>
-        /// Optional instruction type ID (presence determined by opcode, valid if > 0)
-        /// </summary>
-        public uint InstructionTypeID = 0;
-        /// <summary>
-        /// Optional instruction result ID (presence determined by opcode, valid if > 0).
-        /// </summary>
-        public uint InstructionResultID = 0;
-
-        /// <summary>
-        /// List of operand codes
-        /// </summary>
-        public readonly List<uint> Operands = new List<uint>();
+        public abstract OpCode OpCode { get; }
         
-
-        /// <summary>
-        /// Ctor
-        /// </summary>
-        protected Instruction(OpCode opCode, uint wc)
-        {
-            OpCode = opCode;
-            WordCount = wc;
-            InstructionCode = (uint)opCode + (wc << 16);
-        }
-
         /// <summary>
         /// Adds the instruction bytecode to the given list
+        /// Code can be null (only updates word count)
         /// </summary>
-        public void Generate(List<uint> code)
+        public virtual void Generate(List<uint> code)
         {
+            // get type info
+            var t = GetType();
+
+            LayoutInfo info;
+            if (!CachedLayouts.TryGetValue(t, out info))
+            {
+                // generate info
+                info = new LayoutInfo();
+
+                CachedLayouts.Add(t, info);
+            }
+
+            WordCount = info.WordCount;
+
+            // generate bytecode
+            if (code == null)
+                return;
             var cc = code.Count;
 
             code.Add(InstructionCode);
-            if (InstructionTypeID > 0) code.Add(InstructionTypeID);
-            if (InstructionResultID > 0) code.Add(InstructionResultID);
-            code.AddRange(Operands);
+            // TODO
 
             Debug.Assert(WordCount == code.Count - cc);
         }
