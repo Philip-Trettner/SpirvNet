@@ -14,6 +14,91 @@ namespace SpirvNet.DotNet
     /// </summary>
     static class CecilLoader
     {
+        /* http://stackoverflow.com/questions/7212255/cecil-instruction-operand-types-corresponding-to-instruction-opcode-code-value
+            Instruction.OpCode.Code|Instruction.OpCode.OperandType|Instruction.Operand class
+            Ldarg_S                |ShortInlineArg                |ParameterDefinition
+            Ldarga_S               |ShortInlineArg                |ParameterDefinition
+            Starg_S                |ShortInlineArg                |ParameterDefinition
+            Ldloc_S                |ShortInlineVar                |VariableDefinition
+            Ldloca_S               |ShortInlineVar                |VariableDefinition
+            Stloc_S                |ShortInlineVar                |VariableDefinition
+            Ldc_I4_S               |ShortInlineI                  |sbyte <===== NOTE: special case
+            Ldc_I4                 |InlineI                       |int32
+            Ldc_I8                 |InlineI8                      |int64
+            Ldc_R4                 |ShortInlineR                  |single
+            Ldc_R8                 |InlineR                       |float (64 bit)
+            Jmp                    |InlineMethod                  |MethodReference
+            Call                   |InlineMethod                  |MethodReference
+            Calli                  |InlineSig                     |CallSite
+            Br_S                   |ShortInlineBrTarget           |Instruction
+            Brfalse_S              |ShortInlineBrTarget           |Instruction
+            Brtrue_S               |ShortInlineBrTarget           |Instruction
+            Beq_S                  |ShortInlineBrTarget           |Instruction
+            Bge_S                  |ShortInlineBrTarget           |Instruction
+            Bgt_S                  |ShortInlineBrTarget           |Instruction
+            Ble_S                  |ShortInlineBrTarget           |Instruction
+            Blt_S                  |ShortInlineBrTarget           |Instruction
+            Bne_Un_S               |ShortInlineBrTarget           |Instruction
+            Bge_Un_S               |ShortInlineBrTarget           |Instruction
+            Bgt_Un_S               |ShortInlineBrTarget           |Instruction
+            Ble_Un_S               |ShortInlineBrTarget           |Instruction
+            Blt_Un_S               |ShortInlineBrTarget           |Instruction
+            Br                     |InlineBrTarget                |Instruction
+            Brfalse                |InlineBrTarget                |Instruction
+            Brtrue                 |InlineBrTarget                |Instruction
+            Beq                    |InlineBrTarget                |Instruction
+            Bge                    |InlineBrTarget                |Instruction
+            Bgt                    |InlineBrTarget                |Instruction
+            Ble                    |InlineBrTarget                |Instruction
+            Blt                    |InlineBrTarget                |Instruction
+            Bne_Un                 |InlineBrTarget                |Instruction
+            Bge_Un                 |InlineBrTarget                |Instruction
+            Bgt_Un                 |InlineBrTarget                |Instruction
+            Ble_Un                 |InlineBrTarget                |Instruction
+            Blt_Un                 |InlineBrTarget                |Instruction
+            Switch                 |InlineSwitch                  |Instruction array
+            Callvirt               |InlineMethod                  |MethodReference
+            Cpobj                  |InlineType                    |TypeReference
+            Ldobj                  |InlineType                    |TypeReference
+            Ldstr                  |InlineString                  |string
+            Newobj                 |InlineMethod                  |MethodReference
+            Castclass              |InlineType                    |TypeReference
+            Isinst                 |InlineType                    |TypeReference
+            Unbox                  |InlineType                    |TypeReference
+            Ldfld                  |InlineField                   |FieldReference
+            Ldflda                 |InlineField                   |FieldReference
+            Stfld                  |InlineField                   |FieldReference
+            Ldsfld                 |InlineField                   |FieldReference
+            Ldsflda                |InlineField                   |FieldReference
+            Stsfld                 |InlineField                   |FieldReference
+            Stobj                  |InlineType                    |TypeReference
+            Box                    |InlineType                    |TypeReference
+            Newarr                 |InlineType                    |TypeReference
+            Ldelema                |InlineType                    |TypeReference
+            Ldelem_Any             |InlineType                    |TypeReference
+            Stelem_Any             |InlineType                    |TypeReference
+            Unbox_Any              |InlineType                    |TypeReference
+            Refanyval              |InlineType                    |TypeReference
+            Mkrefany               |InlineType                    |TypeReference
+            Ldtoken                |InlineTok                     |IMetadataTokenProvider
+            Leave                  |InlineBrTarget                |Instruction
+            Leave_S                |ShortInlineBrTarget           |Instruction
+            Ldftn                  |InlineMethod                  |MethodReference
+            Ldvirtftn              |InlineMethod                  |MethodReference
+            Ldarg                  |InlineArg                     |ParameterDefinition
+            Ldarga                 |InlineArg                     |ParameterDefinition
+            Starg                  |InlineArg                     |ParameterDefinition
+            Ldloc                  |InlineVar                     |VariableDefinition
+            Ldloca                 |InlineVar                     |VariableDefinition
+            Stloc                  |InlineVar                     |VariableDefinition
+            Unaligned              |ShortInlineI                  |byte
+            Initobj                |InlineType                    |TypeReference
+            Constrained            |InlineType                    |TypeReference
+            No                     |ShortInlineI                  |byte
+            Sizeof                 |InlineType                    |TypeReference
+        */
+
+
         /// <summary>
         /// Cache
         /// </summary>
