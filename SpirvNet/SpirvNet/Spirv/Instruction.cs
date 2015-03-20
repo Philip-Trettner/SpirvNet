@@ -24,6 +24,11 @@ namespace SpirvNet.Spirv
             /// Code from object -> add to code
             /// </summary>
             public readonly List<Action<object, List<uint>>> Fields = new List<Action<object, List<uint>>>();
+
+            /// <summary>
+            /// Code from object -> ID
+            /// </summary>
+            public readonly List<Func<object, ID>> IDs = new List<Func<object, ID>>();
         }
 
         /// <summary>
@@ -54,6 +59,24 @@ namespace SpirvNet.Spirv
         public virtual void Generate(List<uint> code)
         {
             // get type info
+            var info = GenerateAndCacheInfo();
+
+            // generate bytecode
+            var cc = code.Count;
+
+            code.Add(0); // dummy
+            foreach (var field in info.Fields)
+                field(this, code);
+
+            WordCount = (uint)(code.Count - cc);
+            code[cc] = InstructionCode; // real val
+        }
+
+        /// <summary>
+        /// Generates and caches layout info on demand
+        /// </summary>
+        private LayoutInfo GenerateAndCacheInfo()
+        {
             var t = GetType();
 
             LayoutInfo info;
@@ -65,14 +88,17 @@ namespace SpirvNet.Spirv
                 {
                     var field = tfield; // extra var for closure capture
 
-                    if (field.FieldType == typeof(ID))
-                        info.Fields.Add((o, c) => c.Add(((ID)field.GetValue(o)).Value));
+                    if (field.FieldType == typeof (ID))
+                    {
+                        info.IDs.Add(o => (ID) field.GetValue(o));
+                        info.Fields.Add((o, c) => c.Add(((ID) field.GetValue(o)).Value));
+                    }
 
-                    else if (field.FieldType == typeof(LiteralNumber))
-                        info.Fields.Add((o, c) => c.Add(((LiteralNumber)field.GetValue(o)).Value));
+                    else if (field.FieldType == typeof (LiteralNumber))
+                        info.Fields.Add((o, c) => c.Add(((LiteralNumber) field.GetValue(o)).Value));
 
-                    else if (field.FieldType == typeof(LiteralString))
-                        info.Fields.Add((o, c) => ((LiteralString)field.GetValue(o)).Generate(c));
+                    else if (field.FieldType == typeof (LiteralString))
+                        info.Fields.Add((o, c) => ((LiteralString) field.GetValue(o)).Generate(c));
 
                     else
                         throw new NotSupportedException("Unsupported field type for " + field);
@@ -80,16 +106,7 @@ namespace SpirvNet.Spirv
 
                 CachedLayouts.Add(t, info);
             }
-
-            // generate bytecode
-            var cc = code.Count;
-
-            code.Add(0); // dummy
-            foreach (var field in info.Fields)
-                field(this, code);
-
-            WordCount = (uint)(code.Count - cc);
-            code[cc] = InstructionCode; // real val
+            return info;
         }
     }
 }
