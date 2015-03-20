@@ -108,7 +108,27 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Spirv\Ops\Annotation\" />
+    <Folder Include="Spirv\Ops\Arithmetic\" />
+    <Folder Include="Spirv\Ops\Atomic\" />
+    <Folder Include="Spirv\Ops\Composite\" />
+    <Folder Include="Spirv\Ops\ConstantCreation\" />
+    <Folder Include="Spirv\Ops\Conversion\" />
+    <Folder Include="Spirv\Ops\Derivative\" />
+    <Folder Include="Spirv\Ops\DeviceSideEnqueue\" />
+    <Folder Include="Spirv\Ops\Extension\" />
+    <Folder Include="Spirv\Ops\FlowControl\" />
+    <Folder Include="Spirv\Ops\Function\" />
+    <Folder Include="Spirv\Ops\Group\" />
+    <Folder Include="Spirv\Ops\Logical\" />
+    <Folder Include="Spirv\Ops\Memory\" />
+    <Folder Include="Spirv\Ops\ModeSetting\" />
+    <Folder Include="Spirv\Ops\Pipe\" />
+    <Folder Include="Spirv\Ops\Primitive\" />
+    <Folder Include="Spirv\Ops\Texture\" />
+    <Folder Include="Spirv\Ops\TypeDeclaration\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
