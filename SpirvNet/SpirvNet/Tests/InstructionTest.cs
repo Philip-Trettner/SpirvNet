@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using NUnit.Framework;
@@ -74,6 +75,15 @@ namespace SpirvNet.Tests
             op.Generate(code);
             Assert.AreEqual(3, op.WordCount);
             Assert.AreEqual(2 + 2 + 3, code.Count);
+        }
+
+        [Test]
+        public void CoveredOpCodes()
+        {
+            var op2type = Assembly.GetExecutingAssembly().GetTypes().Where(t => t.IsSubclassOf(typeof(Instruction))).ToDictionary(type => type.Name);
+
+            foreach (var value in Enum.GetValues(typeof(OpCode)))
+                Assert.That(op2type.ContainsKey("Op" + value));
         }
     }
 }
