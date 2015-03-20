@@ -111,6 +111,202 @@ namespace OpCodeGen
             yield return Op("TextureQueryLod", Id("ResultType"), Id("Result"), Id("Sampler"), Id("Coordinate")).Compat("Shader");
             yield return Op("TextureQueryLevels", Id("ResultType"), Id("Result"), Id("Sampler")).Compat("Shader");
             yield return Op("TextureQuerySamples", Id("ResultType"), Id("Result"), Id("Sampler")).Compat("Shader");
+
+            opCategory = "Conversion";
+            yield return Op("ConvertFToU", Id("ResultType"), Id("Result"), Id("FloatValue"));
+            yield return Op("ConvertFToS", Id("ResultType"), Id("Result"), Id("FloatValue"));
+            yield return Op("ConvertSToF", Id("ResultType"), Id("Result"), Id("SignedValue"));
+            yield return Op("ConvertUToF", Id("ResultType"), Id("Result"), Id("UnsignedValue"));
+            yield return Op("UConvert", Id("ResultType"), Id("Result"), Id("UnsignedValue"));
+            yield return Op("SConvert", Id("ResultType"), Id("Result"), Id("SignedValue"));
+            yield return Op("FConvert", Id("ResultType"), Id("Result"), Id("FloatValue"));
+            yield return Op("ConvertPtrToU", Id("ResultType"), Id("Result"), Id("Pointer")).Compat("Addr");
+            yield return Op("ConvertUToPtr", Id("ResultType"), Id("Result"), Id("IntegerValue")).Compat("Addr");
+            yield return Op("PtrCastToGeneric", Id("ResultType"), Id("Result"), Id("SourcePointer")).Compat("Kernel");
+            yield return Op("GenericCastToPtr", Id("ResultType"), Id("Result"), Id("SourcePointer")).Compat("Kernel");
+            yield return Op("Bitcast", Id("ResultType"), Id("Result"), Id("Operand"));
+            yield return Op("GenericCastToPtrExplicit", Id("ResultType"), Id("Result"), Id("SourcePointer"), Typed("StorageClass")).Compat("Kernel");
+
+            opCategory = "Composite";
+            yield return Op("VectorExtractDynamic", Id("ResultType"), Id("Result"), Id("Vector"), Id("Index"));
+            yield return Op("VectorInsertDynamic", Id("ResultType"), Id("Result"), Id("Component"), Id("Index"));
+            yield return Op("VectorShuffle", Id("ResultType"), Id("Result"), Id("Vector1"), Id("Vector2"), NrArray("Components"));
+            yield return Op("CompositeConstruct", Id("ResultType"), Id("Result"), IdArray("Constituents"));
+            yield return Op("CompositeExtract", Id("ResultType"), Id("Result"), Id("Composite"), IdArray("Indexes"));
+            yield return Op("CompositeInsert", Id("ResultType"), Id("Result"), Id("Object"), Id("Composite"), IdArray("Indexes"));
+            yield return Op("CopyObject", Id("ResultType"), Id("Result"), Id("Operand"));
+            yield return Op("Transpose", Id("ResultType"), Id("Result"), Id("Matrix")).Compat("Matrix");
+
+            opCategory = "Arithmetic";
+            yield return Op("SNegate", Id("ResultType"), Id("Result"), Id("Operand"));
+            yield return Op("FNegate", Id("ResultType"), Id("Result"), Id("Operand"));
+            yield return Op("Not", Id("ResultType"), Id("Result"), Id("Operand"));
+            yield return Op("IAdd", Id("ResultType"), Id("Result"), Id("Operand1"), Id("Operand2"));
+            yield return Op("FAdd", Id("ResultType"), Id("Result"), Id("Operand1"), Id("Operand2"));
+            yield return Op("ISub", Id("ResultType"), Id("Result"), Id("Operand1"), Id("Operand2"));
+            yield return Op("FSub", Id("ResultType"), Id("Result"), Id("Operand1"), Id("Operand2"));
+            yield return Op("IMul", Id("ResultType"), Id("Result"), Id("Operand1"), Id("Operand2"));
+            yield return Op("FMul", Id("ResultType"), Id("Result"), Id("Operand1"), Id("Operand2"));
+            yield return Op("UDiv", Id("ResultType"), Id("Result"), Id("Operand1"), Id("Operand2"));
+            yield return Op("SDiv", Id("ResultType"), Id("Result"), Id("Operand1"), Id("Operand2"));
+            yield return Op("FDiv", Id("ResultType"), Id("Result"), Id("Operand1"), Id("Operand2"));
+            yield return Op("UMod", Id("ResultType"), Id("Result"), Id("Operand1"), Id("Operand2"));
+            yield return Op("SRem", Id("ResultType"), Id("Result"), Id("Operand1"), Id("Operand2"));
+            yield return Op("SMod", Id("ResultType"), Id("Result"), Id("Operand1"), Id("Operand2"));
+            yield return Op("FRem", Id("ResultType"), Id("Result"), Id("Operand1"), Id("Operand2"));
+            yield return Op("FMod", Id("ResultType"), Id("Result"), Id("Operand1"), Id("Operand2"));
+            yield return Op("VectorTimesScalar", Id("ResultType"), Id("Result"), Id("Vector"), Id("Scalar"));
+            yield return Op("MatrixTimesScalar", Id("ResultType"), Id("Result"), Id("Matrix"), Id("Scalar")).Compat("Matrix");
+            yield return Op("VectorTimesMatrix", Id("ResultType"), Id("Result"), Id("Vector"), Id("Matrix")).Compat("Matrix");
+            yield return Op("MatrixTimesVector", Id("ResultType"), Id("Result"), Id("Matrix"), Id("Vector")).Compat("Matrix");
+            yield return Op("MatrixTimesMatrix", Id("ResultType"), Id("Result"), Id("LeftMatrix"), Id("RightMatrix")).Compat("Matrix");
+            yield return Op("OuterProduct", Id("ResultType"), Id("Result"), Id("Vector1"), Id("Vector2")).Compat("Matrix");
+            yield return Op("Dot", Id("ResultType"), Id("Result"), Id("Vector1"), Id("Vector2"));
+            yield return Op("ShiftRightLogical", Id("ResultType"), Id("Result"), Id("Operand1"), Id("Operand2"));
+            yield return Op("ShiftRightArithmetic", Id("ResultType"), Id("Result"), Id("Operand1"), Id("Operand2"));
+            yield return Op("ShiftLeftLogical", Id("ResultType"), Id("Result"), Id("Operand1"), Id("Operand2"));
+            yield return Op("BitwiseOr", Id("ResultType"), Id("Result"), Id("Operand1"), Id("Operand2"));
+            yield return Op("BitwiseXor", Id("ResultType"), Id("Result"), Id("Operand1"), Id("Operand2"));
+            yield return Op("BitwiseAnd", Id("ResultType"), Id("Result"), Id("Operand1"), Id("Operand2"));
+
+            opCategory = "RelationalLogical";
+            yield return Op("Any", Id("ResultType"), Id("Result"), Id("Vector"));
+            yield return Op("All", Id("ResultType"), Id("Result"), Id("Vector"));
+            yield return Op("IsNan", Id("ResultType"), Id("Result"), Id("x"));
+            yield return Op("IsInf", Id("ResultType"), Id("Result"), Id("x"));
+            yield return Op("IsFinite", Id("ResultType"), Id("Result"), Id("x")).Compat("Kernel");
+            yield return Op("IsNormal", Id("ResultType"), Id("Result"), Id("x")).Compat("Kernel");
+            yield return Op("SignBitSet", Id("ResultType"), Id("Result"), Id("x")).Compat("Kernel");
+            yield return Op("LessOrGreater", Id("ResultType"), Id("Result"), Id("x"), Id("y")).Compat("Kernel");
+            yield return Op("Ordered", Id("ResultType"), Id("Result"), Id("x"), Id("y")).Compat("Kernel");
+            yield return Op("Unordered", Id("ResultType"), Id("Result"), Id("x"), Id("y")).Compat("Kernel");
+            yield return Op("LogicalOr", Id("ResultType"), Id("Result"), Id("Operand1"), Id("Operand2"));
+            yield return Op("LogicalXor", Id("ResultType"), Id("Result"), Id("Operand1"), Id("Operand2"));
+            yield return Op("LogicalAnd", Id("ResultType"), Id("Result"), Id("Operand1"), Id("Operand2"));
+            yield return Op("Select", Id("ResultType"), Id("Result"), Id("Condition"), Id("Object1"), Id("Object2"));
+            yield return Op("IEqual", Id("ResultType"), Id("Result"), Id("Operand1"), Id("Operand2"));
+            yield return Op("FOrdEqual", Id("ResultType"), Id("Result"), Id("Operand1"), Id("Operand2"));
+            yield return Op("FUnordEqual", Id("ResultType"), Id("Result"), Id("Operand1"), Id("Operand2"));
+            yield return Op("INotEqual", Id("ResultType"), Id("Result"), Id("Operand1"), Id("Operand2"));
+            yield return Op("FOrdNotEqual", Id("ResultType"), Id("Result"), Id("Operand1"), Id("Operand2"));
+            yield return Op("FUnordNotEqual", Id("ResultType"), Id("Result"), Id("Operand1"), Id("Operand2"));
+            yield return Op("ULessThan", Id("ResultType"), Id("Result"), Id("Operand1"), Id("Operand2"));
+            yield return Op("SLessThan", Id("ResultType"), Id("Result"), Id("Operand1"), Id("Operand2"));
+            yield return Op("FOrdLessThan", Id("ResultType"), Id("Result"), Id("Operand1"), Id("Operand2"));
+            yield return Op("FUnordLessThan", Id("ResultType"), Id("Result"), Id("Operand1"), Id("Operand2"));
+            yield return Op("UGreaterThan", Id("ResultType"), Id("Result"), Id("Operand1"), Id("Operand2"));
+            yield return Op("SGreaterThan", Id("ResultType"), Id("Result"), Id("Operand1"), Id("Operand2"));
+            yield return Op("FOrdGreaterThan", Id("ResultType"), Id("Result"), Id("Operand1"), Id("Operand2"));
+            yield return Op("FUnordGreaterThan", Id("ResultType"), Id("Result"), Id("Operand1"), Id("Operand2"));
+            yield return Op("ULessThanEqual", Id("ResultType"), Id("Result"), Id("Operand1"), Id("Operand2"));
+            yield return Op("SLessThanEqual", Id("ResultType"), Id("Result"), Id("Operand1"), Id("Operand2"));
+            yield return Op("FOrdLessThanEqual", Id("ResultType"), Id("Result"), Id("Operand1"), Id("Operand2"));
+            yield return Op("FUnordLessThanEqual", Id("ResultType"), Id("Result"), Id("Operand1"), Id("Operand2"));
+            yield return Op("UGreaterThanEqual", Id("ResultType"), Id("Result"), Id("Operand1"), Id("Operand2"));
+            yield return Op("SGreaterThanEqual", Id("ResultType"), Id("Result"), Id("Operand1"), Id("Operand2"));
+            yield return Op("FOrdGreaterThanEqual", Id("ResultType"), Id("Result"), Id("Operand1"), Id("Operand2"));
+            yield return Op("FUnordGreaterThanEqual", Id("ResultType"), Id("Result"), Id("Operand1"), Id("Operand2"));
+
+            opCategory = "Derivative";
+            yield return Op("DPdx", Id("ResultType"), Id("Result"), Id("P")).Compat("Shader");
+            yield return Op("DPdy", Id("ResultType"), Id("Result"), Id("P")).Compat("Shader");
+            yield return Op("Fwidth", Id("ResultType"), Id("Result"), Id("P")).Compat("Shader");
+            yield return Op("DPdxFine", Id("ResultType"), Id("Result"), Id("P")).Compat("Shader");
+            yield return Op("DPdyFine", Id("ResultType"), Id("Result"), Id("P")).Compat("Shader");
+            yield return Op("FwidthFine", Id("ResultType"), Id("Result"), Id("P")).Compat("Shader");
+            yield return Op("DPdxCoarse", Id("ResultType"), Id("Result"), Id("P")).Compat("Shader");
+            yield return Op("DPdyCoarse", Id("ResultType"), Id("Result"), Id("P")).Compat("Shader");
+            yield return Op("FwidthCoarse", Id("ResultType"), Id("Result"), Id("P")).Compat("Shader");
+
+            opCategory = "FlowControl";
+            yield return Op("Phi", Id("ResultType"), Id("Result"), IdArray("IDs"));
+            yield return Op("LoopMerge", Id("Label"), Typed("LoopControl"));
+            yield return Op("SelectionMerge", Id("Label"), Typed("SelectionControl"));
+            yield return Op("Label", Id("Result"));
+            yield return Op("Branch", Id("TargetLabel"));
+            yield return Op("BranchConditional", Id("Condition"), Id("TrueLabel"), Id("FalseLabel"), NrArray("BranchWeights"));
+            yield return Op("Switch", Id("Selector"), Id("Default"), PairArray(Nr("Literal"), Id("Label"), "Target"));
+            yield return Op("Kill");
+            yield return Op("Return");
+            yield return Op("ReturnValue", Id("Value"));
+            yield return Op("Unreachable");
+            yield return Op("LifetimeStart", Id("Object"), Nr("Literal"));
+            yield return Op("LifetimeStop", Id("Object"), Nr("Literal"));
+
+            opCategory = "Atomic";
+            yield return Op("AtomicInit", Id("Pointer"), Id("Value"));
+            yield return Op("AtomicLoad", Id("ResultType"), Id("Result"), Id("Pointer"), Typed("ExecutionScope", "Scope"), Typed("MemorySemantics", "Semantics"));
+            yield return Op("AtomicStore", Id("Pointer"), Typed("ExecutionScope", "Scope"), Typed("MemorySemantics", "Semantics"), Id("Value"));
+            yield return Op("AtomicExchange", Id("ResultType"), Id("Result"), Id("Pointer"), Typed("ExecutionScope", "Scope"), Typed("MemorySemantics", "Semantics"), Id("Value"));
+            yield return Op("AtomicCompareExchange", Id("ResultType"), Id("Result"), Id("Pointer"), Typed("ExecutionScope", "Scope"), Typed("MemorySemantics", "Semantics"), Id("Value"), Id("Comparator"));
+            yield return Op("AtomicCompareExchangeWeak", Id("ResultType"), Id("Result"), Id("Pointer"), Typed("ExecutionScope", "Scope"), Typed("MemorySemantics", "Semantics"), Id("Value"), Id("Comparator"));
+            yield return Op("AtomicIIncrement", Id("ResultType"), Id("Result"), Id("Pointer"), Typed("ExecutionScope", "Scope"), Typed("MemorySemantics", "Semantics"));
+            yield return Op("AtomicIDecrement", Id("ResultType"), Id("Result"), Id("Pointer"), Typed("ExecutionScope", "Scope"), Typed("MemorySemantics", "Semantics"));
+            yield return Op("AtomicIAdd", Id("ResultType"), Id("Result"), Id("Pointer"), Typed("ExecutionScope", "Scope"), Typed("MemorySemantics", "Semantics"), Id("Value"));
+            yield return Op("AtomicISub", Id("ResultType"), Id("Result"), Id("Pointer"), Typed("ExecutionScope", "Scope"), Typed("MemorySemantics", "Semantics"), Id("Value"));
+            yield return Op("AtomicUMin", Id("ResultType"), Id("Result"), Id("Pointer"), Typed("ExecutionScope", "Scope"), Typed("MemorySemantics", "Semantics"), Id("Value"));
+            yield return Op("AtomicUMax", Id("ResultType"), Id("Result"), Id("Pointer"), Typed("ExecutionScope", "Scope"), Typed("MemorySemantics", "Semantics"), Id("Value"));
+            yield return Op("AtomicAnd", Id("ResultType"), Id("Result"), Id("Pointer"), Typed("ExecutionScope", "Scope"), Typed("MemorySemantics", "Semantics"), Id("Value"));
+            yield return Op("AtomicOr", Id("ResultType"), Id("Result"), Id("Pointer"), Typed("ExecutionScope", "Scope"), Typed("MemorySemantics", "Semantics"), Id("Value"));
+            yield return Op("AtomicXor", Id("ResultType"), Id("Result"), Id("Pointer"), Typed("ExecutionScope", "Scope"), Typed("MemorySemantics", "Semantics"), Id("Value"));
+
+            opCategory = "Primitive";
+            yield return Op("EmitVertex").Compat("Geom");
+            yield return Op("EmitPrimitive").Compat("Geom");
+            yield return Op("EmitStreamVertex", Id("Stream")).Compat("Geom");
+            yield return Op("EndStreamPrimitive", Id("Stream")).Compat("Geom");
+
+            opCategory = "Barrier";
+            yield return Op("ControlBarrier", Typed("ExecutionScope", "Scope"));
+            yield return Op("MemoryBarrier", Typed("ExecutionScope", "Scope"), Typed("MemorySemantics", "Semantics"));
+
+            opCategory = "Group";
+            yield return Op("AsyncGroupCopy", Id("ResultType"), Id("Result"), Typed("ExecutionScope", "Scope"), Id("Destination"), Id("Source"), Id("NumElements"), Id("Stride"), Id("Event")).Compat("Kernel");
+            yield return Op("WaitGroupEvents", Id("ResultType"), Id("Result"), Typed("ExecutionScope", "Scope"), Id("NumEvents"), Id("EventsList")).Compat("Kernel");
+            yield return Op("GroupAll", Id("ResultType"), Id("Result"), Typed("ExecutionScope", "Scope"), Id("Predicate")).Compat("Kernel");
+            yield return Op("GroupAny", Id("ResultType"), Id("Result"), Typed("ExecutionScope", "Scope"), Id("Predicate")).Compat("Kernel");
+            yield return Op("GroupBroadcast", Id("ResultType"), Id("Result"), Typed("ExecutionScope", "Scope"), Id("Value"), Id("LocalId")).Compat("Kernel");
+            yield return Op("GroupIAdd", Id("ResultType"), Id("Result"), Typed("ExecutionScope", "Scope"), Id("X")).Compat("Kernel");
+            yield return Op("GroupFAdd", Id("ResultType"), Id("Result"), Typed("ExecutionScope", "Scope"), Id("X")).Compat("Kernel");
+            yield return Op("GroupFMin", Id("ResultType"), Id("Result"), Typed("ExecutionScope", "Scope"), Id("X")).Compat("Kernel");
+            yield return Op("GroupUMin", Id("ResultType"), Id("Result"), Typed("ExecutionScope", "Scope"), Id("X")).Compat("Kernel");
+            yield return Op("GroupSMin", Id("ResultType"), Id("Result"), Typed("ExecutionScope", "Scope"), Id("X")).Compat("Kernel");
+            yield return Op("GroupFMax", Id("ResultType"), Id("Result"), Typed("ExecutionScope", "Scope"), Id("X")).Compat("Kernel");
+            yield return Op("GroupUMax", Id("ResultType"), Id("Result"), Typed("ExecutionScope", "Scope"), Id("X")).Compat("Kernel");
+            yield return Op("GroupSMax", Id("ResultType"), Id("Result"), Typed("ExecutionScope", "Scope"), Id("X")).Compat("Kernel");
+
+            opCategory = "DeviceSideEnqueue";
+            yield return Op("EnqueueMarker", Id("ResultType"), Id("Result"), Id("q"), Id("NumEvents"), Id("WaitEvents"), Id("RetEvent")).Compat("Kernel");
+            yield return Op("EnqueueKernel", Id("ResultType"), Id("Result"), Id("q"), Typed("KernelEnqueueFlags", "flags"), Id("NDRange"), Id("NumEvents"), Id("WaitEvents"), Id("RetEvent"), Id("Invoke"), Id("Param"), Id("ParamSize"), Id("ParamAlign"), IdArray("LocalSize")).Compat("Kernel");
+            yield return Op("GetKernelNDrangeSubGroupCount", Id("ResultType"), Id("Result"), Id("NDRange"), Id("Invoke")).Compat("Kernel");
+            yield return Op("GetKernelNDrangeMaxSubGroupSize", Id("ResultType"), Id("Result"), Id("NDRange"), Id("Invoke")).Compat("Kernel");
+            yield return Op("GetKernelWorkGroupSize", Id("ResultType"), Id("Result"), Id("Invoke")).Compat("Kernel");
+            yield return Op("GetKernelPreferredWorkGroupSizeMultiple", Id("ResultType"), Id("Result"), Id("Invoke")).Compat("Kernel");
+            yield return Op("RetainEvent", Id("Event")).Compat("Kernel");
+            yield return Op("ReleaseEvent", Id("Event")).Compat("Kernel");
+            yield return Op("CreateUserEvent", Id("ResultType"), Id("Event")).Compat("Kernel");
+            yield return Op("IsValidEvent", Id("ResultType"), Id("Result"), Id("Event")).Compat("Kernel");
+            yield return Op("SetUserEventStatus", Id("Event"), Id("Status")).Compat("Kernel");
+            yield return Op("CaptureEventProfilingInfo", Id("Event"), Typed("KernelProfilingInfo", "Info"), Id("Value")).Compat("Kernel");
+            yield return Op("GetDefaultQueue", Id("ResultType"), Id("Result")).Compat("Kernel");
+            yield return Op("BuildNDRange", Id("ResultType"), Id("Result"), Id("GlobalWorkSize"), Id("LocalWorkSize"), Id("GlobalWorkOffset")).Compat("Kernel");
+
+            opCategory = "Pipe";
+            yield return Op("ReadPipe", Id("ResultType"), Id("Result"), Id("p"), Id("ptr")).Compat("Kernel");
+            yield return Op("WritePipe", Id("ResultType"), Id("Result"), Id("p"), Id("ptr")).Compat("Kernel");
+            yield return Op("ReservedReadPipe", Id("ResultType"), Id("Result"), Id("p"), Id("ReserveId"), Id("Index"), Id("ptr")).Compat("Kernel");
+            yield return Op("ReservedWritePipe", Id("ResultType"), Id("Result"), Id("p"), Id("ReserveId"), Id("Index"), Id("ptr")).Compat("Kernel");
+            yield return Op("ReserveReadPipePackets", Id("ResultType"), Id("Result"), Id("p"), Id("NumPackets")).Compat("Kernel");
+            yield return Op("ReserveWritePipePackets", Id("ResultType"), Id("Result"), Id("p"), Id("NumPackets")).Compat("Kernel");
+            yield return Op("CommitReadPipe", Id("p"), Id("ReserveId")).Compat("Kernel");
+            yield return Op("CommitWritePipe", Id("p"), Id("ReserveId")).Compat("Kernel");
+            yield return Op("IsValidReserveId", Id("ResultType"), Id("Result"), Id("ReserveId")).Compat("Kernel");
+            yield return Op("GetNumPipePackets", Id("ResultType"), Id("Result"), Id("p")).Compat("Kernel");
+            yield return Op("GetMaxPipePackets", Id("ResultType"), Id("Result"), Id("p")).Compat("Kernel");
+            yield return Op("GroupReserveReadPipePackets", Id("ResultType"), Id("Result"), Typed("ExecutionScope", "Scope"), Id("p"), Id("NumPackets")).Compat("Kernel");
+            yield return Op("GroupReserveWritePipePackets", Id("ResultType"), Id("Result"), Typed("ExecutionScope", "Scope"), Id("p"), Id("NumPackets")).Compat("Kernel");
+            yield return Op("GroupCommitReadPipe", Typed("ExecutionScope", "Scope"), Id("p"), Id("ReserveId")).Compat("Kernel");
+            yield return Op("GroupCommitWritePipe", Typed("ExecutionScope", "Scope"), Id("p"), Id("ReserveId")).Compat("Kernel");
         }
 
         class OpField
@@ -201,11 +397,27 @@ namespace OpCodeGen
                 Name = name
             };
         }
+        static OpField NrArray(string name)
+        {
+            return new OpField
+            {
+                Type = "LiteralNumber[]",
+                Name = name
+            };
+        }
         static OpField Str(string name)
         {
             return new OpField
             {
                 Type = "LiteralString",
+                Name = name
+            };
+        }
+        static OpField PairArray(OpField op1, OpField op2, string name)
+        {
+            return new OpField
+            {
+                Type = string.Format("Pair<{0}, {1}>[]", op1.Type, op2.Type),
                 Name = name
             };
         }

@@ -100,6 +100,7 @@
     <Compile Include="Spirv\Ops\Debug\OpString.cs" />
     <Compile Include="Spirv\Ops\Misc\OpNop.cs" />
     <Compile Include="Spirv\Ops\Misc\OpUndef.cs" />
+    <Compile Include="Spirv\Pair.cs" />
     <Compile Include="Spirv\UniversalLimits.cs" />
     <Compile Include="Spirv\Ops\OpUnknown.cs" />
     <Compile Include="Tests\CecilTest.cs" />
@@ -112,6 +113,7 @@
     <Folder Include="Spirv\Ops\Annotation\" />
     <Folder Include="Spirv\Ops\Arithmetic\" />
     <Folder Include="Spirv\Ops\Atomic\" />
+    <Folder Include="Spirv\Ops\Barrier\" />
     <Folder Include="Spirv\Ops\Composite\" />
     <Folder Include="Spirv\Ops\ConstantCreation\" />
     <Folder Include="Spirv\Ops\Conversion\" />
