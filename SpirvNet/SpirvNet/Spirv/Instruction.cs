@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.Eventing.Reader;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using SpirvNet.Spirv.Enums;
@@ -18,13 +20,21 @@ namespace SpirvNet.Spirv
         /// </summary>
         private class LayoutInfo
         {
+            /// <summary>
+            /// Word count
+            /// </summary>
             public uint WordCount;
+
+            /// <summary>
+            /// Code from object -> add to code
+            /// </summary>
+            public List<Action<object, List<uint>>> Fields = new List<Action<object, List<uint>>>();
         }
 
         /// <summary>
         /// Mapping of cached layouts
         /// </summary>
-        private static readonly Dictionary<Type, LayoutInfo> CachedLayouts = new Dictionary<Type, LayoutInfo>(); 
+        private static readonly Dictionary<Type, LayoutInfo> CachedLayouts = new Dictionary<Type, LayoutInfo>();
 
         /// <summary>
         /// Opcode: The 16 high-order bits are the WordCount of the
@@ -42,7 +52,7 @@ namespace SpirvNet.Spirv
         /// OpCode
         /// </summary>
         public abstract OpCode OpCode { get; }
-        
+
         /// <summary>
         /// Adds the instruction bytecode to the given list
         /// Code can be null (only updates word count)
@@ -56,7 +66,26 @@ namespace SpirvNet.Spirv
             if (!CachedLayouts.TryGetValue(t, out info))
             {
                 // generate info
-                info = new LayoutInfo();
+                info = new LayoutInfo { WordCount = 1 };
+                foreach (var tfield in t.GetFields())
+                {
+                    var field = tfield; // extra var for closure capture
+
+                    if (field.FieldType == typeof(ID))
+                    {
+                        info.WordCount += 1u;
+                        info.Fields.Add((o, c) => c.Add(((ID)field.GetValue(o)).Value));
+                    }
+                    else if (field.FieldType == typeof(LiteralNumber))
+                    {
+                        info.WordCount += 1u;
+                        info.Fields.Add((o, c) => c.Add(((LiteralNumber)field.GetValue(o)).Value));
+                    }
+                    else
+                    {
+                        throw new NotSupportedException("Unsupported field type for " + field);
+                    }
+                }
 
                 CachedLayouts.Add(t, info);
             }
@@ -69,7 +98,8 @@ namespace SpirvNet.Spirv
             var cc = code.Count;
 
             code.Add(InstructionCode);
-            // TODO
+            foreach (var field in info.Fields)
+                field(this, code);
 
             Debug.Assert(WordCount == code.Count - cc);
         }
