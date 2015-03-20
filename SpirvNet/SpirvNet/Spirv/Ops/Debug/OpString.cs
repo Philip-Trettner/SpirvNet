@@ -1,21 +1,22 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using SpirvNet.Spirv.Enums;
 
+// This file is auto-generated and should not be modified manually.
+
 namespace SpirvNet.Spirv.Ops.Debug
 {
     /// <summary>
-    /// Name a string for use with other debug instructions (see OpLine). This has no semantic impact and
-    /// can safely be removed from a module.
-    /// String is the literal string being assigned a Result<id>.It has no result type and no storage
+    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
     /// </summary>
     public sealed class OpString : Instruction
     {
+        public override bool IsDebug => true;
         public override OpCode OpCode => OpCode.String;
         public ID Result;
-        public LiteralString String;
+        public LiteralString Name;
     }
 }

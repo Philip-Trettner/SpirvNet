@@ -13,6 +13,18 @@ namespace OpCodeGen
 
         static IEnumerable<OpCode> GenOps()
         {
+            opCategory = "Misc";
+            yield return Op("Nop");
+            yield return Op("Undef", Id("ResultType"), Id("Result"));
+
+            opCategory = "Debug";
+            yield return Op("Source", Typed("SourceLanguage"), Nr("Version"));
+            yield return Op("SourceExtension", Str("Extension"));
+            yield return Op("Name", Id("Target"), Str("Name"));
+            yield return Op("MemberName", Id("Target"), Nr("Member"), Str("Name"));
+            yield return Op("String", Id("Result"), Str("Name"));
+            yield return Op("Line", Id("Target"), Id("File"), Nr("Line"), Nr("Column"));
+
             opCategory = "Annotation";
             yield return Op("DecorationGroup", Id("Result"));
             yield return Op("Decorate", Id("Target"), Typed("Decoration")); // TODO: Special
@@ -252,7 +264,7 @@ namespace OpCodeGen
 
             opCategory = "Primitive";
             yield return Op("EmitVertex").Compat("Geom");
-            yield return Op("EmitPrimitive").Compat("Geom");
+            yield return Op("EndPrimitive").Compat("Geom");
             yield return Op("EmitStreamVertex", Id("Stream")).Compat("Geom");
             yield return Op("EndStreamPrimitive", Id("Stream")).Compat("Geom");
 
@@ -277,7 +289,7 @@ namespace OpCodeGen
 
             opCategory = "DeviceSideEnqueue";
             yield return Op("EnqueueMarker", Id("ResultType"), Id("Result"), Id("q"), Id("NumEvents"), Id("WaitEvents"), Id("RetEvent")).Compat("Kernel");
-            yield return Op("EnqueueKernel", Id("ResultType"), Id("Result"), Id("q"), Typed("KernelEnqueueFlags", "flags"), Id("NDRange"), Id("NumEvents"), Id("WaitEvents"), Id("RetEvent"), Id("Invoke"), Id("Param"), Id("ParamSize"), Id("ParamAlign"), IdArray("LocalSize")).Compat("Kernel");
+            yield return Op("EnqueueKernel", Id("ResultType"), Id("Result"), Id("q"), Typed("KernelEnqueueFlags", "Flags"), Id("NDRange"), Id("NumEvents"), Id("WaitEvents"), Id("RetEvent"), Id("Invoke"), Id("Param"), Id("ParamSize"), Id("ParamAlign"), IdArray("LocalSize")).Compat("Kernel");
             yield return Op("GetKernelNDrangeSubGroupCount", Id("ResultType"), Id("Result"), Id("NDRange"), Id("Invoke")).Compat("Kernel");
             yield return Op("GetKernelNDrangeMaxSubGroupSize", Id("ResultType"), Id("Result"), Id("NDRange"), Id("Invoke")).Compat("Kernel");
             yield return Op("GetKernelWorkGroupSize", Id("ResultType"), Id("Result"), Id("Invoke")).Compat("Kernel");
@@ -292,21 +304,21 @@ namespace OpCodeGen
             yield return Op("BuildNDRange", Id("ResultType"), Id("Result"), Id("GlobalWorkSize"), Id("LocalWorkSize"), Id("GlobalWorkOffset")).Compat("Kernel");
 
             opCategory = "Pipe";
-            yield return Op("ReadPipe", Id("ResultType"), Id("Result"), Id("p"), Id("ptr")).Compat("Kernel");
-            yield return Op("WritePipe", Id("ResultType"), Id("Result"), Id("p"), Id("ptr")).Compat("Kernel");
-            yield return Op("ReservedReadPipe", Id("ResultType"), Id("Result"), Id("p"), Id("ReserveId"), Id("Index"), Id("ptr")).Compat("Kernel");
-            yield return Op("ReservedWritePipe", Id("ResultType"), Id("Result"), Id("p"), Id("ReserveId"), Id("Index"), Id("ptr")).Compat("Kernel");
-            yield return Op("ReserveReadPipePackets", Id("ResultType"), Id("Result"), Id("p"), Id("NumPackets")).Compat("Kernel");
-            yield return Op("ReserveWritePipePackets", Id("ResultType"), Id("Result"), Id("p"), Id("NumPackets")).Compat("Kernel");
-            yield return Op("CommitReadPipe", Id("p"), Id("ReserveId")).Compat("Kernel");
-            yield return Op("CommitWritePipe", Id("p"), Id("ReserveId")).Compat("Kernel");
+            yield return Op("ReadPipe", Id("ResultType"), Id("Result"), Id("P"), Id("Ptr")).Compat("Kernel");
+            yield return Op("WritePipe", Id("ResultType"), Id("Result"), Id("P"), Id("Ptr")).Compat("Kernel");
+            yield return Op("ReservedReadPipe", Id("ResultType"), Id("Result"), Id("P"), Id("ReserveId"), Id("Index"), Id("Ptr")).Compat("Kernel");
+            yield return Op("ReservedWritePipe", Id("ResultType"), Id("Result"), Id("P"), Id("ReserveId"), Id("Index"), Id("Ptr")).Compat("Kernel");
+            yield return Op("ReserveReadPipePackets", Id("ResultType"), Id("Result"), Id("P"), Id("NumPackets")).Compat("Kernel");
+            yield return Op("ReserveWritePipePackets", Id("ResultType"), Id("Result"), Id("P"), Id("NumPackets")).Compat("Kernel");
+            yield return Op("CommitReadPipe", Id("P"), Id("ReserveId")).Compat("Kernel");
+            yield return Op("CommitWritePipe", Id("P"), Id("ReserveId")).Compat("Kernel");
             yield return Op("IsValidReserveId", Id("ResultType"), Id("Result"), Id("ReserveId")).Compat("Kernel");
-            yield return Op("GetNumPipePackets", Id("ResultType"), Id("Result"), Id("p")).Compat("Kernel");
-            yield return Op("GetMaxPipePackets", Id("ResultType"), Id("Result"), Id("p")).Compat("Kernel");
-            yield return Op("GroupReserveReadPipePackets", Id("ResultType"), Id("Result"), Typed("ExecutionScope", "Scope"), Id("p"), Id("NumPackets")).Compat("Kernel");
-            yield return Op("GroupReserveWritePipePackets", Id("ResultType"), Id("Result"), Typed("ExecutionScope", "Scope"), Id("p"), Id("NumPackets")).Compat("Kernel");
-            yield return Op("GroupCommitReadPipe", Typed("ExecutionScope", "Scope"), Id("p"), Id("ReserveId")).Compat("Kernel");
-            yield return Op("GroupCommitWritePipe", Typed("ExecutionScope", "Scope"), Id("p"), Id("ReserveId")).Compat("Kernel");
+            yield return Op("GetNumPipePackets", Id("ResultType"), Id("Result"), Id("P")).Compat("Kernel");
+            yield return Op("GetMaxPipePackets", Id("ResultType"), Id("Result"), Id("P")).Compat("Kernel");
+            yield return Op("GroupReserveReadPipePackets", Id("ResultType"), Id("Result"), Typed("ExecutionScope", "Scope"), Id("P"), Id("NumPackets")).Compat("Kernel");
+            yield return Op("GroupReserveWritePipePackets", Id("ResultType"), Id("Result"), Typed("ExecutionScope", "Scope"), Id("P"), Id("NumPackets")).Compat("Kernel");
+            yield return Op("GroupCommitReadPipe", Typed("ExecutionScope", "Scope"), Id("P"), Id("ReserveId")).Compat("Kernel");
+            yield return Op("GroupCommitWritePipe", Typed("ExecutionScope", "Scope"), Id("P"), Id("ReserveId")).Compat("Kernel");
         }
 
         class OpField
@@ -346,17 +358,22 @@ namespace OpCodeGen
                 yield return "using System.Threading.Tasks;";
                 yield return "using SpirvNet.Spirv.Enums;";
                 yield return "";
+                yield return "// This file is auto-generated and should not be modified manually.";
+                yield return "";
                 yield return "namespace SpirvNet.Spirv.Ops." + Cat;
                 yield return "{";
                 yield return "    /// <summary>";
                 if (string.IsNullOrEmpty(comment))
                     yield return "    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf";
-                foreach (var line in comment.Split('\n'))
-                    yield return "    /// " + line.Replace("<id>", " ID").Replace("  ID", " ID");
+                else
+                    foreach (var line in comment.Split('\n'))
+                        yield return "    /// " + line.Replace("<id>", " ID").Replace("  ID", " ID");
                 yield return "    /// </summary>";
-                yield return string.Format("    [DependsOn({0})]", compatibilities.Select(c => "LanguageCapability." + c).Aggregate((s1, s2) => s1 + " | " + s2));
+                if (compatibilities.Count > 0)
+                    yield return string.Format("    [DependsOn({0})]", compatibilities.Select(c => "LanguageCapability." + c).Aggregate((s1, s2) => s1 + " | " + s2));
                 yield return string.Format("    public sealed class Op{0} : Instruction", Name);
                 yield return "    {";
+                yield return string.Format("        public override bool Is{0} => true;", Cat);
                 yield return string.Format("        public override OpCode OpCode => OpCode.{0};", Name);
                 foreach (var field in Fields)
                     yield return string.Format("        public {0} {1};", field.Type, field.Name);

@@ -15,6 +15,30 @@ namespace SpirvNet.Spirv
     /// </summary>
     public abstract class Instruction
     {
+        // Classificiation
+        public virtual bool IsFunction => false;
+        public virtual bool IsGroup => false;
+        public virtual bool IsMemory => false;
+        public virtual bool IsMisc => false;
+        public virtual bool IsModeSetting => false;
+        public virtual bool IsPipe => false;
+        public virtual bool IsPrimitive => false;
+        public virtual bool IsRelationalLogical => false;
+        public virtual bool IsTexture => false;
+        public virtual bool IsTypeDeclaration => false;
+        public virtual bool IsAnnotation => false;
+        public virtual bool IsArithmetic => false;
+        public virtual bool IsAtomic => false;
+        public virtual bool IsBarrier => false;
+        public virtual bool IsComposite => false;
+        public virtual bool IsConstantCreation => false;
+        public virtual bool IsConversion => false;
+        public virtual bool IsDebug => false;
+        public virtual bool IsDerivative => false;
+        public virtual bool IsDeviceSideEnqueue => false;
+        public virtual bool IsExtension => false;
+        public virtual bool IsFlowControl => false;
+
         /// <summary>
         /// Cached information for instruction layout
         /// </summary>
