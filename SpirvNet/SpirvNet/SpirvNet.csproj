@@ -92,8 +92,12 @@
     <Compile Include="Spirv\LiteralString.cs" />
     <Compile Include="Spirv\Module.cs" />
     <Compile Include="Spirv\Enums\OpCode.cs" />
+    <Compile Include="Spirv\Ops\Debug\OpLine.cs" />
+    <Compile Include="Spirv\Ops\Debug\OpMemberName.cs" />
+    <Compile Include="Spirv\Ops\Debug\OpName.cs" />
     <Compile Include="Spirv\Ops\Debug\OpSource.cs" />
     <Compile Include="Spirv\Ops\Debug\OpSourceExtension.cs" />
+    <Compile Include="Spirv\Ops\Debug\OpString.cs" />
     <Compile Include="Spirv\Ops\Misc\OpNop.cs" />
     <Compile Include="Spirv\Ops\Misc\OpUndef.cs" />
     <Compile Include="Spirv\UniversalLimits.cs" />
