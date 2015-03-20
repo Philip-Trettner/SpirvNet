@@ -21,14 +21,9 @@ namespace SpirvNet.Spirv
         private class LayoutInfo
         {
             /// <summary>
-            /// Word count
-            /// </summary>
-            public uint WordCount;
-
-            /// <summary>
             /// Code from object -> add to code
             /// </summary>
-            public List<Action<object, List<uint>>> Fields = new List<Action<object, List<uint>>>();
+            public readonly List<Action<object, List<uint>>> Fields = new List<Action<object, List<uint>>>();
         }
 
         /// <summary>
@@ -55,7 +50,6 @@ namespace SpirvNet.Spirv
 
         /// <summary>
         /// Adds the instruction bytecode to the given list
-        /// Code can be null (only updates word count)
         /// </summary>
         public virtual void Generate(List<uint> code)
         {
@@ -66,42 +60,36 @@ namespace SpirvNet.Spirv
             if (!CachedLayouts.TryGetValue(t, out info))
             {
                 // generate info
-                info = new LayoutInfo { WordCount = 1 };
+                info = new LayoutInfo();
                 foreach (var tfield in t.GetFields())
                 {
                     var field = tfield; // extra var for closure capture
 
                     if (field.FieldType == typeof(ID))
-                    {
-                        info.WordCount += 1u;
                         info.Fields.Add((o, c) => c.Add(((ID)field.GetValue(o)).Value));
-                    }
+
                     else if (field.FieldType == typeof(LiteralNumber))
-                    {
-                        info.WordCount += 1u;
                         info.Fields.Add((o, c) => c.Add(((LiteralNumber)field.GetValue(o)).Value));
-                    }
+
+                    else if (field.FieldType == typeof(LiteralString))
+                        info.Fields.Add((o, c) => ((LiteralString)field.GetValue(o)).Generate(c));
+
                     else
-                    {
                         throw new NotSupportedException("Unsupported field type for " + field);
-                    }
                 }
 
                 CachedLayouts.Add(t, info);
             }
 
-            WordCount = info.WordCount;
-
             // generate bytecode
-            if (code == null)
-                return;
             var cc = code.Count;
 
-            code.Add(InstructionCode);
+            code.Add(0); // dummy
             foreach (var field in info.Fields)
                 field(this, code);
 
-            Debug.Assert(WordCount == code.Count - cc);
+            WordCount = (uint)(code.Count - cc);
+            code[cc] = InstructionCode; // real val
         }
     }
 }

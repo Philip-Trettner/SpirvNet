@@ -7,7 +7,8 @@ using System.Threading.Tasks;
 namespace SpirvNet.Spirv
 {
     /// <summary>
-    /// A literal number
+    /// A numeric value consuming one or more words. 
+    /// When a numeric value is larger than one word, low-order words appear first.
     /// </summary>
     public struct LiteralNumber
     {

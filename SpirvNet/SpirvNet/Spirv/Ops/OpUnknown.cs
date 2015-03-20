@@ -30,8 +30,8 @@ namespace SpirvNet.Spirv.Ops
         public override void Generate(List<uint> code)
         {
             WordCount = (uint)(1 + Args.Count);
-            code?.Add(InstructionCode);
-            code?.AddRange(Args);
+            code.Add(InstructionCode);
+            code.AddRange(Args);
         }
     }
 }
