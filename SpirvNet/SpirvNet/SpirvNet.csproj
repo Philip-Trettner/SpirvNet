@@ -58,6 +58,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DotNet\CecilLoader.cs" />
+    <Compile Include="DotNet\CFG\ControlFlowGraph.cs" />
+    <Compile Include="DotNet\CFG\Vertex.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="Spirv\DependsOnAttribute.cs" />
     <Compile Include="Spirv\Enums\AccessQualifier.cs" />

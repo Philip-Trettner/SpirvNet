@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using GlmSharp;
 using NUnit.Framework;
 using SpirvNet.DotNet;
+using SpirvNet.DotNet.CFG;
 
 namespace SpirvNet.Tests
 {
@@ -83,6 +84,34 @@ namespace SpirvNet.Tests
                 v.Position = ProjectionMatrix * eyePos;
                 return v;
             }
+
+            public vec3 BranchingShader(vec2 v)
+            {
+                if (v.Length < 0.5)
+                {
+                    return v.swizzle.grg;
+                }
+                else
+                {
+                    for (int i = 0; i < v.LengthSqr; ++i)
+                        v += vec2.UnitX * i;
+
+                    switch (v.Count)
+                    {
+                        case 0:
+                            return vec3.UnitX;
+                        case 1:
+                            return vec3.UnitY;
+                        case 2:
+                            return vec3.UnitZ;
+                        default:
+                            v += vec2.Ones;
+                            break;
+                    }
+                }
+
+                return vec3.MaxValue - new vec3(v);
+            }
         }
 
         [Test]
@@ -93,6 +122,19 @@ namespace SpirvNet.Tests
             Assert.AreEqual("VertexShader", def.Name);
 
             //File.WriteAllLines(@"C:\Temp\shadertestdump.csv", CecilLoader.CsvDump(def));
+        }
+
+        [Test]
+        public void BranchingShaderTest()
+        {
+            var shader = new ParticleShader();
+            var def = CecilLoader.DefinitionFor((Func<vec2, vec3>)shader.BranchingShader);
+            Assert.AreEqual("BranchingShader", def.Name);
+
+            var cfg = new ControlFlowGraph(def);
+
+            //File.WriteAllLines(@"C:\Temp\shadertestdump-branching.csv", CecilLoader.CsvDump(def));
+            //File.WriteAllLines(@"C:\Temp\shadertestdump-branching.dot", cfg.DotFile);
         }
     }
 }
