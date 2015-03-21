@@ -152,5 +152,10 @@ namespace SpirvNet.Spirv
 
             return mod;
         }
+
+        /// <summary>
+        /// Returns a deep-copy of all modules
+        /// </summary>
+        public Module Clone() => FromCode(GenerateBytecode().ToArray());
     }
 }

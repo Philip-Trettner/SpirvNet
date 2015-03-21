@@ -61,6 +61,7 @@
     <Compile Include="DotNet\CFG\ControlFlowGraph.cs" />
     <Compile Include="DotNet\CFG\Vertex.cs" />
     <Compile Include="Extensions.cs" />
+    <Compile Include="Spirv\BlockBuilder.cs" />
     <Compile Include="Spirv\DependsOnAttribute.cs" />
     <Compile Include="Spirv\Enums\AccessQualifier.cs" />
     <Compile Include="Spirv\Enums\AddressingModel.cs" />
@@ -90,6 +91,7 @@
     <Compile Include="Spirv\Enums\SourceLanguage.cs" />
     <Compile Include="Spirv\Enums\StorageClass.cs" />
     <Compile Include="Spirv\ExtraOperandAttribute.cs" />
+    <Compile Include="Spirv\FunctionBuilder.cs" />
     <Compile Include="Spirv\ID.cs" />
     <Compile Include="Spirv\Instruction.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -97,6 +99,7 @@
     <Compile Include="Spirv\LiteralString.cs" />
     <Compile Include="Spirv\Module.cs" />
     <Compile Include="Spirv\Enums\OpCode.cs" />
+    <Compile Include="Spirv\ModuleBuilder.cs" />
     <Compile Include="Spirv\Ops\Annotation\OpDecorate.cs" />
     <Compile Include="Spirv\Ops\Annotation\OpDecorationGroup.cs" />
     <Compile Include="Spirv\Ops\Annotation\OpGroupDecorate.cs" />
