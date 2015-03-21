@@ -19,9 +19,10 @@ namespace SpirvNet.Spirv.Ops.TypeDeclaration
 
         public ID Result;
         public ID ReturnType;
+        public ID[] FunctionTypes = { };
 
         #region Code
-        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(Result) + ", " + StrOf(ReturnType) + ")";
+        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(Result) + ", " + StrOf(ReturnType) + ", " + StrOf(FunctionTypes) + ")";
 
         protected override void FromCode(uint[] codes, int start)
         {
@@ -29,12 +30,19 @@ namespace SpirvNet.Spirv.Ops.TypeDeclaration
             var i = start + 1;
             Result = new ID(codes[i++]);
             ReturnType = new ID(codes[i++]);
+            var length = WordCount - (i - start);
+            FunctionTypes = new ID[length];
+            for (var k = 0; k < length; ++k)
+                FunctionTypes[k] = new ID(codes[i++]);
         }
 
         protected override void WriteCode(List<uint> code)
         {
             code.Add(Result.Value);
             code.Add(ReturnType.Value);
+            if (FunctionTypes != null)
+                foreach (var val in FunctionTypes)
+                    code.Add(val.Value);
         }
 
         public override IEnumerable<ID> AllIDs
@@ -43,6 +51,9 @@ namespace SpirvNet.Spirv.Ops.TypeDeclaration
             {
                 yield return Result;
                 yield return ReturnType;
+                if (FunctionTypes != null)
+                    foreach (var id in FunctionTypes)
+                        yield return id;
             }
         }
         #endregion

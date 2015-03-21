@@ -27,20 +27,20 @@ namespace OpCodeGen
 
             opCategory = "Annotation";
             yield return Op("DecorationGroup", Id("Result"));
-            yield return Op("Decorate", Id("Target"), Typed("Decoration")); // TODO: Special
-            yield return Op("MemberDecorate", Id("StructureType"), Nr("Member"), Typed("Decoration", "Decoration")); // TODO: Special
-            yield return Op("GroupDecorate", Id("DecorationGroup")); // TODO: How do these work? array of IDs
-            yield return Op("GroupMemberDecorate", Id("DecorationGroup")); // TODO: How do these work? array of IDs
+            yield return Op("Decorate", Id("Target"), Typed("Decoration"), NrArray("Args"));
+            yield return Op("MemberDecorate", Id("StructureType"), Nr("Member"), Typed("Decoration"), NrArray("Args"));
+            yield return Op("GroupDecorate", Id("DecorationGroup"), IdArray("Targets"));
+            yield return Op("GroupMemberDecorate", Id("DecorationGroup"), IdArray("Targets"));
 
             opCategory = "Extension";
             yield return Op("Extension", Str("Name"));
             yield return Op("ExtInstImport", Id("Result"), Str("Name"));
-            yield return Op("ExtInst", Id("ResultType"), Id("Result"), Id("Set"), Nr("Instruction")); // TODO: Operands
+            yield return Op("ExtInst", Id("ResultType"), Id("Result"), Id("Set"), Nr("Instruction"), IdArray("Operands"));
 
             opCategory = "ModeSetting";
             yield return Op("MemoryModel", Typed("AddressingModel"), Typed("MemoryModel"));
             yield return Op("EntryPoint", Typed("ExecutionModel"), Id("EntryPoint"));
-            yield return Op("ExecutionMode", Id("EntryPoint"), Typed("ExecutionMode")); // TODO: Literals
+            yield return Op("ExecutionMode", Id("EntryPoint"), Typed("ExecutionMode"), NrArray("Args")); // TODO: , IdOpt("VectorType")
             yield return Op("CompileFlag", Str("Flag")).Compat("Kernel");
 
             opCategory = "TypeDeclaration";
@@ -50,14 +50,14 @@ namespace OpCodeGen
             yield return Op("TypeFloat", Id("Result"), Nr("Width"));
             yield return Op("TypeVector", Id("Result"), Id("ComponentType"), Nr("ComponentCount"));
             yield return Op("TypeMatrix", Id("Result"), Id("ColumnType"), Nr("ColumnCount"));
-            yield return Op("TypeSampler", Id("Result"), Id("SampledType"), Typed("Dim"), Nr("Content"), Nr("Arrayed"), Nr("Compare"), Nr("MS")); // TODO: optional qualifier
+            yield return Op("TypeSampler", Id("Result"), Id("SampledType"), Typed("Dim"), Nr("Content"), Nr("Arrayed"), Nr("Compare"), Nr("MS"), IdOpt("Qualifier"));
             yield return Op("TypeFilter", Id("Result"));
             yield return Op("TypeArray", Id("Result"), Id("ElementType"), Id("Length"));
             yield return Op("TypeRuntimeArray", Id("Result"), Id("ElementType")).Compat("Shader");
-            yield return Op("TypeStruct", Id("Result")); // TODO: Member types
+            yield return Op("TypeStruct", Id("Result"), IdArray("MemberTypes"));
             yield return Op("TypeOpaque", Id("Result"), Str("OpaqueType")).Compat("Kernel");
             yield return Op("TypePointer", Id("Result"), Typed("StorageClass"), Id("Type"));
-            yield return Op("TypeFunction", Id("Result"), Id("ReturnType")); // TODO: Parameter types
+            yield return Op("TypeFunction", Id("Result"), Id("ReturnType"), IdArray("FunctionTypes"));
             yield return Op("TypeEvent", Id("Result")).Compat("Kernel");
             yield return Op("TypeDeviceEvent", Id("Result")).Compat("Kernel");
             yield return Op("TypeReserveId", Id("Result")).Compat("Kernel");
@@ -67,15 +67,15 @@ namespace OpCodeGen
             opCategory = "ConstantCreation";
             yield return Op("ConstantTrue", Id("ResultType"), Id("Result"));
             yield return Op("ConstantFalse", Id("ResultType"), Id("Result"));
-            yield return Op("Constant", Id("ResultType"), Id("Result"), Nr("Value")); // TODO: multiple words?
-            yield return Op("ConstantComposite", Id("ResultType"), Id("Result")); // TODO: Constituents IDs
+            yield return Op("Constant", Id("ResultType"), Id("Result"), NrArray("Value"));
+            yield return Op("ConstantComposite", Id("ResultType"), Id("Result"), IdArray("Constituents"));
             yield return Op("ConstantSampler", Id("ResultType"), Id("Result"), Nr("Mode"), Nr("Param"), Nr("Filter")).Compat("Kernel");
             yield return Op("ConstantNullPointer", Id("ResultType"), Id("Result")).Compat("Addr");
             yield return Op("ConstantNullObject", Id("ResultType"), Id("Result")).Compat("Kernel");
             yield return Op("SpecConstantTrue", Id("ResultType"), Id("Result")).Compat("Shader");
             yield return Op("SpecConstantFalse", Id("ResultType"), Id("Result")).Compat("Shader");
-            yield return Op("SpecConstant", Id("ResultType"), Id("Result"), Nr("Value")).Compat("Shader"); // TODO: multiple words?
-            yield return Op("SpecConstantComposite", Id("ResultType"), Id("Result")).Compat("Shader"); // TODO: Constituents IDs
+            yield return Op("SpecConstant", Id("ResultType"), Id("Result"), NrArray("Value")).Compat("Shader");
+            yield return Op("SpecConstantComposite", Id("ResultType"), Id("Result"), IdArray("Constituents")).Compat("Shader");
 
             opCategory = "Memory";
             yield return Op("Variable", Id("ResultType"), Id("Result"), Typed("StorageClass"), IdOpt("Initializer"));

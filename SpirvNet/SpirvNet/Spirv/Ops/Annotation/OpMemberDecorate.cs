@@ -20,9 +20,10 @@ namespace SpirvNet.Spirv.Ops.Annotation
         public ID StructureType;
         public LiteralNumber Member;
         public Decoration Decoration;
+        public LiteralNumber[] Args = { };
 
         #region Code
-        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(StructureType) + ", " + StrOf(Member) + ", " + StrOf(Decoration) + ")";
+        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(StructureType) + ", " + StrOf(Member) + ", " + StrOf(Decoration) + ", " + StrOf(Args) + ")";
 
         protected override void FromCode(uint[] codes, int start)
         {
@@ -31,6 +32,10 @@ namespace SpirvNet.Spirv.Ops.Annotation
             StructureType = new ID(codes[i++]);
             Member = new LiteralNumber(codes[i++]);
             Decoration = (Decoration)codes[i++];
+            var length = WordCount - (i - start);
+            Args = new LiteralNumber[length];
+            for (var k = 0; k < length; ++k)
+                Args[k] = new LiteralNumber(codes[i++]);
         }
 
         protected override void WriteCode(List<uint> code)
@@ -38,6 +43,9 @@ namespace SpirvNet.Spirv.Ops.Annotation
             code.Add(StructureType.Value);
             code.Add(Member.Value);
             code.Add((uint)Decoration);
+            if (Args != null)
+                foreach (var val in Args)
+                    code.Add(val.Value);
         }
 
         public override IEnumerable<ID> AllIDs

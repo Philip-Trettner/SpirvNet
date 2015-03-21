@@ -19,9 +19,10 @@ namespace SpirvNet.Spirv.Ops.Annotation
 
         public ID Target;
         public Decoration Decoration;
+        public LiteralNumber[] Args = { };
 
         #region Code
-        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(Target) + ", " + StrOf(Decoration) + ")";
+        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(Target) + ", " + StrOf(Decoration) + ", " + StrOf(Args) + ")";
 
         protected override void FromCode(uint[] codes, int start)
         {
@@ -29,12 +30,19 @@ namespace SpirvNet.Spirv.Ops.Annotation
             var i = start + 1;
             Target = new ID(codes[i++]);
             Decoration = (Decoration)codes[i++];
+            var length = WordCount - (i - start);
+            Args = new LiteralNumber[length];
+            for (var k = 0; k < length; ++k)
+                Args[k] = new LiteralNumber(codes[i++]);
         }
 
         protected override void WriteCode(List<uint> code)
         {
             code.Add(Target.Value);
             code.Add((uint)Decoration);
+            if (Args != null)
+                foreach (var val in Args)
+                    code.Add(val.Value);
         }
 
         public override IEnumerable<ID> AllIDs

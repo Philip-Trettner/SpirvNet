@@ -18,20 +18,28 @@ namespace SpirvNet.Spirv.Ops.Annotation
         public override OpCode OpCode => OpCode.GroupDecorate;
 
         public ID DecorationGroup;
+        public ID[] Targets = { };
 
         #region Code
-        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(DecorationGroup) + ")";
+        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(DecorationGroup) + ", " + StrOf(Targets) + ")";
 
         protected override void FromCode(uint[] codes, int start)
         {
             System.Diagnostics.Debug.Assert((codes[start] & 0x0000FFFF) == (uint)OpCode.GroupDecorate);
             var i = start + 1;
             DecorationGroup = new ID(codes[i++]);
+            var length = WordCount - (i - start);
+            Targets = new ID[length];
+            for (var k = 0; k < length; ++k)
+                Targets[k] = new ID(codes[i++]);
         }
 
         protected override void WriteCode(List<uint> code)
         {
             code.Add(DecorationGroup.Value);
+            if (Targets != null)
+                foreach (var val in Targets)
+                    code.Add(val.Value);
         }
 
         public override IEnumerable<ID> AllIDs
@@ -39,6 +47,9 @@ namespace SpirvNet.Spirv.Ops.Annotation
             get
             {
                 yield return DecorationGroup;
+                if (Targets != null)
+                    foreach (var id in Targets)
+                        yield return id;
             }
         }
         #endregion

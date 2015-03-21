@@ -20,7 +20,7 @@ namespace SpirvNet.Spirv.Ops.ConstantCreation
 
         public ID ResultType;
         public ID Result;
-        public LiteralNumber Value;
+        public LiteralNumber[] Value = { };
 
         #region Code
         public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(ResultType) + ", " + StrOf(Result) + ", " + StrOf(Value) + ")";
@@ -31,14 +31,19 @@ namespace SpirvNet.Spirv.Ops.ConstantCreation
             var i = start + 1;
             ResultType = new ID(codes[i++]);
             Result = new ID(codes[i++]);
-            Value = new LiteralNumber(codes[i++]);
+            var length = WordCount - (i - start);
+            Value = new LiteralNumber[length];
+            for (var k = 0; k < length; ++k)
+                Value[k] = new LiteralNumber(codes[i++]);
         }
 
         protected override void WriteCode(List<uint> code)
         {
             code.Add(ResultType.Value);
             code.Add(Result.Value);
-            code.Add(Value.Value);
+            if (Value != null)
+                foreach (var val in Value)
+                    code.Add(val.Value);
         }
 
         public override IEnumerable<ID> AllIDs

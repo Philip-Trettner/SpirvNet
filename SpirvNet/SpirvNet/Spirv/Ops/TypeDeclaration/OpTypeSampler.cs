@@ -24,9 +24,10 @@ namespace SpirvNet.Spirv.Ops.TypeDeclaration
         public LiteralNumber Arrayed;
         public LiteralNumber Compare;
         public LiteralNumber MS;
+        public ID? Qualifier;
 
         #region Code
-        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(Result) + ", " + StrOf(SampledType) + ", " + StrOf(Dim) + ", " + StrOf(Content) + ", " + StrOf(Arrayed) + ", " + StrOf(Compare) + ", " + StrOf(MS) + ")";
+        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(Result) + ", " + StrOf(SampledType) + ", " + StrOf(Dim) + ", " + StrOf(Content) + ", " + StrOf(Arrayed) + ", " + StrOf(Compare) + ", " + StrOf(MS) + ", " + StrOf(Qualifier) + ")";
 
         protected override void FromCode(uint[] codes, int start)
         {
@@ -39,6 +40,10 @@ namespace SpirvNet.Spirv.Ops.TypeDeclaration
             Arrayed = new LiteralNumber(codes[i++]);
             Compare = new LiteralNumber(codes[i++]);
             MS = new LiteralNumber(codes[i++]);
+            if (i - start < WordCount)
+                Qualifier = new ID(codes[i++]);
+            else
+                Qualifier = null;
         }
 
         protected override void WriteCode(List<uint> code)
@@ -50,6 +55,8 @@ namespace SpirvNet.Spirv.Ops.TypeDeclaration
             code.Add(Arrayed.Value);
             code.Add(Compare.Value);
             code.Add(MS.Value);
+            if (Qualifier.HasValue)
+                code.Add(Qualifier.Value.Value);
         }
 
         public override IEnumerable<ID> AllIDs
@@ -58,6 +65,8 @@ namespace SpirvNet.Spirv.Ops.TypeDeclaration
             {
                 yield return Result;
                 yield return SampledType;
+                if (Qualifier.HasValue)
+                    yield return Qualifier.Value;
             }
         }
         #endregion

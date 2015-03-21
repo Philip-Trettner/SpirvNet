@@ -19,9 +19,10 @@ namespace SpirvNet.Spirv.Ops.ModeSetting
 
         public ID EntryPoint;
         public ExecutionMode ExecutionMode;
+        public LiteralNumber[] Args = { };
 
         #region Code
-        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(EntryPoint) + ", " + StrOf(ExecutionMode) + ")";
+        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(EntryPoint) + ", " + StrOf(ExecutionMode) + ", " + StrOf(Args) + ")";
 
         protected override void FromCode(uint[] codes, int start)
         {
@@ -29,12 +30,19 @@ namespace SpirvNet.Spirv.Ops.ModeSetting
             var i = start + 1;
             EntryPoint = new ID(codes[i++]);
             ExecutionMode = (ExecutionMode)codes[i++];
+            var length = WordCount - (i - start);
+            Args = new LiteralNumber[length];
+            for (var k = 0; k < length; ++k)
+                Args[k] = new LiteralNumber(codes[i++]);
         }
 
         protected override void WriteCode(List<uint> code)
         {
             code.Add(EntryPoint.Value);
             code.Add((uint)ExecutionMode);
+            if (Args != null)
+                foreach (var val in Args)
+                    code.Add(val.Value);
         }
 
         public override IEnumerable<ID> AllIDs
