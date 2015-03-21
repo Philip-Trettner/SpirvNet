@@ -85,6 +85,28 @@ namespace SpirvNet.Spirv
         }
 
         /// <summary>
+        /// Generate CSV Dump
+        /// </summary>
+        public IEnumerable<string> CSVDump()
+        {
+            // get op word counts
+            foreach (var op in Instructions)
+                op.Generate();
+
+            yield return string.Format("Magic Number;{0:X8}", MagicNumber);
+            yield return string.Format("Version Number;{0}", VersionNumber);
+            yield return string.Format("Generator;{0}", Generator);
+            yield return string.Format("Bound;{0}", Bound);
+            yield return string.Format("Instruction Schema;{0}", InstructionSchema);
+            yield return "";
+            yield return "Instructions";
+            yield return "Result ID;Result Type ID;OpCode;Word Count;ToString";
+            foreach (var op in Instructions)
+                yield return string.Format("{0};{1};{2};{3};{4}", 
+                    op.ResultID, op.ResultTypeID, op.OpCode, op.WordCount, op);
+        } 
+
+        /// <summary>
         /// Creates a module from file by name
         /// </summary>
         public static Module FromFile(string filename) => FromStream(new FileStream(filename, FileMode.Open));

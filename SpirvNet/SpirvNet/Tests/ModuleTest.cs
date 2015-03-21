@@ -57,13 +57,13 @@ namespace SpirvNet.Tests
         public void RandomModuleStream()
         {
             var ops = Instruction.GenerateDummyInstructions();
+            Module mod = null;
             for (var _ = 0; _ < 1000; ++_)
             {
                 var random = new Random(_ + 1);
                 var stream = new MemoryStream();
 
-                var mod = new Module();
-
+                mod = new Module();
                 // gen mod
                 var ic = random.Next(0, 100);
                 var wc = 5;
@@ -92,6 +92,8 @@ namespace SpirvNet.Tests
                 for (var i = 0; i < code.Count; ++i)
                     Assert.AreEqual(code[i], code2[i]);
             }
+
+            //File.WriteAllLines(@"C:\Temp\moddump.csv", mod?.CSVDump() ?? new[] { "NULL" });
         }
 
         [Test]
