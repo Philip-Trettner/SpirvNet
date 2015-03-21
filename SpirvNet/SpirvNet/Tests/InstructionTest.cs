@@ -105,5 +105,33 @@ namespace SpirvNet.Tests
                     Assert.AreEqual(code[i], code2[i]);
             }
         }
+
+        [Test]
+        public void RandomSerializeDeserialize()
+        {
+            var ops = Instruction.GenerateDummyInstructions();
+            foreach (var op in ops.Values)
+            {
+                var random = new Random(op.GetType().GetHashCode());
+                for (var _ = 0; _ < 20; ++_)
+                {
+                    op.FillWithRandomValues(random);
+
+                    var code = new List<uint>();
+                    op.Generate(code);
+                    Assert.AreEqual(code.Count, op.WordCount);
+
+                    var op2 = Instruction.Read(code.ToArray());
+                    var code2 = new List<uint>();
+                    op2.Generate(code2);
+
+                    Assert.AreEqual(code.Count, code2.Count);
+                    for (var i = 0; i < code.Count; ++i)
+                        Assert.AreEqual(code[i], code2[i]);
+
+                    //Console.WriteLine("{0}: {1}", op, code.Select(u => u.ToString("X8")).Aggregate((s1, s2) => s1 + " " + s2));
+                }
+            }
+        }
     }
 }

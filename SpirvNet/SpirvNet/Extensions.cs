@@ -10,9 +10,32 @@ namespace SpirvNet
 {
     public static class Extensions
     {
+        /// <summary>
+        /// Converts .NET Fullname to Cecil fullname
+        /// (Nested classes are A/B instead of A+B)
+        /// </summary>
         public static string CecilFullType(this string s)
         {
             return string.IsNullOrEmpty(s) ? "" : s.Replace("+", "/");
+        }
+
+        /// <summary>
+        /// Returns a random element of a given array
+        /// </summary>
+        public static object RandomElement(this Array a, Random r)
+        {
+            if (a == null || a.Length == 0)
+                return null;
+            return a.GetValue(r.Next(a.Length));
+        }
+
+        /// <summary>
+        /// Executes selector for each int up to (excluding) i
+        /// </summary>
+        public static IEnumerable<T> ForUpTo<T>(this int i, Func<int, T> sel)
+        {
+            for (var k = 0; k < i; ++k)
+                yield return sel(k);
         }
 
         /// <summary>

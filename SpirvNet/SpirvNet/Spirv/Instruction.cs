@@ -209,6 +209,55 @@ namespace SpirvNet.Spirv
         protected static string StrOf(LiteralNumber[] nrs) => string.Format("[{0}]", nrs == null ? "null" : nrs.Length == 0 ? " " : nrs.Select(i => i.ToString()).Aggregate((s1, s2) => s1 + ", " + s2));
         protected static string StrOf<T>(T e) where T : struct => e.ToString();
         protected static string StrOf<T>(T[] es) => string.Format("[{0}]", es == null ? "null" : es.Length == 0 ? " " : es.Select(i => i.ToString()).Aggregate((s1, s2) => s1 + ", " + s2));
-        protected static string StrOf<U, V>(Pair<U,V>[] p) => string.Format("[{0}]", p == null ? "null" : p.Length == 0 ? " " : p.Select(i => i.ToString()).Aggregate((s1, s2) => s1 + ", " + s2));
+        protected static string StrOf<U, V>(Pair<U, V>[] p) => string.Format("[{0}]", p == null ? "null" : p.Length == 0 ? " " : p.Select(i => i.ToString()).Aggregate((s1, s2) => s1 + ", " + s2));
+
+        /// <summary>
+        /// Debug function to fill fiels with random values
+        /// </summary>
+        internal void FillWithRandomValues(Random random)
+        {
+            foreach (var field in GetType().GetFields())
+            {
+                var ftype = field.FieldType;
+
+                if (ftype == typeof(ID))
+                    field.SetValue(this, new ID((uint)random.Next()));
+
+                else if (ftype == typeof(ID?))
+                    field.SetValue(this, random.NextDouble() < 0.5 ? new ID((uint)random.Next()) : (ID?)null);
+
+                else if (ftype == typeof(ID[]))
+                    field.SetValue(this, random.Next(0, 4).ForUpTo(i => new ID((uint)random.Next())).ToArray());
+
+                else if (ftype == typeof(LiteralNumber))
+                    field.SetValue(this, new LiteralNumber((uint)random.Next()));
+
+                else if (ftype == typeof(LiteralNumber[]))
+                    field.SetValue(this, random.Next(0, 4).ForUpTo(i => new LiteralNumber((uint)random.Next())).ToArray());
+
+                else if (ftype == typeof(LiteralString))
+                    field.SetValue(this, new LiteralString { Value = (random.Next(0, 3) * random.Next(0, 7)).ForUpTo(i => random.Next(0, 10).ToString()).Aggregate("", (s1, s2) => s1 + s2) });
+
+                else if (ftype.IsEnum)
+                    field.SetValue(this, Enum.GetValues(ftype).RandomElement(random));
+
+                else if (ftype.IsArray && ftype.GetElementType().IsEnum)
+                {
+                    var arraySize = random.Next(0, 4);
+                    var array = ftype.GetConstructor(new[] { typeof(int) })?.Invoke(new object[] { arraySize }) as Array;
+                    if (array == null)
+                        throw new InvalidOperationException("array null");
+                    for (var i = 0; i < arraySize; ++i)
+                        array.SetValue(Enum.GetValues(ftype.GetElementType()).RandomElement(random), i);
+                    field.SetValue(this, array);
+                }
+
+                else if (ftype == typeof(Pair<LiteralNumber, ID>[]))
+                    field.SetValue(this, random.Next(0, 4).ForUpTo(i => new Pair<LiteralNumber, ID>(new LiteralNumber((uint)random.Next()), new ID((uint)random.Next()))).ToArray());
+
+                else
+                    throw new NotSupportedException("Unsupported field type: " + ftype + " of " + field);
+            }
+        }
     }
 }
