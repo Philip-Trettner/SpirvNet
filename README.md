@@ -31,6 +31,7 @@ Resources:
 .NET IL is based on a stack machine.
 
 Resources:
+* [ECMA Specification](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-335.pdf)
 * [Wikipedia: List of Instructions](https://en.wikipedia.org/wiki/List_of_CIL_instructions)
 * [MSDN Reference for Reflection.Emit](https://msdn.microsoft.com/en-us/library/system.reflection.emit.opcodes_fields(v=vs.110).aspx)
 
