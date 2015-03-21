@@ -17,6 +17,7 @@ namespace SpirvNet.Spirv.Ops.ConstantCreation
     {
         public override bool IsConstantCreation => true;
         public override OpCode OpCode => OpCode.ConstantSampler;
+
         public ID ResultType;
         public ID Result;
         public LiteralNumber Mode;
@@ -24,5 +25,34 @@ namespace SpirvNet.Spirv.Ops.ConstantCreation
         public LiteralNumber Filter;
 
         public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + ResultType + ", " + Result + ", " + Mode + ", " + Param + ", " + Filter + ')';
+
+        public override void FromCode(uint[] codes, int start)
+        {
+            System.Diagnostics.Debug.Assert((codes[start] & 0x0000FFFF) == (uint)OpCode.ConstantSampler);
+            var i = 1;
+            ResultType = new ID(codes[start + i++]);
+            Result = new ID(codes[start + i++]);
+            Mode = new LiteralNumber(codes[start + i++]);
+            Param = new LiteralNumber(codes[start + i++]);
+            Filter = new LiteralNumber(codes[start + i++]);
+        }
+
+        public override void WriteCode(List<uint> code)
+        {
+            code.Add(ResultType.Value);
+            code.Add(Result.Value);
+            code.Add(Mode.Value);
+            code.Add(Param.Value);
+            code.Add(Filter.Value);
+        }
+
+        public override IEnumerable<ID> AllIDs
+        {
+            get
+            {
+                yield return ResultType;
+                yield return Result;
+            }
+        }
     }
 }

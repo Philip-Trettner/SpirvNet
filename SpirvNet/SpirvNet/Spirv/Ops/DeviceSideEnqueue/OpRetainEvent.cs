@@ -17,8 +17,29 @@ namespace SpirvNet.Spirv.Ops.DeviceSideEnqueue
     {
         public override bool IsDeviceSideEnqueue => true;
         public override OpCode OpCode => OpCode.RetainEvent;
+
         public ID Event;
 
         public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + Event + ')';
+
+        public override void FromCode(uint[] codes, int start)
+        {
+            System.Diagnostics.Debug.Assert((codes[start] & 0x0000FFFF) == (uint)OpCode.RetainEvent);
+            var i = 1;
+            Event = new ID(codes[start + i++]);
+        }
+
+        public override void WriteCode(List<uint> code)
+        {
+            code.Add(Event.Value);
+        }
+
+        public override IEnumerable<ID> AllIDs
+        {
+            get
+            {
+                yield return Event;
+            }
+        }
     }
 }

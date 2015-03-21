@@ -16,9 +16,32 @@ namespace SpirvNet.Spirv.Ops.ModeSetting
     {
         public override bool IsModeSetting => true;
         public override OpCode OpCode => OpCode.EntryPoint;
+
         public ExecutionModel ExecutionModel;
         public ID EntryPoint;
 
         public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + ExecutionModel + ", " + EntryPoint + ')';
+
+        public override void FromCode(uint[] codes, int start)
+        {
+            System.Diagnostics.Debug.Assert((codes[start] & 0x0000FFFF) == (uint)OpCode.EntryPoint);
+            var i = 1;
+            ExecutionModel = (ExecutionModel)codes[start + i++];
+            EntryPoint = new ID(codes[start + i++]);
+        }
+
+        public override void WriteCode(List<uint> code)
+        {
+            code.Add((uint)ExecutionModel);
+            code.Add(EntryPoint.Value);
+        }
+
+        public override IEnumerable<ID> AllIDs
+        {
+            get
+            {
+                yield return EntryPoint;
+            }
+        }
     }
 }

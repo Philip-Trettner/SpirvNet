@@ -17,6 +17,7 @@ namespace SpirvNet.Spirv.Ops.Group
     {
         public override bool IsGroup => true;
         public override OpCode OpCode => OpCode.AsyncGroupCopy;
+
         public ID ResultType;
         public ID Result;
         public ExecutionScope Scope;
@@ -27,5 +28,45 @@ namespace SpirvNet.Spirv.Ops.Group
         public ID Event;
 
         public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + ResultType + ", " + Result + ", " + Scope + ", " + Destination + ", " + Source + ", " + NumElements + ", " + Stride + ", " + Event + ')';
+
+        public override void FromCode(uint[] codes, int start)
+        {
+            System.Diagnostics.Debug.Assert((codes[start] & 0x0000FFFF) == (uint)OpCode.AsyncGroupCopy);
+            var i = 1;
+            ResultType = new ID(codes[start + i++]);
+            Result = new ID(codes[start + i++]);
+            Scope = (ExecutionScope)codes[start + i++];
+            Destination = new ID(codes[start + i++]);
+            Source = new ID(codes[start + i++]);
+            NumElements = new ID(codes[start + i++]);
+            Stride = new ID(codes[start + i++]);
+            Event = new ID(codes[start + i++]);
+        }
+
+        public override void WriteCode(List<uint> code)
+        {
+            code.Add(ResultType.Value);
+            code.Add(Result.Value);
+            code.Add((uint)Scope);
+            code.Add(Destination.Value);
+            code.Add(Source.Value);
+            code.Add(NumElements.Value);
+            code.Add(Stride.Value);
+            code.Add(Event.Value);
+        }
+
+        public override IEnumerable<ID> AllIDs
+        {
+            get
+            {
+                yield return ResultType;
+                yield return Result;
+                yield return Destination;
+                yield return Source;
+                yield return NumElements;
+                yield return Stride;
+                yield return Event;
+            }
+        }
     }
 }

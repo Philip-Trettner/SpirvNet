@@ -17,8 +17,29 @@ namespace SpirvNet.Spirv.Ops.ModeSetting
     {
         public override bool IsModeSetting => true;
         public override OpCode OpCode => OpCode.CompileFlag;
+
         public LiteralString Flag;
 
         public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + Flag + ')';
+
+        public override void FromCode(uint[] codes, int start)
+        {
+            System.Diagnostics.Debug.Assert((codes[start] & 0x0000FFFF) == (uint)OpCode.CompileFlag);
+            var i = 1;
+            Flag = LiteralString.FromCode(codes, ref i);
+        }
+
+        public override void WriteCode(List<uint> code)
+        {
+            Flag.WriteCode(code);
+        }
+
+        public override IEnumerable<ID> AllIDs
+        {
+            get
+            {
+                yield break;
+            }
+        }
     }
 }

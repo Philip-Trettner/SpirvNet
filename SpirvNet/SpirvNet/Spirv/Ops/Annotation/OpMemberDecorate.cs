@@ -16,10 +16,35 @@ namespace SpirvNet.Spirv.Ops.Annotation
     {
         public override bool IsAnnotation => true;
         public override OpCode OpCode => OpCode.MemberDecorate;
+
         public ID StructureType;
         public LiteralNumber Member;
         public Decoration Decoration;
 
         public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + StructureType + ", " + Member + ", " + Decoration + ')';
+
+        public override void FromCode(uint[] codes, int start)
+        {
+            System.Diagnostics.Debug.Assert((codes[start] & 0x0000FFFF) == (uint)OpCode.MemberDecorate);
+            var i = 1;
+            StructureType = new ID(codes[start + i++]);
+            Member = new LiteralNumber(codes[start + i++]);
+            Decoration = (Decoration)codes[start + i++];
+        }
+
+        public override void WriteCode(List<uint> code)
+        {
+            code.Add(StructureType.Value);
+            code.Add(Member.Value);
+            code.Add((uint)Decoration);
+        }
+
+        public override IEnumerable<ID> AllIDs
+        {
+            get
+            {
+                yield return StructureType;
+            }
+        }
     }
 }

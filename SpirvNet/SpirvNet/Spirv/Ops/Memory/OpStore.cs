@@ -16,10 +16,40 @@ namespace SpirvNet.Spirv.Ops.Memory
     {
         public override bool IsMemory => true;
         public override OpCode OpCode => OpCode.Store;
+
         public ID Pointer;
         public ID Object;
         public MemoryAccess[] MemoryAccess;
 
         public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + Pointer + ", " + Object + ", " + MemoryAccess + ')';
+
+        public override void FromCode(uint[] codes, int start)
+        {
+            System.Diagnostics.Debug.Assert((codes[start] & 0x0000FFFF) == (uint)OpCode.Store);
+            var i = 1;
+            Pointer = new ID(codes[start + i++]);
+            Object = new ID(codes[start + i++]);
+            var length = WordCount - i + 1;
+            MemoryAccess = new MemoryAccess[length];
+            for (var k = 0; k < length; ++k)
+                MemoryAccess[k] = (MemoryAccess)codes[start + i++];
+        }
+
+        public override void WriteCode(List<uint> code)
+        {
+            code.Add(Pointer.Value);
+            code.Add(Object.Value);
+            foreach (var val in MemoryAccess)
+                code.Add((uint)val);
+        }
+
+        public override IEnumerable<ID> AllIDs
+        {
+            get
+            {
+                yield return Pointer;
+                yield return Object;
+            }
+        }
     }
 }

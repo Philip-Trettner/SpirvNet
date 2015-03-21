@@ -10,5 +10,11 @@ namespace SpirvNet.Spirv.Ops
     {
         public U First;
         public V Second;
+
+        public Pair(U u, V v)
+        {
+            First = u;
+            Second = v;
+        } 
     }
 }

@@ -16,9 +16,32 @@ namespace SpirvNet.Spirv.Ops.ModeSetting
     {
         public override bool IsModeSetting => true;
         public override OpCode OpCode => OpCode.MemoryModel;
+
         public AddressingModel AddressingModel;
         public MemoryModel MemoryModel;
 
         public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + AddressingModel + ", " + MemoryModel + ')';
+
+        public override void FromCode(uint[] codes, int start)
+        {
+            System.Diagnostics.Debug.Assert((codes[start] & 0x0000FFFF) == (uint)OpCode.MemoryModel);
+            var i = 1;
+            AddressingModel = (AddressingModel)codes[start + i++];
+            MemoryModel = (MemoryModel)codes[start + i++];
+        }
+
+        public override void WriteCode(List<uint> code)
+        {
+            code.Add((uint)AddressingModel);
+            code.Add((uint)MemoryModel);
+        }
+
+        public override IEnumerable<ID> AllIDs
+        {
+            get
+            {
+                yield break;
+            }
+        }
     }
 }

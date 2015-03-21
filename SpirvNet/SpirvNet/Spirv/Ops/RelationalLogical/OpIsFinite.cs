@@ -17,10 +17,37 @@ namespace SpirvNet.Spirv.Ops.RelationalLogical
     {
         public override bool IsRelationalLogical => true;
         public override OpCode OpCode => OpCode.IsFinite;
+
         public ID ResultType;
         public ID Result;
         public ID x;
 
         public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + ResultType + ", " + Result + ", " + x + ')';
+
+        public override void FromCode(uint[] codes, int start)
+        {
+            System.Diagnostics.Debug.Assert((codes[start] & 0x0000FFFF) == (uint)OpCode.IsFinite);
+            var i = 1;
+            ResultType = new ID(codes[start + i++]);
+            Result = new ID(codes[start + i++]);
+            x = new ID(codes[start + i++]);
+        }
+
+        public override void WriteCode(List<uint> code)
+        {
+            code.Add(ResultType.Value);
+            code.Add(Result.Value);
+            code.Add(x.Value);
+        }
+
+        public override IEnumerable<ID> AllIDs
+        {
+            get
+            {
+                yield return ResultType;
+                yield return Result;
+                yield return x;
+            }
+        }
     }
 }

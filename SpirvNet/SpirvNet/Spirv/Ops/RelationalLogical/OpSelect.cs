@@ -16,6 +16,7 @@ namespace SpirvNet.Spirv.Ops.RelationalLogical
     {
         public override bool IsRelationalLogical => true;
         public override OpCode OpCode => OpCode.Select;
+
         public ID ResultType;
         public ID Result;
         public ID Condition;
@@ -23,5 +24,37 @@ namespace SpirvNet.Spirv.Ops.RelationalLogical
         public ID Object2;
 
         public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + ResultType + ", " + Result + ", " + Condition + ", " + Object1 + ", " + Object2 + ')';
+
+        public override void FromCode(uint[] codes, int start)
+        {
+            System.Diagnostics.Debug.Assert((codes[start] & 0x0000FFFF) == (uint)OpCode.Select);
+            var i = 1;
+            ResultType = new ID(codes[start + i++]);
+            Result = new ID(codes[start + i++]);
+            Condition = new ID(codes[start + i++]);
+            Object1 = new ID(codes[start + i++]);
+            Object2 = new ID(codes[start + i++]);
+        }
+
+        public override void WriteCode(List<uint> code)
+        {
+            code.Add(ResultType.Value);
+            code.Add(Result.Value);
+            code.Add(Condition.Value);
+            code.Add(Object1.Value);
+            code.Add(Object2.Value);
+        }
+
+        public override IEnumerable<ID> AllIDs
+        {
+            get
+            {
+                yield return ResultType;
+                yield return Result;
+                yield return Condition;
+                yield return Object1;
+                yield return Object2;
+            }
+        }
     }
 }

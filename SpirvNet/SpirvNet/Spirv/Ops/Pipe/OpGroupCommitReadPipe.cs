@@ -17,10 +17,36 @@ namespace SpirvNet.Spirv.Ops.Pipe
     {
         public override bool IsPipe => true;
         public override OpCode OpCode => OpCode.GroupCommitReadPipe;
+
         public ExecutionScope Scope;
         public ID P;
         public ID ReserveId;
 
         public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + Scope + ", " + P + ", " + ReserveId + ')';
+
+        public override void FromCode(uint[] codes, int start)
+        {
+            System.Diagnostics.Debug.Assert((codes[start] & 0x0000FFFF) == (uint)OpCode.GroupCommitReadPipe);
+            var i = 1;
+            Scope = (ExecutionScope)codes[start + i++];
+            P = new ID(codes[start + i++]);
+            ReserveId = new ID(codes[start + i++]);
+        }
+
+        public override void WriteCode(List<uint> code)
+        {
+            code.Add((uint)Scope);
+            code.Add(P.Value);
+            code.Add(ReserveId.Value);
+        }
+
+        public override IEnumerable<ID> AllIDs
+        {
+            get
+            {
+                yield return P;
+                yield return ReserveId;
+            }
+        }
     }
 }

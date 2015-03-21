@@ -17,6 +17,7 @@ namespace SpirvNet.Spirv.Ops.Pipe
     {
         public override bool IsPipe => true;
         public override OpCode OpCode => OpCode.GroupReserveReadPipePackets;
+
         public ID ResultType;
         public ID Result;
         public ExecutionScope Scope;
@@ -24,5 +25,36 @@ namespace SpirvNet.Spirv.Ops.Pipe
         public ID NumPackets;
 
         public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + ResultType + ", " + Result + ", " + Scope + ", " + P + ", " + NumPackets + ')';
+
+        public override void FromCode(uint[] codes, int start)
+        {
+            System.Diagnostics.Debug.Assert((codes[start] & 0x0000FFFF) == (uint)OpCode.GroupReserveReadPipePackets);
+            var i = 1;
+            ResultType = new ID(codes[start + i++]);
+            Result = new ID(codes[start + i++]);
+            Scope = (ExecutionScope)codes[start + i++];
+            P = new ID(codes[start + i++]);
+            NumPackets = new ID(codes[start + i++]);
+        }
+
+        public override void WriteCode(List<uint> code)
+        {
+            code.Add(ResultType.Value);
+            code.Add(Result.Value);
+            code.Add((uint)Scope);
+            code.Add(P.Value);
+            code.Add(NumPackets.Value);
+        }
+
+        public override IEnumerable<ID> AllIDs
+        {
+            get
+            {
+                yield return ResultType;
+                yield return Result;
+                yield return P;
+                yield return NumPackets;
+            }
+        }
     }
 }

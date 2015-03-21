@@ -17,10 +17,36 @@ namespace SpirvNet.Spirv.Ops.TypeDeclaration
     {
         public override bool IsTypeDeclaration => true;
         public override OpCode OpCode => OpCode.TypePipe;
+
         public ID Result;
         public ID Type;
         public AccessQualifier AccessQualifier;
 
         public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + Result + ", " + Type + ", " + AccessQualifier + ')';
+
+        public override void FromCode(uint[] codes, int start)
+        {
+            System.Diagnostics.Debug.Assert((codes[start] & 0x0000FFFF) == (uint)OpCode.TypePipe);
+            var i = 1;
+            Result = new ID(codes[start + i++]);
+            Type = new ID(codes[start + i++]);
+            AccessQualifier = (AccessQualifier)codes[start + i++];
+        }
+
+        public override void WriteCode(List<uint> code)
+        {
+            code.Add(Result.Value);
+            code.Add(Type.Value);
+            code.Add((uint)AccessQualifier);
+        }
+
+        public override IEnumerable<ID> AllIDs
+        {
+            get
+            {
+                yield return Result;
+                yield return Type;
+            }
+        }
     }
 }

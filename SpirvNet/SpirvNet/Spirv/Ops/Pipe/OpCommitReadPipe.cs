@@ -17,9 +17,33 @@ namespace SpirvNet.Spirv.Ops.Pipe
     {
         public override bool IsPipe => true;
         public override OpCode OpCode => OpCode.CommitReadPipe;
+
         public ID P;
         public ID ReserveId;
 
         public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + P + ", " + ReserveId + ')';
+
+        public override void FromCode(uint[] codes, int start)
+        {
+            System.Diagnostics.Debug.Assert((codes[start] & 0x0000FFFF) == (uint)OpCode.CommitReadPipe);
+            var i = 1;
+            P = new ID(codes[start + i++]);
+            ReserveId = new ID(codes[start + i++]);
+        }
+
+        public override void WriteCode(List<uint> code)
+        {
+            code.Add(P.Value);
+            code.Add(ReserveId.Value);
+        }
+
+        public override IEnumerable<ID> AllIDs
+        {
+            get
+            {
+                yield return P;
+                yield return ReserveId;
+            }
+        }
     }
 }

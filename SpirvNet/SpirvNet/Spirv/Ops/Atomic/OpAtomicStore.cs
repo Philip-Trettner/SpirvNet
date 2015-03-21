@@ -16,11 +16,39 @@ namespace SpirvNet.Spirv.Ops.Atomic
     {
         public override bool IsAtomic => true;
         public override OpCode OpCode => OpCode.AtomicStore;
+
         public ID Pointer;
         public ExecutionScope Scope;
         public MemorySemantics Semantics;
         public ID Value;
 
         public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + Pointer + ", " + Scope + ", " + Semantics + ", " + Value + ')';
+
+        public override void FromCode(uint[] codes, int start)
+        {
+            System.Diagnostics.Debug.Assert((codes[start] & 0x0000FFFF) == (uint)OpCode.AtomicStore);
+            var i = 1;
+            Pointer = new ID(codes[start + i++]);
+            Scope = (ExecutionScope)codes[start + i++];
+            Semantics = (MemorySemantics)codes[start + i++];
+            Value = new ID(codes[start + i++]);
+        }
+
+        public override void WriteCode(List<uint> code)
+        {
+            code.Add(Pointer.Value);
+            code.Add((uint)Scope);
+            code.Add((uint)Semantics);
+            code.Add(Value.Value);
+        }
+
+        public override IEnumerable<ID> AllIDs
+        {
+            get
+            {
+                yield return Pointer;
+                yield return Value;
+            }
+        }
     }
 }

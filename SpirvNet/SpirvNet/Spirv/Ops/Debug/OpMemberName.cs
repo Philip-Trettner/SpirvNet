@@ -16,10 +16,35 @@ namespace SpirvNet.Spirv.Ops.Debug
     {
         public override bool IsDebug => true;
         public override OpCode OpCode => OpCode.MemberName;
+
         public ID Target;
         public LiteralNumber Member;
         public LiteralString Name;
 
         public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + Target + ", " + Member + ", " + Name + ')';
+
+        public override void FromCode(uint[] codes, int start)
+        {
+            System.Diagnostics.Debug.Assert((codes[start] & 0x0000FFFF) == (uint)OpCode.MemberName);
+            var i = 1;
+            Target = new ID(codes[start + i++]);
+            Member = new LiteralNumber(codes[start + i++]);
+            Name = LiteralString.FromCode(codes, ref i);
+        }
+
+        public override void WriteCode(List<uint> code)
+        {
+            code.Add(Target.Value);
+            code.Add(Member.Value);
+            Name.WriteCode(code);
+        }
+
+        public override IEnumerable<ID> AllIDs
+        {
+            get
+            {
+                yield return Target;
+            }
+        }
     }
 }

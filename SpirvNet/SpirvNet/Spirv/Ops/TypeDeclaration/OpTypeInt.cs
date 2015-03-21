@@ -16,10 +16,35 @@ namespace SpirvNet.Spirv.Ops.TypeDeclaration
     {
         public override bool IsTypeDeclaration => true;
         public override OpCode OpCode => OpCode.TypeInt;
+
         public ID Result;
         public LiteralNumber Width;
         public LiteralNumber Signedness;
 
         public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + Result + ", " + Width + ", " + Signedness + ')';
+
+        public override void FromCode(uint[] codes, int start)
+        {
+            System.Diagnostics.Debug.Assert((codes[start] & 0x0000FFFF) == (uint)OpCode.TypeInt);
+            var i = 1;
+            Result = new ID(codes[start + i++]);
+            Width = new LiteralNumber(codes[start + i++]);
+            Signedness = new LiteralNumber(codes[start + i++]);
+        }
+
+        public override void WriteCode(List<uint> code)
+        {
+            code.Add(Result.Value);
+            code.Add(Width.Value);
+            code.Add(Signedness.Value);
+        }
+
+        public override IEnumerable<ID> AllIDs
+        {
+            get
+            {
+                yield return Result;
+            }
+        }
     }
 }

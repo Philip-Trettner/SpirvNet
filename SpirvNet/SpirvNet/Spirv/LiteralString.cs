@@ -16,7 +16,7 @@ namespace SpirvNet.Spirv
     {
         public string Value;
 
-        public void Generate(List<uint> code)
+        public void WriteCode(List<uint> code)
         {
             if (Value == null)
             {
@@ -50,6 +50,28 @@ namespace SpirvNet.Spirv
                 var val = (uint)(b0 + (b1 << 8) + (b2 << 16) + (b3 << 24));
                 code.Add(val);
             }
+        }
+
+        /// <summary>
+        /// Reads the literal string from a code array
+        /// </summary>
+        public static LiteralString FromCode(uint[] code, ref int i)
+        {
+            var bytes = new List<byte>();
+            while (true)
+            {
+                var c = code[i];
+                bytes.AddRange(BitConverter.GetBytes(c));
+                if (bytes[bytes.Count - 4] == 0 ||
+                    bytes[bytes.Count - 3] == 0 ||
+                    bytes[bytes.Count - 2] == 0 ||
+                    bytes[bytes.Count - 1] == 0)
+                    break;
+                ++i;
+            }
+
+            var s = Encoding.UTF8.GetString(bytes.ToArray());
+            return new LiteralString { Value = s };
         }
 
         public override string ToString() => '"' + Value + '"';

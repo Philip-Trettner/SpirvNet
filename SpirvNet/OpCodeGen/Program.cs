@@ -325,6 +325,8 @@ namespace OpCodeGen
         {
             public string Type;
             public string Name;
+            public Func<string, string[]> ReadCode;
+            public Func<string, string[]> WriteCode;
         }
 
         class OpCode
@@ -375,10 +377,76 @@ namespace OpCodeGen
                 yield return "    {";
                 yield return string.Format("        public override bool Is{0} => true;", Cat);
                 yield return string.Format("        public override OpCode OpCode => OpCode.{0};", Name);
-                foreach (var field in Fields)
-                    yield return string.Format("        public {0} {1};", field.Type, field.Name);
+                if (Fields.Length > 0)
+                {
+                    yield return "";
+                    foreach (var field in Fields)
+                        yield return string.Format("        public {0} {1};", field.Type, field.Name);
+                }
                 yield return "";
                 yield return string.Format("        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + \")\"{0} + ')';", Fields.Length == 0 ? "" : Fields.Select(f => f.Name).Aggregate("", (s1, s2) => s1 + " + \", \" + " + s2));
+                yield return "";
+                yield return "        public override void FromCode(uint[] codes, int start)";
+                yield return "        {";
+                yield return string.Format("            System.Diagnostics.Debug.Assert((codes[start] & 0x0000FFFF) == (uint)OpCode.{0});", Name);
+                if (Fields.Length > 0)
+                {
+                    yield return "            var i = 1;";
+                    foreach (var field in Fields)
+                        foreach (var c in field.ReadCode(field.Name))
+                            yield return "            " + c;
+                }
+                yield return "        }";
+                yield return "";
+                yield return "        public override void WriteCode(List<uint> code)";
+                yield return "        {";
+                if (Fields.Length > 0)
+                {
+                    foreach (var field in Fields)
+                        foreach (var c in field.WriteCode(field.Name))
+                            yield return "            " + c;
+                }
+                else
+                    yield return "            // no-op";
+                yield return "        }";
+                yield return "";
+                yield return "        public override IEnumerable<ID> AllIDs";
+                yield return "        {";
+                yield return "            get";
+                yield return "            {";
+                var anyID = false;
+                foreach (var field in Fields)
+                {
+                    switch (field.Type)
+                    {
+                        case "ID":
+                            anyID = true;
+                            yield return string.Format("                yield return {0};", field.Name);
+                            break;
+                        case "ID?":
+                            anyID = true;
+                            yield return string.Format("                if ({0}.HasValue)", field.Name);
+                            yield return string.Format("                    yield return {0}.Value;", field.Name);
+                            break;
+                        case "ID[]":
+                            anyID = true;
+                            yield return string.Format("                if ({0} != null)", field.Name);
+                            yield return string.Format("                    foreach (var id in {0})", field.Name);
+                            yield return string.Format("                        yield return id;");
+                            break;
+                        case "Pair<LiteralNumber, ID>[]":
+                            anyID = true;
+                            yield return string.Format("                if ({0} != null)", field.Name);
+                            yield return string.Format("                    foreach (var p in {0})", field.Name);
+                            yield return string.Format("                        yield return p.Second;");
+                            break;
+                    }
+                }
+                if (!anyID)
+                    yield return "                yield break;";
+                yield return "            }";
+                yield return "        }";
+
                 yield return "    }";
                 yield return "}";
             }
@@ -389,7 +457,9 @@ namespace OpCodeGen
             return new OpField
             {
                 Type = "ID",
-                Name = name
+                Name = name,
+                ReadCode = n => new[] { string.Format("{0} = new ID(codes[start + i++]);", n) },
+                WriteCode = n => new[] { string.Format("code.Add({0}.Value);", n) }
             };
         }
         static OpField IdArray(string name)
@@ -397,7 +467,19 @@ namespace OpCodeGen
             return new OpField
             {
                 Type = "ID[]",
-                Name = name
+                Name = name,
+                ReadCode = n => new[]
+                {
+                    "var length = WordCount - i + 1;",
+                    string.Format("{0} = new ID[length];", n),
+                    "for (var k = 0; k < length; ++k)",
+                    string.Format("    {0}[k] = new ID(codes[start + i++]);", n),
+                },
+                WriteCode = n => new[]
+                {
+                    string.Format("foreach (var val in {0})", n),
+                    string.Format("    code.Add(val.Value);")
+                }
             };
         }
         static OpField IdOpt(string name)
@@ -405,7 +487,17 @@ namespace OpCodeGen
             return new OpField
             {
                 Type = "ID?",
-                Name = name
+                Name = name,
+                ReadCode = n => new[]
+                {
+                    "if (i < WordCount)",
+                    string.Format("    {0} = new ID(codes[start + i++]);", n)
+                },
+                WriteCode = n => new[]
+                {
+                    string.Format("if ({0}.HasValue)", n),
+                    string.Format("    code.Add({0}.Value.Value);", n)
+                }
             };
         }
         static OpField Nr(string name)
@@ -413,7 +505,9 @@ namespace OpCodeGen
             return new OpField
             {
                 Type = "LiteralNumber",
-                Name = name
+                Name = name,
+                ReadCode = n => new[] { string.Format("{0} = new LiteralNumber(codes[start + i++]);", n) },
+                WriteCode = n => new[] { string.Format("code.Add({0}.Value);", n) }
             };
         }
         static OpField NrArray(string name)
@@ -421,7 +515,19 @@ namespace OpCodeGen
             return new OpField
             {
                 Type = "LiteralNumber[]",
-                Name = name
+                Name = name,
+                ReadCode = n => new[]
+                {
+                    "var length = WordCount - i + 1;",
+                    string.Format("{0} = new LiteralNumber[length];", n),
+                    "for (var k = 0; k < length; ++k)",
+                    string.Format("    {0}[k] = new LiteralNumber(codes[start + i++]);", n),
+                },
+                WriteCode = n => new[]
+                {
+                    string.Format("foreach (var val in {0})", n),
+                    string.Format("    code.Add(val.Value);")
+                }
             };
         }
         static OpField Str(string name)
@@ -429,7 +535,9 @@ namespace OpCodeGen
             return new OpField
             {
                 Type = "LiteralString",
-                Name = name
+                Name = name,
+                ReadCode = n => new[] { string.Format("{0} = LiteralString.FromCode(codes, ref i);", n) },
+                WriteCode = n => new[] { string.Format("{0}.WriteCode(code);", n) }
             };
         }
         static OpField PairArray(OpField op1, OpField op2, string name)
@@ -437,7 +545,26 @@ namespace OpCodeGen
             return new OpField
             {
                 Type = string.Format("Pair<{0}, {1}>[]", op1.Type, op2.Type),
-                Name = name
+                Name = name,
+                ReadCode = n => new[]
+                {
+                    "var length = (WordCount - i + 1) / 2;",
+                    string.Format("{0} = new Pair<{1}, {2}>[length];", n, op1.Type, op2.Type),
+                    "for (var k = 0; k < length; ++k)",
+                    "    {",
+                    string.Format("        var f = new {0}(codes[start + i++]);", op1.Type),
+                    string.Format("        var s = new {0}(codes[start + i++]);", op2.Type),
+                    string.Format("    {0}[k] = new Pair<{1}, {2}>(f, s);", n, op1.Type, op2.Type),
+                    "    }",
+                },
+                WriteCode = n => new[]
+                {
+                    string.Format("foreach (var val in {0})", n),
+                    string.Format("{{"),
+                    string.Format("    code.Add(val.First.Value);"),
+                    string.Format("    code.Add(val.Second.Value);"),
+                    string.Format("}}"),
+                }
             };
         }
 
@@ -447,7 +574,9 @@ namespace OpCodeGen
             return new OpField
             {
                 Type = type,
-                Name = name
+                Name = name,
+                ReadCode = n => new[] { string.Format("{0} = ({1})codes[start + i++];", n, type) },
+                WriteCode = n => new[] { string.Format("code.Add((uint){0});", n) }
             };
         }
         static OpField TypedArray(string typeAndName) => TypedArray(typeAndName, typeAndName);
@@ -456,7 +585,19 @@ namespace OpCodeGen
             return new OpField
             {
                 Type = type + "[]",
-                Name = name
+                Name = name,
+                ReadCode = n => new[]
+                {
+                    "var length = WordCount - i + 1;",
+                    string.Format("{0} = new {1}[length];", n, type),
+                    "for (var k = 0; k < length; ++k)",
+                    string.Format("    {0}[k] = ({1})codes[start + i++];", n, type),
+                },
+                WriteCode = n => new[]
+                {
+                    string.Format("foreach (var val in {0})", n),
+                    string.Format("    code.Add((uint)val);")
+                }
             };
         }
 

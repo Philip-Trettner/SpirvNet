@@ -16,11 +16,47 @@ namespace SpirvNet.Spirv.Ops.Memory
     {
         public override bool IsMemory => true;
         public override OpCode OpCode => OpCode.InBoundsAccessChain;
+
         public ID ResultType;
         public ID Result;
         public ID Base;
         public ID[] Indexes;
 
         public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + ResultType + ", " + Result + ", " + Base + ", " + Indexes + ')';
+
+        public override void FromCode(uint[] codes, int start)
+        {
+            System.Diagnostics.Debug.Assert((codes[start] & 0x0000FFFF) == (uint)OpCode.InBoundsAccessChain);
+            var i = 1;
+            ResultType = new ID(codes[start + i++]);
+            Result = new ID(codes[start + i++]);
+            Base = new ID(codes[start + i++]);
+            var length = WordCount - i + 1;
+            Indexes = new ID[length];
+            for (var k = 0; k < length; ++k)
+                Indexes[k] = new ID(codes[start + i++]);
+        }
+
+        public override void WriteCode(List<uint> code)
+        {
+            code.Add(ResultType.Value);
+            code.Add(Result.Value);
+            code.Add(Base.Value);
+            foreach (var val in Indexes)
+                code.Add(val.Value);
+        }
+
+        public override IEnumerable<ID> AllIDs
+        {
+            get
+            {
+                yield return ResultType;
+                yield return Result;
+                yield return Base;
+                if (Indexes != null)
+                    foreach (var id in Indexes)
+                        yield return id;
+            }
+        }
     }
 }

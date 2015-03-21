@@ -14,6 +14,11 @@ namespace SpirvNet.Spirv
     {
         public uint Value;
 
+        public LiteralNumber(uint val)
+        {
+            Value = val;
+        }
+
         public override string ToString() => Value.ToString();
     }
 }

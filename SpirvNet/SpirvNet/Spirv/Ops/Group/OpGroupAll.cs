@@ -17,11 +17,40 @@ namespace SpirvNet.Spirv.Ops.Group
     {
         public override bool IsGroup => true;
         public override OpCode OpCode => OpCode.GroupAll;
+
         public ID ResultType;
         public ID Result;
         public ExecutionScope Scope;
         public ID Predicate;
 
         public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + ResultType + ", " + Result + ", " + Scope + ", " + Predicate + ')';
+
+        public override void FromCode(uint[] codes, int start)
+        {
+            System.Diagnostics.Debug.Assert((codes[start] & 0x0000FFFF) == (uint)OpCode.GroupAll);
+            var i = 1;
+            ResultType = new ID(codes[start + i++]);
+            Result = new ID(codes[start + i++]);
+            Scope = (ExecutionScope)codes[start + i++];
+            Predicate = new ID(codes[start + i++]);
+        }
+
+        public override void WriteCode(List<uint> code)
+        {
+            code.Add(ResultType.Value);
+            code.Add(Result.Value);
+            code.Add((uint)Scope);
+            code.Add(Predicate.Value);
+        }
+
+        public override IEnumerable<ID> AllIDs
+        {
+            get
+            {
+                yield return ResultType;
+                yield return Result;
+                yield return Predicate;
+            }
+        }
     }
 }

@@ -16,9 +16,32 @@ namespace SpirvNet.Spirv.Ops.Extension
     {
         public override bool IsExtension => true;
         public override OpCode OpCode => OpCode.ExtInstImport;
+
         public ID Result;
         public LiteralString Name;
 
         public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + Result + ", " + Name + ')';
+
+        public override void FromCode(uint[] codes, int start)
+        {
+            System.Diagnostics.Debug.Assert((codes[start] & 0x0000FFFF) == (uint)OpCode.ExtInstImport);
+            var i = 1;
+            Result = new ID(codes[start + i++]);
+            Name = LiteralString.FromCode(codes, ref i);
+        }
+
+        public override void WriteCode(List<uint> code)
+        {
+            code.Add(Result.Value);
+            Name.WriteCode(code);
+        }
+
+        public override IEnumerable<ID> AllIDs
+        {
+            get
+            {
+                yield return Result;
+            }
+        }
     }
 }

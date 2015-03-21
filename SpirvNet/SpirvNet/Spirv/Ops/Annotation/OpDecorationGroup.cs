@@ -16,8 +16,29 @@ namespace SpirvNet.Spirv.Ops.Annotation
     {
         public override bool IsAnnotation => true;
         public override OpCode OpCode => OpCode.DecorationGroup;
+
         public ID Result;
 
         public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + Result + ')';
+
+        public override void FromCode(uint[] codes, int start)
+        {
+            System.Diagnostics.Debug.Assert((codes[start] & 0x0000FFFF) == (uint)OpCode.DecorationGroup);
+            var i = 1;
+            Result = new ID(codes[start + i++]);
+        }
+
+        public override void WriteCode(List<uint> code)
+        {
+            code.Add(Result.Value);
+        }
+
+        public override IEnumerable<ID> AllIDs
+        {
+            get
+            {
+                yield return Result;
+            }
+        }
     }
 }

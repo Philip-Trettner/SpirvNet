@@ -16,8 +16,29 @@ namespace SpirvNet.Spirv.Ops.FlowControl
     {
         public override bool IsFlowControl => true;
         public override OpCode OpCode => OpCode.ReturnValue;
+
         public ID Value;
 
         public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + Value + ')';
+
+        public override void FromCode(uint[] codes, int start)
+        {
+            System.Diagnostics.Debug.Assert((codes[start] & 0x0000FFFF) == (uint)OpCode.ReturnValue);
+            var i = 1;
+            Value = new ID(codes[start + i++]);
+        }
+
+        public override void WriteCode(List<uint> code)
+        {
+            code.Add(Value.Value);
+        }
+
+        public override IEnumerable<ID> AllIDs
+        {
+            get
+            {
+                yield return Value;
+            }
+        }
     }
 }

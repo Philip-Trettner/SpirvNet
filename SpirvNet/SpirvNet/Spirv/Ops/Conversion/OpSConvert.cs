@@ -16,10 +16,37 @@ namespace SpirvNet.Spirv.Ops.Conversion
     {
         public override bool IsConversion => true;
         public override OpCode OpCode => OpCode.SConvert;
+
         public ID ResultType;
         public ID Result;
         public ID SignedValue;
 
         public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + ResultType + ", " + Result + ", " + SignedValue + ')';
+
+        public override void FromCode(uint[] codes, int start)
+        {
+            System.Diagnostics.Debug.Assert((codes[start] & 0x0000FFFF) == (uint)OpCode.SConvert);
+            var i = 1;
+            ResultType = new ID(codes[start + i++]);
+            Result = new ID(codes[start + i++]);
+            SignedValue = new ID(codes[start + i++]);
+        }
+
+        public override void WriteCode(List<uint> code)
+        {
+            code.Add(ResultType.Value);
+            code.Add(Result.Value);
+            code.Add(SignedValue.Value);
+        }
+
+        public override IEnumerable<ID> AllIDs
+        {
+            get
+            {
+                yield return ResultType;
+                yield return Result;
+                yield return SignedValue;
+            }
+        }
     }
 }

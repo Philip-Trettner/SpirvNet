@@ -20,7 +20,7 @@ namespace SpirvNet.Spirv
         /// <summary>
         /// Version number. The first public version will be 100 (use 99 for pre-release).
         /// </summary>
-        public const uint VersionNumber = 99;
+        public uint VersionNumber { get; private set; } = 99;
 
         /// <summary>
         /// Generator’s magic number. It is associated with the tool that
@@ -28,17 +28,18 @@ namespace SpirvNet.Spirv
         /// is allowed to be 0. Using a non-0 value is encouraged, and can be
         /// registered with Khronos.
         /// </summary>
-        public const uint Generator = 42;
+        public uint Generator { get; private set; } = 42;
 
         /// <summary>
         /// Bound; where all IDs in this module are guaranteed to satisfy 0 &lt; bound &lt; Bound
+        /// (Only valid after bytecode generation)
         /// </summary>
-        public uint Bound = 0;
+        public uint Bound { get; private set; } = 0;
 
         /// <summary>
         /// 0 (Reserved for instruction schema, if needed.)
         /// </summary>
-        public uint InstructionSchema = 0;
+        public uint InstructionSchema { get; private set; } = 0;
 
         /// <summary>
         /// All instructions of this module
@@ -50,6 +51,13 @@ namespace SpirvNet.Spirv
         /// </summary>
         public List<uint> GenerateBytecode()
         {
+            var maxID = 1u;
+            foreach (var instruction in Instructions)
+                foreach (var id in instruction.AllIDs)
+                    if (id.Value > maxID)
+                        maxID = id.Value;
+            Bound = maxID + 1;
+
             var code = new List<uint>
             {
                 MagicNumber,
@@ -71,8 +79,9 @@ namespace SpirvNet.Spirv
         /// </summary>
         public static Module FromFile(Stream stream)
         {
+            // read bytes
             var bytes = new List<byte>();
-            byte[] buffer = new byte[1024];
+            var buffer = new byte[1024];
             do
             {
                 var rc = stream.Read(buffer, 0, buffer.Length);
@@ -88,7 +97,35 @@ namespace SpirvNet.Spirv
             if (bytes.Count < 5 * sizeof(uint))
                 throw new FormatException("Less than 5 words can");
 
-            throw new NotImplementedException();
+            if (bytes.Count % sizeof(uint) != 0)
+                throw new FormatException("bytecount not divisible by 4 (" + bytes.Count + ")");
+
+            // convert to uint
+            var code = new uint[buffer.Length / sizeof(uint)];
+            for (var i = 0; i < code.Length; ++i)
+                code[i] = BitConverter.ToUInt32(buffer, i * 4);
+
+            // verify
+            if (code[0] != MagicNumber)
+                throw new FormatException("Magic number mismatch: " + code[0].ToString("X") + " vs " + MagicNumber.ToString("X"));
+
+            // create module header
+            var mod = new Module
+            {
+                VersionNumber = code[1],
+                Bound = code[2],
+                InstructionSchema = code[3]
+            };
+
+            // read instructions
+            var ptr = 4;
+            while (ptr < code.Length)
+            {
+                var instr = Instruction.Read(code, ref ptr);
+                mod.Instructions.Add(instr);
+            }
+
+            return mod;
         }
     }
 }

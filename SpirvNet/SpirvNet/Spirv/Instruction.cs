@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using SpirvNet.Spirv.Enums;
+using SpirvNet.Spirv.Ops;
 
 namespace SpirvNet.Spirv
 {
@@ -45,20 +46,19 @@ namespace SpirvNet.Spirv
         private class LayoutInfo
         {
             /// <summary>
-            /// Code from object -> add to code
+            /// Ctor info
             /// </summary>
-            public readonly List<Action<object, List<uint>>> Fields = new List<Action<object, List<uint>>>();
-
-            /// <summary>
-            /// Code from object -> ID
-            /// </summary>
-            public readonly List<Func<object, ID>> IDs = new List<Func<object, ID>>();
+            public ConstructorInfo Ctor;
         }
 
         /// <summary>
         /// Mapping of cached layouts
         /// </summary>
-        private static readonly Dictionary<Type, LayoutInfo> CachedLayouts = new Dictionary<Type, LayoutInfo>();
+        private static Dictionary<Type, LayoutInfo> cachedLayouts;
+        /// <summary>
+        /// Mapping of cached ops
+        /// </summary>
+        private static Dictionary<OpCode, LayoutInfo> cachedOps;
 
         /// <summary>
         /// Opcode: The 16 high-order bits are the WordCount of the
@@ -82,55 +82,94 @@ namespace SpirvNet.Spirv
         /// </summary>
         public virtual void Generate(List<uint> code)
         {
-            // get type info
-            var info = GenerateAndCacheInfo();
-
             // generate bytecode
             var cc = code.Count;
 
             code.Add(0); // dummy
-            foreach (var field in info.Fields)
-                field(this, code);
+            WriteCode(code);
 
             WordCount = (uint)(code.Count - cc);
             code[cc] = InstructionCode; // real val
         }
 
         /// <summary>
+        /// Calculates the highest used ID
+        /// </summary>
+        public virtual IEnumerable<ID> AllIDs => new ID[] { };
+
+        /// <summary>
         /// Generates and caches layout info on demand
         /// </summary>
-        private LayoutInfo GenerateAndCacheInfo()
+        private static void GenerateAndCacheInfo()
         {
-            var t = GetType();
+            if (cachedLayouts != null) return;
 
-            LayoutInfo info;
-            if (!CachedLayouts.TryGetValue(t, out info))
-            {
-                // generate info
-                info = new LayoutInfo();
-                foreach (var tfield in t.GetFields())
+            // generate info
+            cachedLayouts = new Dictionary<Type, LayoutInfo>();
+            foreach (var type in Assembly.GetExecutingAssembly().GetTypes())
+                if (type.IsSubclassOf(typeof(Instruction)) && !type.IsAbstract)
                 {
-                    var field = tfield; // extra var for closure capture
+                    // generate info
+                    var info = new LayoutInfo();
 
-                    if (field.FieldType == typeof (ID))
+                    // default ctor
+                    var ctor = type.GetConstructor(new Type[] { });
+                    if (ctor != null)
                     {
-                        info.IDs.Add(o => (ID) field.GetValue(o));
-                        info.Fields.Add((o, c) => c.Add(((ID) field.GetValue(o)).Value));
+                        info.Ctor = ctor;
+                        var obj = ctor.Invoke(null) as Instruction;
+                        if (obj == null)
+                            throw new InvalidOperationException("Strange ctor");
+                        cachedOps.Add(obj.OpCode, info);
                     }
 
-                    else if (field.FieldType == typeof (LiteralNumber))
-                        info.Fields.Add((o, c) => c.Add(((LiteralNumber) field.GetValue(o)).Value));
-
-                    else if (field.FieldType == typeof (LiteralString))
-                        info.Fields.Add((o, c) => ((LiteralString) field.GetValue(o)).Generate(c));
-
-                    else
-                        throw new NotSupportedException("Unsupported field type for " + field);
+                    cachedLayouts.Add(type, info);
                 }
+        }
 
-                CachedLayouts.Add(t, info);
+        /// <summary>
+        /// Fills this instruction from codes
+        /// </summary>
+        public abstract void FromCode(uint[] codes, int start);
+        /// <summary>
+        /// Adds code to the given array
+        /// </summary>
+        public abstract void WriteCode(List<uint> code);
+
+        /// <summary>
+        /// Reads an instruction from a buffer
+        /// </summary>
+        public static Instruction Read(uint[] codes, ref int ptr)
+        {
+            GenerateAndCacheInfo();
+
+            var icode = codes[ptr];
+            var opcode = (OpCode)(icode & 0x0000FFFF);
+            var wc = icode >> 16;
+            if (ptr + wc >= codes.Length)
+                throw new FormatException("End of codes");
+
+            if (cachedOps.ContainsKey(opcode))
+            {
+                var info = cachedOps[opcode];
+
+                var op = info.Ctor.Invoke(null) as Instruction;
+                if (op == null)
+                    throw new FormatException("Malfunctioning ctor of " + opcode);
+
+                op.WordCount = wc;
+                op.FromCode(codes, ptr);
+
+                ptr += (int)wc;
+                return op;
             }
-            return info;
+            else // OpUnknown
+            {
+                var op = new OpUnknown(opcode) { WordCount = wc };
+                op.FromCode(codes, ptr);
+                ptr += (int)wc;
+                return op;
+            }
         }
     }
 }

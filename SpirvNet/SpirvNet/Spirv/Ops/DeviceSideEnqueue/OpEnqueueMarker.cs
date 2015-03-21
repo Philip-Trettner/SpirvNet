@@ -17,6 +17,7 @@ namespace SpirvNet.Spirv.Ops.DeviceSideEnqueue
     {
         public override bool IsDeviceSideEnqueue => true;
         public override OpCode OpCode => OpCode.EnqueueMarker;
+
         public ID ResultType;
         public ID Result;
         public ID q;
@@ -25,5 +26,40 @@ namespace SpirvNet.Spirv.Ops.DeviceSideEnqueue
         public ID RetEvent;
 
         public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + ResultType + ", " + Result + ", " + q + ", " + NumEvents + ", " + WaitEvents + ", " + RetEvent + ')';
+
+        public override void FromCode(uint[] codes, int start)
+        {
+            System.Diagnostics.Debug.Assert((codes[start] & 0x0000FFFF) == (uint)OpCode.EnqueueMarker);
+            var i = 1;
+            ResultType = new ID(codes[start + i++]);
+            Result = new ID(codes[start + i++]);
+            q = new ID(codes[start + i++]);
+            NumEvents = new ID(codes[start + i++]);
+            WaitEvents = new ID(codes[start + i++]);
+            RetEvent = new ID(codes[start + i++]);
+        }
+
+        public override void WriteCode(List<uint> code)
+        {
+            code.Add(ResultType.Value);
+            code.Add(Result.Value);
+            code.Add(q.Value);
+            code.Add(NumEvents.Value);
+            code.Add(WaitEvents.Value);
+            code.Add(RetEvent.Value);
+        }
+
+        public override IEnumerable<ID> AllIDs
+        {
+            get
+            {
+                yield return ResultType;
+                yield return Result;
+                yield return q;
+                yield return NumEvents;
+                yield return WaitEvents;
+                yield return RetEvent;
+            }
+        }
     }
 }

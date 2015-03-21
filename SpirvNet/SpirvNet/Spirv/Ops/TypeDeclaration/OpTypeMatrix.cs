@@ -16,10 +16,36 @@ namespace SpirvNet.Spirv.Ops.TypeDeclaration
     {
         public override bool IsTypeDeclaration => true;
         public override OpCode OpCode => OpCode.TypeMatrix;
+
         public ID Result;
         public ID ColumnType;
         public LiteralNumber ColumnCount;
 
         public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + Result + ", " + ColumnType + ", " + ColumnCount + ')';
+
+        public override void FromCode(uint[] codes, int start)
+        {
+            System.Diagnostics.Debug.Assert((codes[start] & 0x0000FFFF) == (uint)OpCode.TypeMatrix);
+            var i = 1;
+            Result = new ID(codes[start + i++]);
+            ColumnType = new ID(codes[start + i++]);
+            ColumnCount = new LiteralNumber(codes[start + i++]);
+        }
+
+        public override void WriteCode(List<uint> code)
+        {
+            code.Add(Result.Value);
+            code.Add(ColumnType.Value);
+            code.Add(ColumnCount.Value);
+        }
+
+        public override IEnumerable<ID> AllIDs
+        {
+            get
+            {
+                yield return Result;
+                yield return ColumnType;
+            }
+        }
     }
 }

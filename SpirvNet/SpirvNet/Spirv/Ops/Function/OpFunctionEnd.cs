@@ -18,5 +18,23 @@ namespace SpirvNet.Spirv.Ops.Function
         public override OpCode OpCode => OpCode.FunctionEnd;
 
         public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ')';
+
+        public override void FromCode(uint[] codes, int start)
+        {
+            System.Diagnostics.Debug.Assert((codes[start] & 0x0000FFFF) == (uint)OpCode.FunctionEnd);
+        }
+
+        public override void WriteCode(List<uint> code)
+        {
+            // no-op
+        }
+
+        public override IEnumerable<ID> AllIDs
+        {
+            get
+            {
+                yield break;
+            }
+        }
     }
 }

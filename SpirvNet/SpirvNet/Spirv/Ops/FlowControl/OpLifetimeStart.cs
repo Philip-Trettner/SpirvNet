@@ -16,9 +16,32 @@ namespace SpirvNet.Spirv.Ops.FlowControl
     {
         public override bool IsFlowControl => true;
         public override OpCode OpCode => OpCode.LifetimeStart;
+
         public ID Object;
         public LiteralNumber Literal;
 
         public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + Object + ", " + Literal + ')';
+
+        public override void FromCode(uint[] codes, int start)
+        {
+            System.Diagnostics.Debug.Assert((codes[start] & 0x0000FFFF) == (uint)OpCode.LifetimeStart);
+            var i = 1;
+            Object = new ID(codes[start + i++]);
+            Literal = new LiteralNumber(codes[start + i++]);
+        }
+
+        public override void WriteCode(List<uint> code)
+        {
+            code.Add(Object.Value);
+            code.Add(Literal.Value);
+        }
+
+        public override IEnumerable<ID> AllIDs
+        {
+            get
+            {
+                yield return Object;
+            }
+        }
     }
 }
