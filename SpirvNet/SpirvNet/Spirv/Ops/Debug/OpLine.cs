@@ -24,7 +24,7 @@ namespace SpirvNet.Spirv.Ops.Debug
 
         public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + Target + ", " + File + ", " + Line + ", " + Column + ')';
 
-        public override void FromCode(uint[] codes, int start)
+        protected override void FromCode(uint[] codes, int start)
         {
             System.Diagnostics.Debug.Assert((codes[start] & 0x0000FFFF) == (uint)OpCode.Line);
             var i = 1;
@@ -34,7 +34,7 @@ namespace SpirvNet.Spirv.Ops.Debug
             Column = new LiteralNumber(codes[start + i++]);
         }
 
-        public override void WriteCode(List<uint> code)
+        protected override void WriteCode(List<uint> code)
         {
             code.Add(Target.Value);
             code.Add(File.Value);

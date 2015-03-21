@@ -27,21 +27,14 @@ namespace SpirvNet.Spirv.Ops
             OpCode = opCode;
         }
 
-        public override void Generate(List<uint> code)
-        {
-            WordCount = (uint)(1 + Args.Count);
-            code.Add(InstructionCode);
-            code.AddRange(Args);
-        }
-
-        public override void FromCode(uint[] codes, int start)
+        protected override void FromCode(uint[] codes, int start)
         {
             System.Diagnostics.Debug.Assert((codes[start] & 0x0000FFFF) == (uint)OpCode);
             for (var i = 1; i < WordCount; ++i)
                 Args.Add(codes[start + i]);
         }
 
-        public override void WriteCode(List<uint> code)
+        protected override void WriteCode(List<uint> code)
         {
             code.AddRange(Args);
         }

@@ -25,7 +25,7 @@ namespace SpirvNet.Spirv.Ops.Memory
 
         public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + ResultType + ", " + Result + ", " + StorageClass + ", " + N + ')';
 
-        public override void FromCode(uint[] codes, int start)
+        protected override void FromCode(uint[] codes, int start)
         {
             System.Diagnostics.Debug.Assert((codes[start] & 0x0000FFFF) == (uint)OpCode.VariableArray);
             var i = 1;
@@ -35,7 +35,7 @@ namespace SpirvNet.Spirv.Ops.Memory
             N = new ID(codes[start + i++]);
         }
 
-        public override void WriteCode(List<uint> code)
+        protected override void WriteCode(List<uint> code)
         {
             code.Add(ResultType.Value);
             code.Add(Result.Value);

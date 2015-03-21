@@ -22,7 +22,7 @@ namespace SpirvNet.Spirv.Ops.Extension
 
         public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + Result + ", " + Name + ')';
 
-        public override void FromCode(uint[] codes, int start)
+        protected override void FromCode(uint[] codes, int start)
         {
             System.Diagnostics.Debug.Assert((codes[start] & 0x0000FFFF) == (uint)OpCode.ExtInstImport);
             var i = 1;
@@ -30,7 +30,7 @@ namespace SpirvNet.Spirv.Ops.Extension
             Name = LiteralString.FromCode(codes, ref i);
         }
 
-        public override void WriteCode(List<uint> code)
+        protected override void WriteCode(List<uint> code)
         {
             code.Add(Result.Value);
             Name.WriteCode(code);

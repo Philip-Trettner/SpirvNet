@@ -20,11 +20,11 @@ namespace SpirvNet.Spirv.Ops.Memory
         public ID ResultType;
         public ID Result;
         public ID Pointer;
-        public MemoryAccess[] MemoryAccess;
+        public MemoryAccess[] MemoryAccess = new MemoryAccess[] { };
 
         public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + ResultType + ", " + Result + ", " + Pointer + ", " + MemoryAccess + ')';
 
-        public override void FromCode(uint[] codes, int start)
+        protected override void FromCode(uint[] codes, int start)
         {
             System.Diagnostics.Debug.Assert((codes[start] & 0x0000FFFF) == (uint)OpCode.Load);
             var i = 1;
@@ -37,7 +37,7 @@ namespace SpirvNet.Spirv.Ops.Memory
                 MemoryAccess[k] = (MemoryAccess)codes[start + i++];
         }
 
-        public override void WriteCode(List<uint> code)
+        protected override void WriteCode(List<uint> code)
         {
             code.Add(ResultType.Value);
             code.Add(Result.Value);

@@ -85,5 +85,25 @@ namespace SpirvNet.Tests
             foreach (var value in Enum.GetValues(typeof(OpCode)))
                 Assert.That(op2type.ContainsKey("Op" + value));
         }
+
+        [Test]
+        public void ZeroSerializeDeserialize()
+        {
+            var ops = Instruction.GenerateDummyInstructions();
+            foreach (var op in ops.Values)
+            {
+                var code = new List<uint>();
+                op.Generate(code);
+                Assert.AreEqual(code.Count, op.WordCount);
+
+                var op2 = Instruction.Read(code.ToArray());
+                var code2 = new List<uint>();
+                op2.Generate(code2);
+
+                Assert.AreEqual(code.Count, code2.Count);
+                for (var i = 0; i < code.Count; ++i)
+                    Assert.AreEqual(code[i], code2[i]);
+            }
+        }
     }
 }

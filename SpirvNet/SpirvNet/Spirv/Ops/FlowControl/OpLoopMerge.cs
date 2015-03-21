@@ -22,7 +22,7 @@ namespace SpirvNet.Spirv.Ops.FlowControl
 
         public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + Label + ", " + LoopControl + ')';
 
-        public override void FromCode(uint[] codes, int start)
+        protected override void FromCode(uint[] codes, int start)
         {
             System.Diagnostics.Debug.Assert((codes[start] & 0x0000FFFF) == (uint)OpCode.LoopMerge);
             var i = 1;
@@ -30,7 +30,7 @@ namespace SpirvNet.Spirv.Ops.FlowControl
             LoopControl = (LoopControl)codes[start + i++];
         }
 
-        public override void WriteCode(List<uint> code)
+        protected override void WriteCode(List<uint> code)
         {
             code.Add(Label.Value);
             code.Add((uint)LoopControl);

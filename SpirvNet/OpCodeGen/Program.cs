@@ -325,6 +325,7 @@ namespace OpCodeGen
         {
             public string Type;
             public string Name;
+            public string Init;
             public Func<string, string[]> ReadCode;
             public Func<string, string[]> WriteCode;
         }
@@ -381,12 +382,12 @@ namespace OpCodeGen
                 {
                     yield return "";
                     foreach (var field in Fields)
-                        yield return string.Format("        public {0} {1};", field.Type, field.Name);
+                        yield return string.Format("        public {0} {1}{2};", field.Type, field.Name, string.IsNullOrEmpty(field.Init) ? "" : " = " + field.Init);
                 }
                 yield return "";
                 yield return string.Format("        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + \")\"{0} + ')';", Fields.Length == 0 ? "" : Fields.Select(f => f.Name).Aggregate("", (s1, s2) => s1 + " + \", \" + " + s2));
                 yield return "";
-                yield return "        public override void FromCode(uint[] codes, int start)";
+                yield return "        protected override void FromCode(uint[] codes, int start)";
                 yield return "        {";
                 yield return string.Format("            System.Diagnostics.Debug.Assert((codes[start] & 0x0000FFFF) == (uint)OpCode.{0});", Name);
                 if (Fields.Length > 0)
@@ -398,7 +399,7 @@ namespace OpCodeGen
                 }
                 yield return "        }";
                 yield return "";
-                yield return "        public override void WriteCode(List<uint> code)";
+                yield return "        protected override void WriteCode(List<uint> code)";
                 yield return "        {";
                 if (Fields.Length > 0)
                 {
@@ -467,6 +468,7 @@ namespace OpCodeGen
             return new OpField
             {
                 Type = "ID[]",
+                Init = "new ID[] { }",
                 Name = name,
                 ReadCode = n => new[]
                 {
@@ -515,6 +517,7 @@ namespace OpCodeGen
             return new OpField
             {
                 Type = "LiteralNumber[]",
+                Init = "new LiteralNumber[] { }",
                 Name = name,
                 ReadCode = n => new[]
                 {
@@ -545,6 +548,7 @@ namespace OpCodeGen
             return new OpField
             {
                 Type = string.Format("Pair<{0}, {1}>[]", op1.Type, op2.Type),
+                Init = string.Format("new Pair<{0}, {1}>[] {{ }}", op1.Type, op2.Type),
                 Name = name,
                 ReadCode = n => new[]
                 {
@@ -585,6 +589,7 @@ namespace OpCodeGen
             return new OpField
             {
                 Type = type + "[]",
+                Init = "new " + type + "[] { }",
                 Name = name,
                 ReadCode = n => new[]
                 {

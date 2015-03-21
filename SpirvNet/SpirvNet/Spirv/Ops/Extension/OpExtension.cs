@@ -21,14 +21,14 @@ namespace SpirvNet.Spirv.Ops.Extension
 
         public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + Name + ')';
 
-        public override void FromCode(uint[] codes, int start)
+        protected override void FromCode(uint[] codes, int start)
         {
             System.Diagnostics.Debug.Assert((codes[start] & 0x0000FFFF) == (uint)OpCode.Extension);
             var i = 1;
             Name = LiteralString.FromCode(codes, ref i);
         }
 
-        public override void WriteCode(List<uint> code)
+        protected override void WriteCode(List<uint> code)
         {
             Name.WriteCode(code);
         }

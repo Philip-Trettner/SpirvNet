@@ -22,7 +22,7 @@ namespace SpirvNet.Spirv.Ops.Barrier
 
         public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + Scope + ", " + Semantics + ')';
 
-        public override void FromCode(uint[] codes, int start)
+        protected override void FromCode(uint[] codes, int start)
         {
             System.Diagnostics.Debug.Assert((codes[start] & 0x0000FFFF) == (uint)OpCode.MemoryBarrier);
             var i = 1;
@@ -30,7 +30,7 @@ namespace SpirvNet.Spirv.Ops.Barrier
             Semantics = (MemorySemantics)codes[start + i++];
         }
 
-        public override void WriteCode(List<uint> code)
+        protected override void WriteCode(List<uint> code)
         {
             code.Add((uint)Scope);
             code.Add((uint)Semantics);

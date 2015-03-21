@@ -80,7 +80,7 @@ namespace SpirvNet.Spirv
         /// <summary>
         /// Adds the instruction bytecode to the given list
         /// </summary>
-        public virtual void Generate(List<uint> code)
+        public void Generate(List<uint> code)
         {
             // generate bytecode
             var cc = code.Count;
@@ -106,6 +106,7 @@ namespace SpirvNet.Spirv
 
             // generate info
             cachedLayouts = new Dictionary<Type, LayoutInfo>();
+            cachedOps = new Dictionary<OpCode, LayoutInfo>();
             foreach (var type in Assembly.GetExecutingAssembly().GetTypes())
                 if (type.IsSubclassOf(typeof(Instruction)) && !type.IsAbstract)
                 {
@@ -128,14 +129,42 @@ namespace SpirvNet.Spirv
         }
 
         /// <summary>
+        /// Generates a dummy instruction for every registered op code
+        /// </summary>
+        public static Dictionary<OpCode, Instruction> GenerateDummyInstructions()
+        {
+            GenerateAndCacheInfo();
+
+            var result = new Dictionary<OpCode, Instruction>();
+
+            foreach (var op in cachedOps)
+            {
+                var info = op.Value;
+                var i = info.Ctor.Invoke(null) as Instruction;
+                if (i != null)
+                    result.Add(op.Key, i);
+            }
+
+            return result;
+        }
+
+        /// <summary>
         /// Fills this instruction from codes
         /// </summary>
-        public abstract void FromCode(uint[] codes, int start);
+        protected abstract void FromCode(uint[] codes, int start);
         /// <summary>
         /// Adds code to the given array
         /// </summary>
-        public abstract void WriteCode(List<uint> code);
+        protected abstract void WriteCode(List<uint> code);
 
+        /// <summary>
+        /// Reads an instruction from a buffer
+        /// </summary>
+        public static Instruction Read(uint[] codes)
+        {
+            var ptr = 0;
+            return Read(codes, ref ptr);
+        }
         /// <summary>
         /// Reads an instruction from a buffer
         /// </summary>

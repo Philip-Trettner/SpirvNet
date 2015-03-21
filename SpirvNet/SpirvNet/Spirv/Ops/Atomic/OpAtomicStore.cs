@@ -24,7 +24,7 @@ namespace SpirvNet.Spirv.Ops.Atomic
 
         public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + Pointer + ", " + Scope + ", " + Semantics + ", " + Value + ')';
 
-        public override void FromCode(uint[] codes, int start)
+        protected override void FromCode(uint[] codes, int start)
         {
             System.Diagnostics.Debug.Assert((codes[start] & 0x0000FFFF) == (uint)OpCode.AtomicStore);
             var i = 1;
@@ -34,7 +34,7 @@ namespace SpirvNet.Spirv.Ops.Atomic
             Value = new ID(codes[start + i++]);
         }
 
-        public override void WriteCode(List<uint> code)
+        protected override void WriteCode(List<uint> code)
         {
             code.Add(Pointer.Value);
             code.Add((uint)Scope);

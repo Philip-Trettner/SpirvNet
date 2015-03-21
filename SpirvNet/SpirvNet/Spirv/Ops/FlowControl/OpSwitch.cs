@@ -19,11 +19,11 @@ namespace SpirvNet.Spirv.Ops.FlowControl
 
         public ID Selector;
         public ID Default;
-        public Pair<LiteralNumber, ID>[] Target;
+        public Pair<LiteralNumber, ID>[] Target = new Pair<LiteralNumber, ID>[] { };
 
         public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + Selector + ", " + Default + ", " + Target + ')';
 
-        public override void FromCode(uint[] codes, int start)
+        protected override void FromCode(uint[] codes, int start)
         {
             System.Diagnostics.Debug.Assert((codes[start] & 0x0000FFFF) == (uint)OpCode.Switch);
             var i = 1;
@@ -39,7 +39,7 @@ namespace SpirvNet.Spirv.Ops.FlowControl
                 }
         }
 
-        public override void WriteCode(List<uint> code)
+        protected override void WriteCode(List<uint> code)
         {
             code.Add(Selector.Value);
             code.Add(Default.Value);
