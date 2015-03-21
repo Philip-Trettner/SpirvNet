@@ -18,7 +18,8 @@ namespace SpirvNet.Spirv.Ops.Primitive
         public override bool IsPrimitive => true;
         public override OpCode OpCode => OpCode.EmitVertex;
 
-        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ')';
+        #region Code
+        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ")";
 
         protected override void FromCode(uint[] codes, int start)
         {
@@ -37,5 +38,6 @@ namespace SpirvNet.Spirv.Ops.Primitive
                 yield break;
             }
         }
+        #endregion
     }
 }

@@ -23,7 +23,8 @@ namespace SpirvNet.Spirv.Ops.Memory
         public StorageClass StorageClass;
         public ID N;
 
-        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + ResultType + ", " + Result + ", " + StorageClass + ", " + N + ')';
+        #region Code
+        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(ResultType) + ", " + StrOf(Result) + ", " + StrOf(StorageClass) + ", " + StrOf(N) + ")";
 
         protected override void FromCode(uint[] codes, int start)
         {
@@ -52,5 +53,6 @@ namespace SpirvNet.Spirv.Ops.Memory
                 yield return N;
             }
         }
+        #endregion
     }
 }

@@ -20,7 +20,8 @@ namespace SpirvNet.Spirv.Ops.FlowControl
         public ID Object;
         public LiteralNumber Literal;
 
-        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + Object + ", " + Literal + ')';
+        #region Code
+        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(Object) + ", " + StrOf(Literal) + ")";
 
         protected override void FromCode(uint[] codes, int start)
         {
@@ -43,5 +44,6 @@ namespace SpirvNet.Spirv.Ops.FlowControl
                 yield return Object;
             }
         }
+        #endregion
     }
 }

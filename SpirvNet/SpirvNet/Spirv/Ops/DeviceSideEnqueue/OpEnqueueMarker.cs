@@ -25,7 +25,8 @@ namespace SpirvNet.Spirv.Ops.DeviceSideEnqueue
         public ID WaitEvents;
         public ID RetEvent;
 
-        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + ResultType + ", " + Result + ", " + q + ", " + NumEvents + ", " + WaitEvents + ", " + RetEvent + ')';
+        #region Code
+        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(ResultType) + ", " + StrOf(Result) + ", " + StrOf(q) + ", " + StrOf(NumEvents) + ", " + StrOf(WaitEvents) + ", " + StrOf(RetEvent) + ")";
 
         protected override void FromCode(uint[] codes, int start)
         {
@@ -61,5 +62,6 @@ namespace SpirvNet.Spirv.Ops.DeviceSideEnqueue
                 yield return RetEvent;
             }
         }
+        #endregion
     }
 }

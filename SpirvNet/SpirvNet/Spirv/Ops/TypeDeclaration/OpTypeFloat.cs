@@ -20,7 +20,8 @@ namespace SpirvNet.Spirv.Ops.TypeDeclaration
         public ID Result;
         public LiteralNumber Width;
 
-        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + Result + ", " + Width + ')';
+        #region Code
+        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(Result) + ", " + StrOf(Width) + ")";
 
         protected override void FromCode(uint[] codes, int start)
         {
@@ -43,5 +44,6 @@ namespace SpirvNet.Spirv.Ops.TypeDeclaration
                 yield return Result;
             }
         }
+        #endregion
     }
 }

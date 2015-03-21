@@ -21,7 +21,8 @@ namespace SpirvNet.Spirv.Ops.Conversion
         public ID Result;
         public ID Operand;
 
-        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + ResultType + ", " + Result + ", " + Operand + ')';
+        #region Code
+        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(ResultType) + ", " + StrOf(Result) + ", " + StrOf(Operand) + ")";
 
         protected override void FromCode(uint[] codes, int start)
         {
@@ -48,5 +49,6 @@ namespace SpirvNet.Spirv.Ops.Conversion
                 yield return Operand;
             }
         }
+        #endregion
     }
 }

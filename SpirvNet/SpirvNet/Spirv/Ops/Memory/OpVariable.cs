@@ -22,7 +22,8 @@ namespace SpirvNet.Spirv.Ops.Memory
         public StorageClass StorageClass;
         public ID? Initializer;
 
-        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + ResultType + ", " + Result + ", " + StorageClass + ", " + Initializer + ')';
+        #region Code
+        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(ResultType) + ", " + StrOf(Result) + ", " + StrOf(StorageClass) + ", " + StrOf(Initializer) + ")";
 
         protected override void FromCode(uint[] codes, int start)
         {
@@ -54,5 +55,6 @@ namespace SpirvNet.Spirv.Ops.Memory
                     yield return Initializer.Value;
             }
         }
+        #endregion
     }
 }

@@ -21,7 +21,8 @@ namespace SpirvNet.Spirv.Ops.Conversion
         public ID Result;
         public ID UnsignedValue;
 
-        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + ResultType + ", " + Result + ", " + UnsignedValue + ')';
+        #region Code
+        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(ResultType) + ", " + StrOf(Result) + ", " + StrOf(UnsignedValue) + ")";
 
         protected override void FromCode(uint[] codes, int start)
         {
@@ -48,5 +49,6 @@ namespace SpirvNet.Spirv.Ops.Conversion
                 yield return UnsignedValue;
             }
         }
+        #endregion
     }
 }

@@ -21,7 +21,8 @@ namespace SpirvNet.Spirv.Ops.RelationalLogical
         public ID Result;
         public ID Vector;
 
-        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + ResultType + ", " + Result + ", " + Vector + ')';
+        #region Code
+        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(ResultType) + ", " + StrOf(Result) + ", " + StrOf(Vector) + ")";
 
         protected override void FromCode(uint[] codes, int start)
         {
@@ -48,5 +49,6 @@ namespace SpirvNet.Spirv.Ops.RelationalLogical
                 yield return Vector;
             }
         }
+        #endregion
     }
 }

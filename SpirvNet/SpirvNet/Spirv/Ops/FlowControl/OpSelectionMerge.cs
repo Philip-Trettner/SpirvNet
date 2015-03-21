@@ -20,7 +20,8 @@ namespace SpirvNet.Spirv.Ops.FlowControl
         public ID Label;
         public SelectionControl SelectionControl;
 
-        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + Label + ", " + SelectionControl + ')';
+        #region Code
+        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(Label) + ", " + StrOf(SelectionControl) + ")";
 
         protected override void FromCode(uint[] codes, int start)
         {
@@ -43,5 +44,6 @@ namespace SpirvNet.Spirv.Ops.FlowControl
                 yield return Label;
             }
         }
+        #endregion
     }
 }

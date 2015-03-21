@@ -22,7 +22,8 @@ namespace SpirvNet.Spirv.Ops.TypeDeclaration
         public ID Type;
         public AccessQualifier AccessQualifier;
 
-        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + Result + ", " + Type + ", " + AccessQualifier + ')';
+        #region Code
+        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(Result) + ", " + StrOf(Type) + ", " + StrOf(AccessQualifier) + ")";
 
         protected override void FromCode(uint[] codes, int start)
         {
@@ -48,5 +49,6 @@ namespace SpirvNet.Spirv.Ops.TypeDeclaration
                 yield return Type;
             }
         }
+        #endregion
     }
 }

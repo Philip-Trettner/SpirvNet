@@ -21,7 +21,8 @@ namespace SpirvNet.Spirv.Ops.ConstantCreation
         public ID Result;
         public LiteralNumber Value;
 
-        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + ResultType + ", " + Result + ", " + Value + ')';
+        #region Code
+        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(ResultType) + ", " + StrOf(Result) + ", " + StrOf(Value) + ")";
 
         protected override void FromCode(uint[] codes, int start)
         {
@@ -47,5 +48,6 @@ namespace SpirvNet.Spirv.Ops.ConstantCreation
                 yield return Result;
             }
         }
+        #endregion
     }
 }

@@ -24,7 +24,8 @@ namespace SpirvNet.Spirv.Ops.ConstantCreation
         public LiteralNumber Param;
         public LiteralNumber Filter;
 
-        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + ResultType + ", " + Result + ", " + Mode + ", " + Param + ", " + Filter + ')';
+        #region Code
+        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(ResultType) + ", " + StrOf(Result) + ", " + StrOf(Mode) + ", " + StrOf(Param) + ", " + StrOf(Filter) + ")";
 
         protected override void FromCode(uint[] codes, int start)
         {
@@ -54,5 +55,6 @@ namespace SpirvNet.Spirv.Ops.ConstantCreation
                 yield return Result;
             }
         }
+        #endregion
     }
 }

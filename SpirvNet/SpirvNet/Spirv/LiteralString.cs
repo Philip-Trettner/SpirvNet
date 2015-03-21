@@ -57,6 +57,14 @@ namespace SpirvNet.Spirv
         /// </summary>
         public static LiteralString FromCode(uint[] code, ref int i)
         {
+            // zero shortcut
+            if (code[i] == 0)
+            {
+                ++i;
+                return new LiteralString { Value = "" };
+            }
+
+            // restore bytes
             var bytes = new List<byte>();
             while (true)
             {
@@ -69,11 +77,15 @@ namespace SpirvNet.Spirv
                     break;
                 ++i;
             }
+            // remove trailing zeros
+            while (bytes.Count > 0 && bytes[bytes.Count - 1] == 0)
+                bytes.RemoveAt(bytes.Count - 1);
 
+            // decode string
             var s = Encoding.UTF8.GetString(bytes.ToArray());
             return new LiteralString { Value = s };
         }
 
-        public override string ToString() => '"' + Value + '"';
+        public override string ToString() => "\"" + Value + "\"(" + (Value?.Length ?? -1) + ")";
     }
 }

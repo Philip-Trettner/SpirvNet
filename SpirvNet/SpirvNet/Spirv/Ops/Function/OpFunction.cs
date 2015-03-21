@@ -22,7 +22,8 @@ namespace SpirvNet.Spirv.Ops.Function
         public FunctionControlMask FunctionControlMask;
         public ID FunctionType;
 
-        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + ResultType + ", " + Result + ", " + FunctionControlMask + ", " + FunctionType + ')';
+        #region Code
+        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(ResultType) + ", " + StrOf(Result) + ", " + StrOf(FunctionControlMask) + ", " + StrOf(FunctionType) + ")";
 
         protected override void FromCode(uint[] codes, int start)
         {
@@ -51,5 +52,6 @@ namespace SpirvNet.Spirv.Ops.Function
                 yield return FunctionType;
             }
         }
+        #endregion
     }
 }

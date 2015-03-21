@@ -20,7 +20,8 @@ namespace SpirvNet.Spirv.Ops.Annotation
         public ID Target;
         public Decoration Decoration;
 
-        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + Target + ", " + Decoration + ')';
+        #region Code
+        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(Target) + ", " + StrOf(Decoration) + ")";
 
         protected override void FromCode(uint[] codes, int start)
         {
@@ -43,5 +44,6 @@ namespace SpirvNet.Spirv.Ops.Annotation
                 yield return Target;
             }
         }
+        #endregion
     }
 }

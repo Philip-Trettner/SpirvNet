@@ -25,7 +25,8 @@ namespace SpirvNet.Spirv.Ops.TypeDeclaration
         public LiteralNumber Compare;
         public LiteralNumber MS;
 
-        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + Result + ", " + SampledType + ", " + Dim + ", " + Content + ", " + Arrayed + ", " + Compare + ", " + MS + ')';
+        #region Code
+        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(Result) + ", " + StrOf(SampledType) + ", " + StrOf(Dim) + ", " + StrOf(Content) + ", " + StrOf(Arrayed) + ", " + StrOf(Compare) + ", " + StrOf(MS) + ")";
 
         protected override void FromCode(uint[] codes, int start)
         {
@@ -59,5 +60,6 @@ namespace SpirvNet.Spirv.Ops.TypeDeclaration
                 yield return SampledType;
             }
         }
+        #endregion
     }
 }

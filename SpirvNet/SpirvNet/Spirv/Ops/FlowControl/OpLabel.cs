@@ -19,7 +19,8 @@ namespace SpirvNet.Spirv.Ops.FlowControl
 
         public ID Result;
 
-        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + Result + ')';
+        #region Code
+        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(Result) + ")";
 
         protected override void FromCode(uint[] codes, int start)
         {
@@ -40,5 +41,6 @@ namespace SpirvNet.Spirv.Ops.FlowControl
                 yield return Result;
             }
         }
+        #endregion
     }
 }

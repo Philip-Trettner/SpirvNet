@@ -23,7 +23,8 @@ namespace SpirvNet.Spirv.Ops.Memory
         public ID Coordinate;
         public ID Sample;
 
-        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + ResultType + ", " + Result + ", " + Image + ", " + Coordinate + ", " + Sample + ')';
+        #region Code
+        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(ResultType) + ", " + StrOf(Result) + ", " + StrOf(Image) + ", " + StrOf(Coordinate) + ", " + StrOf(Sample) + ")";
 
         protected override void FromCode(uint[] codes, int start)
         {
@@ -56,5 +57,6 @@ namespace SpirvNet.Spirv.Ops.Memory
                 yield return Sample;
             }
         }
+        #endregion
     }
 }

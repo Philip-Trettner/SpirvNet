@@ -19,9 +19,10 @@ namespace SpirvNet.Spirv.Ops.Memory
 
         public ID Pointer;
         public ID Object;
-        public MemoryAccess[] MemoryAccess = new MemoryAccess[] { };
+        public MemoryAccess[] MemoryAccess = { };
 
-        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + Pointer + ", " + Object + ", " + MemoryAccess + ')';
+        #region Code
+        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(Pointer) + ", " + StrOf(Object) + ", " + StrOf(MemoryAccess) + ")";
 
         protected override void FromCode(uint[] codes, int start)
         {
@@ -29,7 +30,7 @@ namespace SpirvNet.Spirv.Ops.Memory
             var i = 1;
             Pointer = new ID(codes[start + i++]);
             Object = new ID(codes[start + i++]);
-            var length = WordCount - i + 1;
+            var length = WordCount - i;
             MemoryAccess = new MemoryAccess[length];
             for (var k = 0; k < length; ++k)
                 MemoryAccess[k] = (MemoryAccess)codes[start + i++];
@@ -39,8 +40,9 @@ namespace SpirvNet.Spirv.Ops.Memory
         {
             code.Add(Pointer.Value);
             code.Add(Object.Value);
-            foreach (var val in MemoryAccess)
-                code.Add((uint)val);
+            if (MemoryAccess != null)
+                foreach (var val in MemoryAccess)
+                    code.Add((uint)val);
         }
 
         public override IEnumerable<ID> AllIDs
@@ -51,5 +53,6 @@ namespace SpirvNet.Spirv.Ops.Memory
                 yield return Object;
             }
         }
+        #endregion
     }
 }

@@ -20,7 +20,8 @@ namespace SpirvNet.Spirv.Ops.ConstantCreation
         public ID ResultType;
         public ID Result;
 
-        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + ResultType + ", " + Result + ')';
+        #region Code
+        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(ResultType) + ", " + StrOf(Result) + ")";
 
         protected override void FromCode(uint[] codes, int start)
         {
@@ -44,5 +45,6 @@ namespace SpirvNet.Spirv.Ops.ConstantCreation
                 yield return Result;
             }
         }
+        #endregion
     }
 }

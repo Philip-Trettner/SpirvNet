@@ -25,7 +25,8 @@ namespace SpirvNet.Spirv.Ops.Texture
         public ID dx;
         public ID dy;
 
-        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + ResultType + ", " + Result + ", " + Sampler + ", " + Coordinate + ", " + dx + ", " + dy + ')';
+        #region Code
+        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(ResultType) + ", " + StrOf(Result) + ", " + StrOf(Sampler) + ", " + StrOf(Coordinate) + ", " + StrOf(dx) + ", " + StrOf(dy) + ")";
 
         protected override void FromCode(uint[] codes, int start)
         {
@@ -61,5 +62,6 @@ namespace SpirvNet.Spirv.Ops.Texture
                 yield return dy;
             }
         }
+        #endregion
     }
 }

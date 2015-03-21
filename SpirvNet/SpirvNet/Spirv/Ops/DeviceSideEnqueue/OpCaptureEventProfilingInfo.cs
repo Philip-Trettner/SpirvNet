@@ -22,7 +22,8 @@ namespace SpirvNet.Spirv.Ops.DeviceSideEnqueue
         public KernelProfilingInfo Info;
         public ID Value;
 
-        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + Event + ", " + Info + ", " + Value + ')';
+        #region Code
+        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(Event) + ", " + StrOf(Info) + ", " + StrOf(Value) + ")";
 
         protected override void FromCode(uint[] codes, int start)
         {
@@ -48,5 +49,6 @@ namespace SpirvNet.Spirv.Ops.DeviceSideEnqueue
                 yield return Value;
             }
         }
+        #endregion
     }
 }

@@ -30,9 +30,10 @@ namespace SpirvNet.Spirv.Ops.DeviceSideEnqueue
         public ID Param;
         public ID ParamSize;
         public ID ParamAlign;
-        public ID[] LocalSize = new ID[] { };
+        public ID[] LocalSize = { };
 
-        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + ResultType + ", " + Result + ", " + q + ", " + Flags + ", " + NDRange + ", " + NumEvents + ", " + WaitEvents + ", " + RetEvent + ", " + Invoke + ", " + Param + ", " + ParamSize + ", " + ParamAlign + ", " + LocalSize + ')';
+        #region Code
+        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(ResultType) + ", " + StrOf(Result) + ", " + StrOf(q) + ", " + StrOf(Flags) + ", " + StrOf(NDRange) + ", " + StrOf(NumEvents) + ", " + StrOf(WaitEvents) + ", " + StrOf(RetEvent) + ", " + StrOf(Invoke) + ", " + StrOf(Param) + ", " + StrOf(ParamSize) + ", " + StrOf(ParamAlign) + ", " + StrOf(LocalSize) + ")";
 
         protected override void FromCode(uint[] codes, int start)
         {
@@ -50,7 +51,7 @@ namespace SpirvNet.Spirv.Ops.DeviceSideEnqueue
             Param = new ID(codes[start + i++]);
             ParamSize = new ID(codes[start + i++]);
             ParamAlign = new ID(codes[start + i++]);
-            var length = WordCount - i + 1;
+            var length = WordCount - i;
             LocalSize = new ID[length];
             for (var k = 0; k < length; ++k)
                 LocalSize[k] = new ID(codes[start + i++]);
@@ -70,8 +71,9 @@ namespace SpirvNet.Spirv.Ops.DeviceSideEnqueue
             code.Add(Param.Value);
             code.Add(ParamSize.Value);
             code.Add(ParamAlign.Value);
-            foreach (var val in LocalSize)
-                code.Add(val.Value);
+            if (LocalSize != null)
+                foreach (var val in LocalSize)
+                    code.Add(val.Value);
         }
 
         public override IEnumerable<ID> AllIDs
@@ -94,5 +96,6 @@ namespace SpirvNet.Spirv.Ops.DeviceSideEnqueue
                         yield return id;
             }
         }
+        #endregion
     }
 }

@@ -20,7 +20,8 @@ namespace SpirvNet.Spirv.Ops.Extension
         public ID Result;
         public LiteralString Name;
 
-        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + Result + ", " + Name + ')';
+        #region Code
+        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(Result) + ", " + StrOf(Name) + ")";
 
         protected override void FromCode(uint[] codes, int start)
         {
@@ -43,5 +44,6 @@ namespace SpirvNet.Spirv.Ops.Extension
                 yield return Result;
             }
         }
+        #endregion
     }
 }

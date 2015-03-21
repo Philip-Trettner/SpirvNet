@@ -23,7 +23,8 @@ namespace SpirvNet.Spirv.Ops.Texture
         public ID Sampler;
         public ID Lod;
 
-        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + ResultType + ", " + Result + ", " + Sampler + ", " + Lod + ')';
+        #region Code
+        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(ResultType) + ", " + StrOf(Result) + ", " + StrOf(Sampler) + ", " + StrOf(Lod) + ")";
 
         protected override void FromCode(uint[] codes, int start)
         {
@@ -53,5 +54,6 @@ namespace SpirvNet.Spirv.Ops.Texture
                 yield return Lod;
             }
         }
+        #endregion
     }
 }

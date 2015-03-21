@@ -20,7 +20,8 @@ namespace SpirvNet.Spirv.Ops.ModeSetting
         public ExecutionModel ExecutionModel;
         public ID EntryPoint;
 
-        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + ExecutionModel + ", " + EntryPoint + ')';
+        #region Code
+        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(ExecutionModel) + ", " + StrOf(EntryPoint) + ")";
 
         protected override void FromCode(uint[] codes, int start)
         {
@@ -43,5 +44,6 @@ namespace SpirvNet.Spirv.Ops.ModeSetting
                 yield return EntryPoint;
             }
         }
+        #endregion
     }
 }

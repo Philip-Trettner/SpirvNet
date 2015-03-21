@@ -21,7 +21,8 @@ namespace SpirvNet.Spirv.Ops.TypeDeclaration
         public ID Result;
         public LiteralString OpaqueType;
 
-        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + Result + ", " + OpaqueType + ')';
+        #region Code
+        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(Result) + ", " + StrOf(OpaqueType) + ")";
 
         protected override void FromCode(uint[] codes, int start)
         {
@@ -44,5 +45,6 @@ namespace SpirvNet.Spirv.Ops.TypeDeclaration
                 yield return Result;
             }
         }
+        #endregion
     }
 }

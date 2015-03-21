@@ -21,7 +21,8 @@ namespace SpirvNet.Spirv.Ops.TypeDeclaration
         public LiteralNumber Width;
         public LiteralNumber Signedness;
 
-        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + Result + ", " + Width + ", " + Signedness + ')';
+        #region Code
+        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(Result) + ", " + StrOf(Width) + ", " + StrOf(Signedness) + ")";
 
         protected override void FromCode(uint[] codes, int start)
         {
@@ -46,5 +47,6 @@ namespace SpirvNet.Spirv.Ops.TypeDeclaration
                 yield return Result;
             }
         }
+        #endregion
     }
 }

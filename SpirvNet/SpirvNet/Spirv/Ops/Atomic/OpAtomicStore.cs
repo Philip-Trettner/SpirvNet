@@ -22,7 +22,8 @@ namespace SpirvNet.Spirv.Ops.Atomic
         public MemorySemantics Semantics;
         public ID Value;
 
-        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + Pointer + ", " + Scope + ", " + Semantics + ", " + Value + ')';
+        #region Code
+        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(Pointer) + ", " + StrOf(Scope) + ", " + StrOf(Semantics) + ", " + StrOf(Value) + ")";
 
         protected override void FromCode(uint[] codes, int start)
         {
@@ -50,5 +51,6 @@ namespace SpirvNet.Spirv.Ops.Atomic
                 yield return Value;
             }
         }
+        #endregion
     }
 }

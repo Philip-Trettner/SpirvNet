@@ -22,7 +22,8 @@ namespace SpirvNet.Spirv.Ops.Composite
         public ID Component;
         public ID Index;
 
-        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + ResultType + ", " + Result + ", " + Component + ", " + Index + ')';
+        #region Code
+        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(ResultType) + ", " + StrOf(Result) + ", " + StrOf(Component) + ", " + StrOf(Index) + ")";
 
         protected override void FromCode(uint[] codes, int start)
         {
@@ -52,5 +53,6 @@ namespace SpirvNet.Spirv.Ops.Composite
                 yield return Index;
             }
         }
+        #endregion
     }
 }

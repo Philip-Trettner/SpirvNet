@@ -27,7 +27,8 @@ namespace SpirvNet.Spirv.Ops.Group
         public ID Stride;
         public ID Event;
 
-        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + ResultType + ", " + Result + ", " + Scope + ", " + Destination + ", " + Source + ", " + NumElements + ", " + Stride + ", " + Event + ')';
+        #region Code
+        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(ResultType) + ", " + StrOf(Result) + ", " + StrOf(Scope) + ", " + StrOf(Destination) + ", " + StrOf(Source) + ", " + StrOf(NumElements) + ", " + StrOf(Stride) + ", " + StrOf(Event) + ")";
 
         protected override void FromCode(uint[] codes, int start)
         {
@@ -68,5 +69,6 @@ namespace SpirvNet.Spirv.Ops.Group
                 yield return Event;
             }
         }
+        #endregion
     }
 }

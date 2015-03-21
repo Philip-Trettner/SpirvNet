@@ -20,7 +20,8 @@ namespace SpirvNet.Spirv.Ops.Primitive
 
         public ID Stream;
 
-        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + Stream + ')';
+        #region Code
+        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(Stream) + ")";
 
         protected override void FromCode(uint[] codes, int start)
         {
@@ -41,5 +42,6 @@ namespace SpirvNet.Spirv.Ops.Primitive
                 yield return Stream;
             }
         }
+        #endregion
     }
 }

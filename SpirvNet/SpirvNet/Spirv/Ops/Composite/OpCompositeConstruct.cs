@@ -19,9 +19,10 @@ namespace SpirvNet.Spirv.Ops.Composite
 
         public ID ResultType;
         public ID Result;
-        public ID[] Constituents = new ID[] { };
+        public ID[] Constituents = { };
 
-        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + ResultType + ", " + Result + ", " + Constituents + ')';
+        #region Code
+        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(ResultType) + ", " + StrOf(Result) + ", " + StrOf(Constituents) + ")";
 
         protected override void FromCode(uint[] codes, int start)
         {
@@ -29,7 +30,7 @@ namespace SpirvNet.Spirv.Ops.Composite
             var i = 1;
             ResultType = new ID(codes[start + i++]);
             Result = new ID(codes[start + i++]);
-            var length = WordCount - i + 1;
+            var length = WordCount - i;
             Constituents = new ID[length];
             for (var k = 0; k < length; ++k)
                 Constituents[k] = new ID(codes[start + i++]);
@@ -39,8 +40,9 @@ namespace SpirvNet.Spirv.Ops.Composite
         {
             code.Add(ResultType.Value);
             code.Add(Result.Value);
-            foreach (var val in Constituents)
-                code.Add(val.Value);
+            if (Constituents != null)
+                foreach (var val in Constituents)
+                    code.Add(val.Value);
         }
 
         public override IEnumerable<ID> AllIDs
@@ -54,5 +56,6 @@ namespace SpirvNet.Spirv.Ops.Composite
                         yield return id;
             }
         }
+        #endregion
     }
 }

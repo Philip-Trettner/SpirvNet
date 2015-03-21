@@ -22,7 +22,8 @@ namespace SpirvNet.Spirv.Ops.Memory
         public ID Result;
         public ID Ptr;
 
-        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + ResultType + ", " + Result + ", " + Ptr + ')';
+        #region Code
+        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(ResultType) + ", " + StrOf(Result) + ", " + StrOf(Ptr) + ")";
 
         protected override void FromCode(uint[] codes, int start)
         {
@@ -49,5 +50,6 @@ namespace SpirvNet.Spirv.Ops.Memory
                 yield return Ptr;
             }
         }
+        #endregion
     }
 }

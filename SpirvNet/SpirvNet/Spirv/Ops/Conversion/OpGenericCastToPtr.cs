@@ -22,7 +22,8 @@ namespace SpirvNet.Spirv.Ops.Conversion
         public ID Result;
         public ID SourcePointer;
 
-        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + ResultType + ", " + Result + ", " + SourcePointer + ')';
+        #region Code
+        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(ResultType) + ", " + StrOf(Result) + ", " + StrOf(SourcePointer) + ")";
 
         protected override void FromCode(uint[] codes, int start)
         {
@@ -49,5 +50,6 @@ namespace SpirvNet.Spirv.Ops.Conversion
                 yield return SourcePointer;
             }
         }
+        #endregion
     }
 }

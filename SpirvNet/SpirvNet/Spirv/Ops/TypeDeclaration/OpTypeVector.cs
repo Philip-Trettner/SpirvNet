@@ -21,7 +21,8 @@ namespace SpirvNet.Spirv.Ops.TypeDeclaration
         public ID ComponentType;
         public LiteralNumber ComponentCount;
 
-        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + Result + ", " + ComponentType + ", " + ComponentCount + ')';
+        #region Code
+        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(Result) + ", " + StrOf(ComponentType) + ", " + StrOf(ComponentCount) + ")";
 
         protected override void FromCode(uint[] codes, int start)
         {
@@ -47,5 +48,6 @@ namespace SpirvNet.Spirv.Ops.TypeDeclaration
                 yield return ComponentType;
             }
         }
+        #endregion
     }
 }

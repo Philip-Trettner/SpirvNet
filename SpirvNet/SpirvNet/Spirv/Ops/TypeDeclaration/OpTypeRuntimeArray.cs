@@ -21,7 +21,8 @@ namespace SpirvNet.Spirv.Ops.TypeDeclaration
         public ID Result;
         public ID ElementType;
 
-        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + Result + ", " + ElementType + ')';
+        #region Code
+        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(Result) + ", " + StrOf(ElementType) + ")";
 
         protected override void FromCode(uint[] codes, int start)
         {
@@ -45,5 +46,6 @@ namespace SpirvNet.Spirv.Ops.TypeDeclaration
                 yield return ElementType;
             }
         }
+        #endregion
     }
 }

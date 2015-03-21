@@ -21,9 +21,10 @@ namespace SpirvNet.Spirv.Ops.Composite
         public ID Result;
         public ID Vector1;
         public ID Vector2;
-        public LiteralNumber[] Components = new LiteralNumber[] { };
+        public LiteralNumber[] Components = { };
 
-        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + ResultType + ", " + Result + ", " + Vector1 + ", " + Vector2 + ", " + Components + ')';
+        #region Code
+        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(ResultType) + ", " + StrOf(Result) + ", " + StrOf(Vector1) + ", " + StrOf(Vector2) + ", " + StrOf(Components) + ")";
 
         protected override void FromCode(uint[] codes, int start)
         {
@@ -33,7 +34,7 @@ namespace SpirvNet.Spirv.Ops.Composite
             Result = new ID(codes[start + i++]);
             Vector1 = new ID(codes[start + i++]);
             Vector2 = new ID(codes[start + i++]);
-            var length = WordCount - i + 1;
+            var length = WordCount - i;
             Components = new LiteralNumber[length];
             for (var k = 0; k < length; ++k)
                 Components[k] = new LiteralNumber(codes[start + i++]);
@@ -45,8 +46,9 @@ namespace SpirvNet.Spirv.Ops.Composite
             code.Add(Result.Value);
             code.Add(Vector1.Value);
             code.Add(Vector2.Value);
-            foreach (var val in Components)
-                code.Add(val.Value);
+            if (Components != null)
+                foreach (var val in Components)
+                    code.Add(val.Value);
         }
 
         public override IEnumerable<ID> AllIDs
@@ -59,5 +61,6 @@ namespace SpirvNet.Spirv.Ops.Composite
                 yield return Vector2;
             }
         }
+        #endregion
     }
 }

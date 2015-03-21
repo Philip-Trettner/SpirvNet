@@ -23,7 +23,8 @@ namespace SpirvNet.Spirv.Ops.RelationalLogical
         public ID x;
         public ID y;
 
-        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + ResultType + ", " + Result + ", " + x + ", " + y + ')';
+        #region Code
+        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(ResultType) + ", " + StrOf(Result) + ", " + StrOf(x) + ", " + StrOf(y) + ")";
 
         protected override void FromCode(uint[] codes, int start)
         {
@@ -53,5 +54,6 @@ namespace SpirvNet.Spirv.Ops.RelationalLogical
                 yield return y;
             }
         }
+        #endregion
     }
 }

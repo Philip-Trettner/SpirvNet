@@ -23,7 +23,8 @@ namespace SpirvNet.Spirv.Ops.Pipe
         public ID P;
         public ID NumPackets;
 
-        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + ResultType + ", " + Result + ", " + P + ", " + NumPackets + ')';
+        #region Code
+        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(ResultType) + ", " + StrOf(Result) + ", " + StrOf(P) + ", " + StrOf(NumPackets) + ")";
 
         protected override void FromCode(uint[] codes, int start)
         {
@@ -53,5 +54,6 @@ namespace SpirvNet.Spirv.Ops.Pipe
                 yield return NumPackets;
             }
         }
+        #endregion
     }
 }

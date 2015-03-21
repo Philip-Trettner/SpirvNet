@@ -25,7 +25,8 @@ namespace SpirvNet.Spirv.Ops.Texture
         public ID Offset;
         public ID? Bias;
 
-        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + ResultType + ", " + Result + ", " + Sampler + ", " + Coordinate + ", " + Offset + ", " + Bias + ')';
+        #region Code
+        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(ResultType) + ", " + StrOf(Result) + ", " + StrOf(Sampler) + ", " + StrOf(Coordinate) + ", " + StrOf(Offset) + ", " + StrOf(Bias) + ")";
 
         protected override void FromCode(uint[] codes, int start)
         {
@@ -64,5 +65,6 @@ namespace SpirvNet.Spirv.Ops.Texture
                     yield return Bias.Value;
             }
         }
+        #endregion
     }
 }

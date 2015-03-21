@@ -24,7 +24,8 @@ namespace SpirvNet.Spirv.Ops.DeviceSideEnqueue
         public ID LocalWorkSize;
         public ID GlobalWorkOffset;
 
-        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + ResultType + ", " + Result + ", " + GlobalWorkSize + ", " + LocalWorkSize + ", " + GlobalWorkOffset + ')';
+        #region Code
+        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(ResultType) + ", " + StrOf(Result) + ", " + StrOf(GlobalWorkSize) + ", " + StrOf(LocalWorkSize) + ", " + StrOf(GlobalWorkOffset) + ")";
 
         protected override void FromCode(uint[] codes, int start)
         {
@@ -57,5 +58,6 @@ namespace SpirvNet.Spirv.Ops.DeviceSideEnqueue
                 yield return GlobalWorkOffset;
             }
         }
+        #endregion
     }
 }

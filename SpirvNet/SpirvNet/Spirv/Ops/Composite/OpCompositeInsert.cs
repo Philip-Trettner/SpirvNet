@@ -21,9 +21,10 @@ namespace SpirvNet.Spirv.Ops.Composite
         public ID Result;
         public ID Object;
         public ID Composite;
-        public ID[] Indexes = new ID[] { };
+        public ID[] Indexes = { };
 
-        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + ResultType + ", " + Result + ", " + Object + ", " + Composite + ", " + Indexes + ')';
+        #region Code
+        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(ResultType) + ", " + StrOf(Result) + ", " + StrOf(Object) + ", " + StrOf(Composite) + ", " + StrOf(Indexes) + ")";
 
         protected override void FromCode(uint[] codes, int start)
         {
@@ -33,7 +34,7 @@ namespace SpirvNet.Spirv.Ops.Composite
             Result = new ID(codes[start + i++]);
             Object = new ID(codes[start + i++]);
             Composite = new ID(codes[start + i++]);
-            var length = WordCount - i + 1;
+            var length = WordCount - i;
             Indexes = new ID[length];
             for (var k = 0; k < length; ++k)
                 Indexes[k] = new ID(codes[start + i++]);
@@ -45,8 +46,9 @@ namespace SpirvNet.Spirv.Ops.Composite
             code.Add(Result.Value);
             code.Add(Object.Value);
             code.Add(Composite.Value);
-            foreach (var val in Indexes)
-                code.Add(val.Value);
+            if (Indexes != null)
+                foreach (var val in Indexes)
+                    code.Add(val.Value);
         }
 
         public override IEnumerable<ID> AllIDs
@@ -62,5 +64,6 @@ namespace SpirvNet.Spirv.Ops.Composite
                         yield return id;
             }
         }
+        #endregion
     }
 }

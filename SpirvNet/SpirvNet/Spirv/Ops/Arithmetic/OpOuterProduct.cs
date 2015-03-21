@@ -23,7 +23,8 @@ namespace SpirvNet.Spirv.Ops.Arithmetic
         public ID Vector1;
         public ID Vector2;
 
-        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + ResultType + ", " + Result + ", " + Vector1 + ", " + Vector2 + ')';
+        #region Code
+        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(ResultType) + ", " + StrOf(Result) + ", " + StrOf(Vector1) + ", " + StrOf(Vector2) + ")";
 
         protected override void FromCode(uint[] codes, int start)
         {
@@ -53,5 +54,6 @@ namespace SpirvNet.Spirv.Ops.Arithmetic
                 yield return Vector2;
             }
         }
+        #endregion
     }
 }

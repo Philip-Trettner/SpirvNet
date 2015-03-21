@@ -21,7 +21,8 @@ namespace SpirvNet.Spirv.Ops.TypeDeclaration
         public StorageClass StorageClass;
         public ID Type;
 
-        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + Result + ", " + StorageClass + ", " + Type + ')';
+        #region Code
+        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(Result) + ", " + StrOf(StorageClass) + ", " + StrOf(Type) + ")";
 
         protected override void FromCode(uint[] codes, int start)
         {
@@ -47,5 +48,6 @@ namespace SpirvNet.Spirv.Ops.TypeDeclaration
                 yield return Type;
             }
         }
+        #endregion
     }
 }

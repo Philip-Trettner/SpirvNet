@@ -20,7 +20,8 @@ namespace SpirvNet.Spirv.Ops.Debug
         public SourceLanguage SourceLanguage;
         public LiteralNumber Version;
 
-        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + SourceLanguage + ", " + Version + ')';
+        #region Code
+        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(SourceLanguage) + ", " + StrOf(Version) + ")";
 
         protected override void FromCode(uint[] codes, int start)
         {
@@ -43,5 +44,6 @@ namespace SpirvNet.Spirv.Ops.Debug
                 yield break;
             }
         }
+        #endregion
     }
 }

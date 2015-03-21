@@ -20,9 +20,10 @@ namespace SpirvNet.Spirv.Ops.FlowControl
         public ID Condition;
         public ID TrueLabel;
         public ID FalseLabel;
-        public LiteralNumber[] BranchWeights = new LiteralNumber[] { };
+        public LiteralNumber[] BranchWeights = { };
 
-        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + Condition + ", " + TrueLabel + ", " + FalseLabel + ", " + BranchWeights + ')';
+        #region Code
+        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(Condition) + ", " + StrOf(TrueLabel) + ", " + StrOf(FalseLabel) + ", " + StrOf(BranchWeights) + ")";
 
         protected override void FromCode(uint[] codes, int start)
         {
@@ -31,7 +32,7 @@ namespace SpirvNet.Spirv.Ops.FlowControl
             Condition = new ID(codes[start + i++]);
             TrueLabel = new ID(codes[start + i++]);
             FalseLabel = new ID(codes[start + i++]);
-            var length = WordCount - i + 1;
+            var length = WordCount - i;
             BranchWeights = new LiteralNumber[length];
             for (var k = 0; k < length; ++k)
                 BranchWeights[k] = new LiteralNumber(codes[start + i++]);
@@ -42,8 +43,9 @@ namespace SpirvNet.Spirv.Ops.FlowControl
             code.Add(Condition.Value);
             code.Add(TrueLabel.Value);
             code.Add(FalseLabel.Value);
-            foreach (var val in BranchWeights)
-                code.Add(val.Value);
+            if (BranchWeights != null)
+                foreach (var val in BranchWeights)
+                    code.Add(val.Value);
         }
 
         public override IEnumerable<ID> AllIDs
@@ -55,5 +57,6 @@ namespace SpirvNet.Spirv.Ops.FlowControl
                 yield return FalseLabel;
             }
         }
+        #endregion
     }
 }

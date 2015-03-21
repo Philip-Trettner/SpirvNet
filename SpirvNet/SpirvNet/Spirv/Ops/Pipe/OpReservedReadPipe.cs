@@ -25,7 +25,8 @@ namespace SpirvNet.Spirv.Ops.Pipe
         public ID Index;
         public ID Ptr;
 
-        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + ResultType + ", " + Result + ", " + P + ", " + ReserveId + ", " + Index + ", " + Ptr + ')';
+        #region Code
+        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(ResultType) + ", " + StrOf(Result) + ", " + StrOf(P) + ", " + StrOf(ReserveId) + ", " + StrOf(Index) + ", " + StrOf(Ptr) + ")";
 
         protected override void FromCode(uint[] codes, int start)
         {
@@ -61,5 +62,6 @@ namespace SpirvNet.Spirv.Ops.Pipe
                 yield return Ptr;
             }
         }
+        #endregion
     }
 }

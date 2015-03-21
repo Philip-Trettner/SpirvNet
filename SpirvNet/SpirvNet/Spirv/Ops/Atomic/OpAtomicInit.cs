@@ -20,7 +20,8 @@ namespace SpirvNet.Spirv.Ops.Atomic
         public ID Pointer;
         public ID Value;
 
-        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + Pointer + ", " + Value + ')';
+        #region Code
+        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(Pointer) + ", " + StrOf(Value) + ")";
 
         protected override void FromCode(uint[] codes, int start)
         {
@@ -44,5 +45,6 @@ namespace SpirvNet.Spirv.Ops.Atomic
                 yield return Value;
             }
         }
+        #endregion
     }
 }

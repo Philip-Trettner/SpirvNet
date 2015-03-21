@@ -24,7 +24,8 @@ namespace SpirvNet.Spirv.Ops.Texture
         public ID Coordinate;
         public ID Offset;
 
-        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + ResultType + ", " + Result + ", " + Sampler + ", " + Coordinate + ", " + Offset + ')';
+        #region Code
+        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(ResultType) + ", " + StrOf(Result) + ", " + StrOf(Sampler) + ", " + StrOf(Coordinate) + ", " + StrOf(Offset) + ")";
 
         protected override void FromCode(uint[] codes, int start)
         {
@@ -57,5 +58,6 @@ namespace SpirvNet.Spirv.Ops.Texture
                 yield return Offset;
             }
         }
+        #endregion
     }
 }

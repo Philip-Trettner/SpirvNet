@@ -19,7 +19,8 @@ namespace SpirvNet.Spirv.Ops.Debug
 
         public LiteralString Extension;
 
-        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + Extension + ')';
+        #region Code
+        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(Extension) + ")";
 
         protected override void FromCode(uint[] codes, int start)
         {
@@ -40,5 +41,6 @@ namespace SpirvNet.Spirv.Ops.Debug
                 yield break;
             }
         }
+        #endregion
     }
 }

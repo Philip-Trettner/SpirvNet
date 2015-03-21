@@ -20,9 +20,10 @@ namespace SpirvNet.Spirv.Ops.Memory
         public ID ResultType;
         public ID Result;
         public ID Base;
-        public ID[] Indexes = new ID[] { };
+        public ID[] Indexes = { };
 
-        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + ResultType + ", " + Result + ", " + Base + ", " + Indexes + ')';
+        #region Code
+        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(ResultType) + ", " + StrOf(Result) + ", " + StrOf(Base) + ", " + StrOf(Indexes) + ")";
 
         protected override void FromCode(uint[] codes, int start)
         {
@@ -31,7 +32,7 @@ namespace SpirvNet.Spirv.Ops.Memory
             ResultType = new ID(codes[start + i++]);
             Result = new ID(codes[start + i++]);
             Base = new ID(codes[start + i++]);
-            var length = WordCount - i + 1;
+            var length = WordCount - i;
             Indexes = new ID[length];
             for (var k = 0; k < length; ++k)
                 Indexes[k] = new ID(codes[start + i++]);
@@ -42,8 +43,9 @@ namespace SpirvNet.Spirv.Ops.Memory
             code.Add(ResultType.Value);
             code.Add(Result.Value);
             code.Add(Base.Value);
-            foreach (var val in Indexes)
-                code.Add(val.Value);
+            if (Indexes != null)
+                foreach (var val in Indexes)
+                    code.Add(val.Value);
         }
 
         public override IEnumerable<ID> AllIDs
@@ -58,5 +60,6 @@ namespace SpirvNet.Spirv.Ops.Memory
                         yield return id;
             }
         }
+        #endregion
     }
 }

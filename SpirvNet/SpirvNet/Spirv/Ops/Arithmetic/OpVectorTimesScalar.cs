@@ -22,7 +22,8 @@ namespace SpirvNet.Spirv.Ops.Arithmetic
         public ID Vector;
         public ID Scalar;
 
-        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + ResultType + ", " + Result + ", " + Vector + ", " + Scalar + ')';
+        #region Code
+        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(ResultType) + ", " + StrOf(Result) + ", " + StrOf(Vector) + ", " + StrOf(Scalar) + ")";
 
         protected override void FromCode(uint[] codes, int start)
         {
@@ -52,5 +53,6 @@ namespace SpirvNet.Spirv.Ops.Arithmetic
                 yield return Scalar;
             }
         }
+        #endregion
     }
 }

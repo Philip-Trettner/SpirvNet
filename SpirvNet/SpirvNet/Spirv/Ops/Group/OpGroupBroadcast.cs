@@ -24,7 +24,8 @@ namespace SpirvNet.Spirv.Ops.Group
         public ID Value;
         public ID LocalId;
 
-        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + ResultType + ", " + Result + ", " + Scope + ", " + Value + ", " + LocalId + ')';
+        #region Code
+        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(ResultType) + ", " + StrOf(Result) + ", " + StrOf(Scope) + ", " + StrOf(Value) + ", " + StrOf(LocalId) + ")";
 
         protected override void FromCode(uint[] codes, int start)
         {
@@ -56,5 +57,6 @@ namespace SpirvNet.Spirv.Ops.Group
                 yield return LocalId;
             }
         }
+        #endregion
     }
 }

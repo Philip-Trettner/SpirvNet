@@ -22,7 +22,8 @@ namespace SpirvNet.Spirv.Ops.Conversion
         public ID Result;
         public ID Pointer;
 
-        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + ResultType + ", " + Result + ", " + Pointer + ')';
+        #region Code
+        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(ResultType) + ", " + StrOf(Result) + ", " + StrOf(Pointer) + ")";
 
         protected override void FromCode(uint[] codes, int start)
         {
@@ -49,5 +50,6 @@ namespace SpirvNet.Spirv.Ops.Conversion
                 yield return Pointer;
             }
         }
+        #endregion
     }
 }

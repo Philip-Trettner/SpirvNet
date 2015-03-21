@@ -19,7 +19,8 @@ namespace SpirvNet.Spirv.Ops.FlowControl
 
         public ID TargetLabel;
 
-        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + TargetLabel + ')';
+        #region Code
+        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(TargetLabel) + ")";
 
         protected override void FromCode(uint[] codes, int start)
         {
@@ -40,5 +41,6 @@ namespace SpirvNet.Spirv.Ops.FlowControl
                 yield return TargetLabel;
             }
         }
+        #endregion
     }
 }

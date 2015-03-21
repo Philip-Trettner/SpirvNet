@@ -17,7 +17,8 @@ namespace SpirvNet.Spirv.Ops.Function
         public override bool IsFunction => true;
         public override OpCode OpCode => OpCode.FunctionEnd;
 
-        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ')';
+        #region Code
+        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ")";
 
         protected override void FromCode(uint[] codes, int start)
         {
@@ -36,5 +37,6 @@ namespace SpirvNet.Spirv.Ops.Function
                 yield break;
             }
         }
+        #endregion
     }
 }

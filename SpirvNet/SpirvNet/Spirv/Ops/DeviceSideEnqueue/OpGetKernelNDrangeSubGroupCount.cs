@@ -23,7 +23,8 @@ namespace SpirvNet.Spirv.Ops.DeviceSideEnqueue
         public ID NDRange;
         public ID Invoke;
 
-        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + ResultType + ", " + Result + ", " + NDRange + ", " + Invoke + ')';
+        #region Code
+        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(ResultType) + ", " + StrOf(Result) + ", " + StrOf(NDRange) + ", " + StrOf(Invoke) + ")";
 
         protected override void FromCode(uint[] codes, int start)
         {
@@ -53,5 +54,6 @@ namespace SpirvNet.Spirv.Ops.DeviceSideEnqueue
                 yield return Invoke;
             }
         }
+        #endregion
     }
 }

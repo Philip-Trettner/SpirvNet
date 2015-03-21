@@ -21,7 +21,8 @@ namespace SpirvNet.Spirv.Ops.TypeDeclaration
         public ID ColumnType;
         public LiteralNumber ColumnCount;
 
-        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + Result + ", " + ColumnType + ", " + ColumnCount + ')';
+        #region Code
+        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(Result) + ", " + StrOf(ColumnType) + ", " + StrOf(ColumnCount) + ")";
 
         protected override void FromCode(uint[] codes, int start)
         {
@@ -47,5 +48,6 @@ namespace SpirvNet.Spirv.Ops.TypeDeclaration
                 yield return ColumnType;
             }
         }
+        #endregion
     }
 }

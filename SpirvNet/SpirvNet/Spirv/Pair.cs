@@ -15,6 +15,8 @@ namespace SpirvNet.Spirv.Ops
         {
             First = u;
             Second = v;
-        } 
+        }
+
+        public override string ToString() => string.Format("({0}, {1})", First, Second);
     }
 }

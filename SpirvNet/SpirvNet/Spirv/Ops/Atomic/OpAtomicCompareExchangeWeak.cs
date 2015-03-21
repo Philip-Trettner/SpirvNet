@@ -25,7 +25,8 @@ namespace SpirvNet.Spirv.Ops.Atomic
         public ID Value;
         public ID Comparator;
 
-        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + ResultType + ", " + Result + ", " + Pointer + ", " + Scope + ", " + Semantics + ", " + Value + ", " + Comparator + ')';
+        #region Code
+        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(ResultType) + ", " + StrOf(Result) + ", " + StrOf(Pointer) + ", " + StrOf(Scope) + ", " + StrOf(Semantics) + ", " + StrOf(Value) + ", " + StrOf(Comparator) + ")";
 
         protected override void FromCode(uint[] codes, int start)
         {
@@ -62,5 +63,6 @@ namespace SpirvNet.Spirv.Ops.Atomic
                 yield return Comparator;
             }
         }
+        #endregion
     }
 }

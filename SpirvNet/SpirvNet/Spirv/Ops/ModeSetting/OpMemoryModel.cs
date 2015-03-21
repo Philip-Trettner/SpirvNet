@@ -20,7 +20,8 @@ namespace SpirvNet.Spirv.Ops.ModeSetting
         public AddressingModel AddressingModel;
         public MemoryModel MemoryModel;
 
-        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + AddressingModel + ", " + MemoryModel + ')';
+        #region Code
+        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(AddressingModel) + ", " + StrOf(MemoryModel) + ")";
 
         protected override void FromCode(uint[] codes, int start)
         {
@@ -43,5 +44,6 @@ namespace SpirvNet.Spirv.Ops.ModeSetting
                 yield break;
             }
         }
+        #endregion
     }
 }

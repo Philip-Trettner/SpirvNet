@@ -175,7 +175,7 @@ namespace SpirvNet.Spirv
             var icode = codes[ptr];
             var opcode = (OpCode)(icode & 0x0000FFFF);
             var wc = icode >> 16;
-            if (ptr + wc >= codes.Length)
+            if (ptr + wc > codes.Length)
                 throw new FormatException("End of codes");
 
             if (cachedOps.ContainsKey(opcode))
@@ -200,5 +200,15 @@ namespace SpirvNet.Spirv
                 return op;
             }
         }
+
+        protected static string StrOf(ID id) => id.ToString();
+        protected static string StrOf(LiteralNumber nr) => nr.ToString();
+        protected static string StrOf(LiteralString str) => str.ToString();
+        protected static string StrOf(ID? id) => string.Format("<{0}>", id?.ToString() ?? "null");
+        protected static string StrOf(ID[] ids) => string.Format("[{0}]", ids == null ? "null" : ids.Length == 0 ? " " : ids.Select(i => i.ToString()).Aggregate((s1, s2) => s1 + ", " + s2));
+        protected static string StrOf(LiteralNumber[] nrs) => string.Format("[{0}]", nrs == null ? "null" : nrs.Length == 0 ? " " : nrs.Select(i => i.ToString()).Aggregate((s1, s2) => s1 + ", " + s2));
+        protected static string StrOf<T>(T e) where T : struct => e.ToString();
+        protected static string StrOf<T>(T[] es) => string.Format("[{0}]", es == null ? "null" : es.Length == 0 ? " " : es.Select(i => i.ToString()).Aggregate((s1, s2) => s1 + ", " + s2));
+        protected static string StrOf<U, V>(Pair<U,V>[] p) => string.Format("[{0}]", p == null ? "null" : p.Length == 0 ? " " : p.Select(i => i.ToString()).Aggregate((s1, s2) => s1 + ", " + s2));
     }
 }

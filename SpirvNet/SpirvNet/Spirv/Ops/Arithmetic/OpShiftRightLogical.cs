@@ -22,7 +22,8 @@ namespace SpirvNet.Spirv.Ops.Arithmetic
         public ID Operand1;
         public ID Operand2;
 
-        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + ResultType + ", " + Result + ", " + Operand1 + ", " + Operand2 + ')';
+        #region Code
+        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(ResultType) + ", " + StrOf(Result) + ", " + StrOf(Operand1) + ", " + StrOf(Operand2) + ")";
 
         protected override void FromCode(uint[] codes, int start)
         {
@@ -52,5 +53,6 @@ namespace SpirvNet.Spirv.Ops.Arithmetic
                 yield return Operand2;
             }
         }
+        #endregion
     }
 }

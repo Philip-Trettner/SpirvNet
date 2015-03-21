@@ -22,7 +22,8 @@ namespace SpirvNet.Spirv.Ops.Pipe
         public ID P;
         public ID ReserveId;
 
-        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + Scope + ", " + P + ", " + ReserveId + ')';
+        #region Code
+        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(Scope) + ", " + StrOf(P) + ", " + StrOf(ReserveId) + ")";
 
         protected override void FromCode(uint[] codes, int start)
         {
@@ -48,5 +49,6 @@ namespace SpirvNet.Spirv.Ops.Pipe
                 yield return ReserveId;
             }
         }
+        #endregion
     }
 }

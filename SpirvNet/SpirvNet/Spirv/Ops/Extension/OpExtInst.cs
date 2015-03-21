@@ -22,7 +22,8 @@ namespace SpirvNet.Spirv.Ops.Extension
         public ID Set;
         public LiteralNumber Instruction;
 
-        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + ResultType + ", " + Result + ", " + Set + ", " + Instruction + ')';
+        #region Code
+        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(ResultType) + ", " + StrOf(Result) + ", " + StrOf(Set) + ", " + StrOf(Instruction) + ")";
 
         protected override void FromCode(uint[] codes, int start)
         {
@@ -51,5 +52,6 @@ namespace SpirvNet.Spirv.Ops.Extension
                 yield return Set;
             }
         }
+        #endregion
     }
 }

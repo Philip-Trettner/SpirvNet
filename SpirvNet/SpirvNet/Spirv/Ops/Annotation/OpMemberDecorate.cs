@@ -21,7 +21,8 @@ namespace SpirvNet.Spirv.Ops.Annotation
         public LiteralNumber Member;
         public Decoration Decoration;
 
-        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + StructureType + ", " + Member + ", " + Decoration + ')';
+        #region Code
+        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(StructureType) + ", " + StrOf(Member) + ", " + StrOf(Decoration) + ")";
 
         protected override void FromCode(uint[] codes, int start)
         {
@@ -46,5 +47,6 @@ namespace SpirvNet.Spirv.Ops.Annotation
                 yield return StructureType;
             }
         }
+        #endregion
     }
 }

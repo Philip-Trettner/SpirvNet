@@ -22,7 +22,8 @@ namespace SpirvNet.Spirv.Ops.Debug
         public LiteralNumber Line;
         public LiteralNumber Column;
 
-        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + Target + ", " + File + ", " + Line + ", " + Column + ')';
+        #region Code
+        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(Target) + ", " + StrOf(File) + ", " + StrOf(Line) + ", " + StrOf(Column) + ")";
 
         protected override void FromCode(uint[] codes, int start)
         {
@@ -50,5 +51,6 @@ namespace SpirvNet.Spirv.Ops.Debug
                 yield return File;
             }
         }
+        #endregion
     }
 }

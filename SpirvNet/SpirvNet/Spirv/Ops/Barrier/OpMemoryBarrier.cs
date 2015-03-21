@@ -20,7 +20,8 @@ namespace SpirvNet.Spirv.Ops.Barrier
         public ExecutionScope Scope;
         public MemorySemantics Semantics;
 
-        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + Scope + ", " + Semantics + ')';
+        #region Code
+        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(Scope) + ", " + StrOf(Semantics) + ")";
 
         protected override void FromCode(uint[] codes, int start)
         {
@@ -43,5 +44,6 @@ namespace SpirvNet.Spirv.Ops.Barrier
                 yield break;
             }
         }
+        #endregion
     }
 }

@@ -20,9 +20,10 @@ namespace SpirvNet.Spirv.Ops.Function
         public ID ResultType;
         public ID Result;
         public ID Function;
-        public ID[] Arguments = new ID[] { };
+        public ID[] Arguments = { };
 
-        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + ResultType + ", " + Result + ", " + Function + ", " + Arguments + ')';
+        #region Code
+        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(ResultType) + ", " + StrOf(Result) + ", " + StrOf(Function) + ", " + StrOf(Arguments) + ")";
 
         protected override void FromCode(uint[] codes, int start)
         {
@@ -31,7 +32,7 @@ namespace SpirvNet.Spirv.Ops.Function
             ResultType = new ID(codes[start + i++]);
             Result = new ID(codes[start + i++]);
             Function = new ID(codes[start + i++]);
-            var length = WordCount - i + 1;
+            var length = WordCount - i;
             Arguments = new ID[length];
             for (var k = 0; k < length; ++k)
                 Arguments[k] = new ID(codes[start + i++]);
@@ -42,8 +43,9 @@ namespace SpirvNet.Spirv.Ops.Function
             code.Add(ResultType.Value);
             code.Add(Result.Value);
             code.Add(Function.Value);
-            foreach (var val in Arguments)
-                code.Add(val.Value);
+            if (Arguments != null)
+                foreach (var val in Arguments)
+                    code.Add(val.Value);
         }
 
         public override IEnumerable<ID> AllIDs
@@ -58,5 +60,6 @@ namespace SpirvNet.Spirv.Ops.Function
                         yield return id;
             }
         }
+        #endregion
     }
 }

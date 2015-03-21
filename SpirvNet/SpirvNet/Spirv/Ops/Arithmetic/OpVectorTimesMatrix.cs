@@ -23,7 +23,8 @@ namespace SpirvNet.Spirv.Ops.Arithmetic
         public ID Vector;
         public ID Matrix;
 
-        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + ResultType + ", " + Result + ", " + Vector + ", " + Matrix + ')';
+        #region Code
+        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(ResultType) + ", " + StrOf(Result) + ", " + StrOf(Vector) + ", " + StrOf(Matrix) + ")";
 
         protected override void FromCode(uint[] codes, int start)
         {
@@ -53,5 +54,6 @@ namespace SpirvNet.Spirv.Ops.Arithmetic
                 yield return Matrix;
             }
         }
+        #endregion
     }
 }

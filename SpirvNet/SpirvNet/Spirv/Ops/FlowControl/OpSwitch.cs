@@ -19,9 +19,10 @@ namespace SpirvNet.Spirv.Ops.FlowControl
 
         public ID Selector;
         public ID Default;
-        public Pair<LiteralNumber, ID>[] Target = new Pair<LiteralNumber, ID>[] { };
+        public Pair<LiteralNumber, ID>[] Target = { };
 
-        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + Selector + ", " + Default + ", " + Target + ')';
+        #region Code
+        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(Selector) + ", " + StrOf(Default) + ", " + StrOf(Target) + ")";
 
         protected override void FromCode(uint[] codes, int start)
         {
@@ -29,7 +30,7 @@ namespace SpirvNet.Spirv.Ops.FlowControl
             var i = 1;
             Selector = new ID(codes[start + i++]);
             Default = new ID(codes[start + i++]);
-            var length = (WordCount - i + 1) / 2;
+            var length = (WordCount - i) / 2;
             Target = new Pair<LiteralNumber, ID>[length];
             for (var k = 0; k < length; ++k)
                 {
@@ -43,11 +44,12 @@ namespace SpirvNet.Spirv.Ops.FlowControl
         {
             code.Add(Selector.Value);
             code.Add(Default.Value);
-            foreach (var val in Target)
-            {
-                code.Add(val.First.Value);
-                code.Add(val.Second.Value);
-            }
+            if (Target != null)
+                foreach (var val in Target)
+                {
+                    code.Add(val.First.Value);
+                    code.Add(val.Second.Value);
+                }
         }
 
         public override IEnumerable<ID> AllIDs
@@ -61,5 +63,6 @@ namespace SpirvNet.Spirv.Ops.FlowControl
                         yield return p.Second;
             }
         }
+        #endregion
     }
 }

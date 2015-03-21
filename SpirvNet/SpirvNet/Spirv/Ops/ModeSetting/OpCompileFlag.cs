@@ -20,7 +20,8 @@ namespace SpirvNet.Spirv.Ops.ModeSetting
 
         public LiteralString Flag;
 
-        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + Flag + ')';
+        #region Code
+        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(Flag) + ")";
 
         protected override void FromCode(uint[] codes, int start)
         {
@@ -41,5 +42,6 @@ namespace SpirvNet.Spirv.Ops.ModeSetting
                 yield break;
             }
         }
+        #endregion
     }
 }

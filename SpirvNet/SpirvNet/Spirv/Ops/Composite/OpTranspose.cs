@@ -22,7 +22,8 @@ namespace SpirvNet.Spirv.Ops.Composite
         public ID Result;
         public ID Matrix;
 
-        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + ResultType + ", " + Result + ", " + Matrix + ')';
+        #region Code
+        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(ResultType) + ", " + StrOf(Result) + ", " + StrOf(Matrix) + ")";
 
         protected override void FromCode(uint[] codes, int start)
         {
@@ -49,5 +50,6 @@ namespace SpirvNet.Spirv.Ops.Composite
                 yield return Matrix;
             }
         }
+        #endregion
     }
 }

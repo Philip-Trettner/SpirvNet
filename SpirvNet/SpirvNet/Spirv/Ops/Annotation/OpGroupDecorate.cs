@@ -19,7 +19,8 @@ namespace SpirvNet.Spirv.Ops.Annotation
 
         public ID DecorationGroup;
 
-        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + DecorationGroup + ')';
+        #region Code
+        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(DecorationGroup) + ")";
 
         protected override void FromCode(uint[] codes, int start)
         {
@@ -40,5 +41,6 @@ namespace SpirvNet.Spirv.Ops.Annotation
                 yield return DecorationGroup;
             }
         }
+        #endregion
     }
 }

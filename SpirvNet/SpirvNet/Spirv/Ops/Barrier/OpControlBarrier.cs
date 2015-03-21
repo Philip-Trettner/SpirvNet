@@ -19,7 +19,8 @@ namespace SpirvNet.Spirv.Ops.Barrier
 
         public ExecutionScope Scope;
 
-        public override string ToString() => '(' + OpCode + '(' + (int)OpCode + ")" + ", " + Scope + ')';
+        #region Code
+        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(Scope) + ")";
 
         protected override void FromCode(uint[] codes, int start)
         {
@@ -40,5 +41,6 @@ namespace SpirvNet.Spirv.Ops.Barrier
                 yield break;
             }
         }
+        #endregion
     }
 }
