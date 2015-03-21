@@ -17,6 +17,8 @@ namespace SpirvNet.Spirv.Ops.Group
     {
         public override bool IsGroup => true;
         public override OpCode OpCode => OpCode.GroupSMin;
+        public override ID? ResultID => Result;
+        public override ID? ResultTypeID => ResultType;
 
         public ID ResultType;
         public ID Result;

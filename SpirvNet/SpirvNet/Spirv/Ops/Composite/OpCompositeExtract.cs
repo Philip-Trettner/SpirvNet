@@ -16,6 +16,8 @@ namespace SpirvNet.Spirv.Ops.Composite
     {
         public override bool IsComposite => true;
         public override OpCode OpCode => OpCode.CompositeExtract;
+        public override ID? ResultID => Result;
+        public override ID? ResultTypeID => ResultType;
 
         public ID ResultType;
         public ID Result;

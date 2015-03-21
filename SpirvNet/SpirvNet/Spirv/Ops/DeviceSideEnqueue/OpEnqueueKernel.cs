@@ -17,6 +17,8 @@ namespace SpirvNet.Spirv.Ops.DeviceSideEnqueue
     {
         public override bool IsDeviceSideEnqueue => true;
         public override OpCode OpCode => OpCode.EnqueueKernel;
+        public override ID? ResultID => Result;
+        public override ID? ResultTypeID => ResultType;
 
         public ID ResultType;
         public ID Result;

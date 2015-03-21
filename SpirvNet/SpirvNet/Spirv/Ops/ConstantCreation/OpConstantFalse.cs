@@ -16,6 +16,8 @@ namespace SpirvNet.Spirv.Ops.ConstantCreation
     {
         public override bool IsConstantCreation => true;
         public override OpCode OpCode => OpCode.ConstantFalse;
+        public override ID? ResultID => Result;
+        public override ID? ResultTypeID => ResultType;
 
         public ID ResultType;
         public ID Result;

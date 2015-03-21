@@ -16,6 +16,8 @@ namespace SpirvNet.Spirv.Ops.Memory
     {
         public override bool IsMemory => true;
         public override OpCode OpCode => OpCode.AccessChain;
+        public override ID? ResultID => Result;
+        public override ID? ResultTypeID => ResultType;
 
         public ID ResultType;
         public ID Result;

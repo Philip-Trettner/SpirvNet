@@ -16,6 +16,8 @@ namespace SpirvNet.Spirv.Ops.Texture
     {
         public override bool IsTexture => true;
         public override OpCode OpCode => OpCode.Sampler;
+        public override ID? ResultID => Result;
+        public override ID? ResultTypeID => ResultType;
 
         public ID ResultType;
         public ID Result;

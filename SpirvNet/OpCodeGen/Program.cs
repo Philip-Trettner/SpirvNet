@@ -378,6 +378,10 @@ namespace OpCodeGen
                 yield return "    {";
                 yield return string.Format("        public override bool Is{0} => true;", Cat);
                 yield return string.Format("        public override OpCode OpCode => OpCode.{0};", Name);
+                if (Fields.Any(f => f.Name == "Result"))
+                    yield return string.Format("        public override ID? ResultID => Result;");
+                if (Fields.Any(f => f.Name == "ResultType"))
+                    yield return string.Format("        public override ID? ResultTypeID => ResultType;");
                 if (Fields.Length > 0)
                 {
                     yield return "";

@@ -16,6 +16,8 @@ namespace SpirvNet.Spirv.Ops.Atomic
     {
         public override bool IsAtomic => true;
         public override OpCode OpCode => OpCode.AtomicIAdd;
+        public override ID? ResultID => Result;
+        public override ID? ResultTypeID => ResultType;
 
         public ID ResultType;
         public ID Result;

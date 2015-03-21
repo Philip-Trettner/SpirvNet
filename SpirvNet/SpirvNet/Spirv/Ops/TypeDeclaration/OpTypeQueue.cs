@@ -17,6 +17,7 @@ namespace SpirvNet.Spirv.Ops.TypeDeclaration
     {
         public override bool IsTypeDeclaration => true;
         public override OpCode OpCode => OpCode.TypeQueue;
+        public override ID? ResultID => Result;
 
         public ID Result;
 

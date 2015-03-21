@@ -16,6 +16,8 @@ namespace SpirvNet.Spirv.Ops.Arithmetic
     {
         public override bool IsArithmetic => true;
         public override OpCode OpCode => OpCode.FMod;
+        public override ID? ResultID => Result;
+        public override ID? ResultTypeID => ResultType;
 
         public ID ResultType;
         public ID Result;

@@ -16,6 +16,7 @@ namespace SpirvNet.Spirv.Ops.FlowControl
     {
         public override bool IsFlowControl => true;
         public override OpCode OpCode => OpCode.Label;
+        public override ID? ResultID => Result;
 
         public ID Result;
 

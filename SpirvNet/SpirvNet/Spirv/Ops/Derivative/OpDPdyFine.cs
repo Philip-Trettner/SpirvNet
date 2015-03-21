@@ -17,6 +17,8 @@ namespace SpirvNet.Spirv.Ops.Derivative
     {
         public override bool IsDerivative => true;
         public override OpCode OpCode => OpCode.DPdyFine;
+        public override ID? ResultID => Result;
+        public override ID? ResultTypeID => ResultType;
 
         public ID ResultType;
         public ID Result;

@@ -17,6 +17,8 @@ namespace SpirvNet.Spirv.Ops.Pipe
     {
         public override bool IsPipe => true;
         public override OpCode OpCode => OpCode.ReservedWritePipe;
+        public override ID? ResultID => Result;
+        public override ID? ResultTypeID => ResultType;
 
         public ID ResultType;
         public ID Result;

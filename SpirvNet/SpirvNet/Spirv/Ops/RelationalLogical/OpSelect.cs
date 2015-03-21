@@ -16,6 +16,8 @@ namespace SpirvNet.Spirv.Ops.RelationalLogical
     {
         public override bool IsRelationalLogical => true;
         public override OpCode OpCode => OpCode.Select;
+        public override ID? ResultID => Result;
+        public override ID? ResultTypeID => ResultType;
 
         public ID ResultType;
         public ID Result;

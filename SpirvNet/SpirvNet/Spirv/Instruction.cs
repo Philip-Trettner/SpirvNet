@@ -40,6 +40,16 @@ namespace SpirvNet.Spirv
         public virtual bool IsExtension => false;
         public virtual bool IsFlowControl => false;
 
+
+        /// <summary>
+        /// If non-null, this the result ID of the op
+        /// </summary>
+        public virtual ID? ResultID => null;
+        /// <summary>
+        /// If non-null, this the result type ID of the op
+        /// </summary>
+        public virtual ID? ResultTypeID => null;
+
         /// <summary>
         /// Cached information for instruction layout
         /// </summary>

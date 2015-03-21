@@ -16,6 +16,8 @@ namespace SpirvNet.Spirv.Ops.Function
     {
         public override bool IsFunction => true;
         public override OpCode OpCode => OpCode.Function;
+        public override ID? ResultID => Result;
+        public override ID? ResultTypeID => ResultType;
 
         public ID ResultType;
         public ID Result;

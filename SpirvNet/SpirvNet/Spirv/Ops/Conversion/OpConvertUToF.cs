@@ -16,6 +16,8 @@ namespace SpirvNet.Spirv.Ops.Conversion
     {
         public override bool IsConversion => true;
         public override OpCode OpCode => OpCode.ConvertUToF;
+        public override ID? ResultID => Result;
+        public override ID? ResultTypeID => ResultType;
 
         public ID ResultType;
         public ID Result;

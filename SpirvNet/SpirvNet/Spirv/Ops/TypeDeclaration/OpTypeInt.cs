@@ -16,6 +16,7 @@ namespace SpirvNet.Spirv.Ops.TypeDeclaration
     {
         public override bool IsTypeDeclaration => true;
         public override OpCode OpCode => OpCode.TypeInt;
+        public override ID? ResultID => Result;
 
         public ID Result;
         public LiteralNumber Width;

@@ -16,6 +16,7 @@ namespace SpirvNet.Spirv.Ops.Annotation
     {
         public override bool IsAnnotation => true;
         public override OpCode OpCode => OpCode.DecorationGroup;
+        public override ID? ResultID => Result;
 
         public ID Result;
 

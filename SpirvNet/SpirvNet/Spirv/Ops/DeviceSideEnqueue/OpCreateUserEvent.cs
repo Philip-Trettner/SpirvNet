@@ -17,6 +17,7 @@ namespace SpirvNet.Spirv.Ops.DeviceSideEnqueue
     {
         public override bool IsDeviceSideEnqueue => true;
         public override OpCode OpCode => OpCode.CreateUserEvent;
+        public override ID? ResultTypeID => ResultType;
 
         public ID ResultType;
         public ID Event;

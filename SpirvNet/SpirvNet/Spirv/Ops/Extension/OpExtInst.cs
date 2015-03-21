@@ -16,6 +16,8 @@ namespace SpirvNet.Spirv.Ops.Extension
     {
         public override bool IsExtension => true;
         public override OpCode OpCode => OpCode.ExtInst;
+        public override ID? ResultID => Result;
+        public override ID? ResultTypeID => ResultType;
 
         public ID ResultType;
         public ID Result;
