@@ -13,7 +13,7 @@ namespace SpirvNet.Spirv.Ops.Primitive
     /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
     /// </summary>
     [DependsOn(LanguageCapability.Geom)]
-    public sealed class OpEndPrimitive : Instruction
+    public sealed class OpEndPrimitive : PrimitiveInstruction
     {
         public override bool IsPrimitive => true;
         public override OpCode OpCode => OpCode.EndPrimitive;

@@ -13,7 +13,7 @@ namespace SpirvNet.Spirv.Ops.TypeDeclaration
     /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
     /// </summary>
     [DependsOn(LanguageCapability.Kernel)]
-    public sealed class OpTypeDeviceEvent : Instruction
+    public sealed class OpTypeDeviceEvent : TypeDeclarationInstruction
     {
         public override bool IsTypeDeclaration => true;
         public override OpCode OpCode => OpCode.TypeDeviceEvent;

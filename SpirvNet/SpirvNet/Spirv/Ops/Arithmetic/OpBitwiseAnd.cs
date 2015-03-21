@@ -12,7 +12,7 @@ namespace SpirvNet.Spirv.Ops.Arithmetic
     /// <summary>
     /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
     /// </summary>
-    public sealed class OpBitwiseAnd : Instruction
+    public sealed class OpBitwiseAnd : ArithmeticInstruction
     {
         public override bool IsArithmetic => true;
         public override OpCode OpCode => OpCode.BitwiseAnd;

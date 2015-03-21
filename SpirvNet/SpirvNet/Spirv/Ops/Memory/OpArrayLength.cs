@@ -13,7 +13,7 @@ namespace SpirvNet.Spirv.Ops.Memory
     /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
     /// </summary>
     [DependsOn(LanguageCapability.Shader)]
-    public sealed class OpArrayLength : Instruction
+    public sealed class OpArrayLength : MemoryInstruction
     {
         public override bool IsMemory => true;
         public override OpCode OpCode => OpCode.ArrayLength;

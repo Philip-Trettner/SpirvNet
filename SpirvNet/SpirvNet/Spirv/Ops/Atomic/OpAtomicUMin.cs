@@ -12,7 +12,7 @@ namespace SpirvNet.Spirv.Ops.Atomic
     /// <summary>
     /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
     /// </summary>
-    public sealed class OpAtomicUMin : Instruction
+    public sealed class OpAtomicUMin : AtomicInstruction
     {
         public override bool IsAtomic => true;
         public override OpCode OpCode => OpCode.AtomicUMin;

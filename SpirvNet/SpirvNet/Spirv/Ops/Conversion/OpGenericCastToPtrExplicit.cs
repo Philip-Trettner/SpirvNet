@@ -13,7 +13,7 @@ namespace SpirvNet.Spirv.Ops.Conversion
     /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
     /// </summary>
     [DependsOn(LanguageCapability.Kernel)]
-    public sealed class OpGenericCastToPtrExplicit : Instruction
+    public sealed class OpGenericCastToPtrExplicit : ConversionInstruction
     {
         public override bool IsConversion => true;
         public override OpCode OpCode => OpCode.GenericCastToPtrExplicit;

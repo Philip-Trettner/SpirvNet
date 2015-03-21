@@ -12,7 +12,7 @@ namespace SpirvNet.Spirv.Ops.FlowControl
     /// <summary>
     /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
     /// </summary>
-    public sealed class OpSelectionMerge : Instruction
+    public sealed class OpSelectionMerge : FlowControlInstruction
     {
         public override bool IsFlowControl => true;
         public override OpCode OpCode => OpCode.SelectionMerge;

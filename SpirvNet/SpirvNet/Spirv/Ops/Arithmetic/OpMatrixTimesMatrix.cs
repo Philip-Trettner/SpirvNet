@@ -13,7 +13,7 @@ namespace SpirvNet.Spirv.Ops.Arithmetic
     /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
     /// </summary>
     [DependsOn(LanguageCapability.Matrix)]
-    public sealed class OpMatrixTimesMatrix : Instruction
+    public sealed class OpMatrixTimesMatrix : ArithmeticInstruction
     {
         public override bool IsArithmetic => true;
         public override OpCode OpCode => OpCode.MatrixTimesMatrix;

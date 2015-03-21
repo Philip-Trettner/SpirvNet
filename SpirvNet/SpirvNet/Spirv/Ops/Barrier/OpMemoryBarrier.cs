@@ -12,7 +12,7 @@ namespace SpirvNet.Spirv.Ops.Barrier
     /// <summary>
     /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
     /// </summary>
-    public sealed class OpMemoryBarrier : Instruction
+    public sealed class OpMemoryBarrier : BarrierInstruction
     {
         public override bool IsBarrier => true;
         public override OpCode OpCode => OpCode.MemoryBarrier;

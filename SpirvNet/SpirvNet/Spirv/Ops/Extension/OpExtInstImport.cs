@@ -12,7 +12,7 @@ namespace SpirvNet.Spirv.Ops.Extension
     /// <summary>
     /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
     /// </summary>
-    public sealed class OpExtInstImport : Instruction
+    public sealed class OpExtInstImport : ExtensionInstruction
     {
         public override bool IsExtension => true;
         public override OpCode OpCode => OpCode.ExtInstImport;

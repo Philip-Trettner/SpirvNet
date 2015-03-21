@@ -12,7 +12,7 @@ namespace SpirvNet.Spirv.Ops.ModeSetting
     /// <summary>
     /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
     /// </summary>
-    public sealed class OpEntryPoint : Instruction
+    public sealed class OpEntryPoint : ModeSettingInstruction
     {
         public override bool IsModeSetting => true;
         public override OpCode OpCode => OpCode.EntryPoint;

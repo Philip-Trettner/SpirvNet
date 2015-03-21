@@ -374,7 +374,7 @@ namespace OpCodeGen
                 yield return "    /// </summary>";
                 if (compatibilities.Count > 0)
                     yield return string.Format("    [DependsOn({0})]", compatibilities.Select(c => "LanguageCapability." + c).Aggregate((s1, s2) => s1 + " | " + s2));
-                yield return string.Format("    public sealed class Op{0} : Instruction", Name);
+                yield return string.Format("    public sealed class Op{0} : {1}Instruction", Name, Cat);
                 yield return "    {";
                 yield return string.Format("        public override bool Is{0} => true;", Cat);
                 yield return string.Format("        public override OpCode OpCode => OpCode.{0};", Name);
@@ -638,13 +638,37 @@ namespace OpCodeGen
                 return;
             }
 
+            var cats = new HashSet<string>();
+
             var ops = GenOps();
             foreach (var op in ops)
             {
                 var filename = Path.Combine(path, op.Cat, string.Format("Op{0}.cs", op.Name));
                 //new FileInfo(filename).Directory?.Create();
 
+                cats.Add(op.Cat);
+
                 File.WriteAllLines(filename, op.CreateLines());
+                Console.WriteLine("Wrote " + filename);
+            }
+
+            foreach (var cat in cats)
+            {
+                var catname = cat + "Instruction";
+                var filename = Path.Combine(path, cat, string.Format("{0}.cs", catname));
+
+                var lines = new[]
+                {
+                    "namespace SpirvNet.Spirv.Ops." + cat,
+                    "{",
+                    string.Format("    public abstract class {0}Instruction : Instruction", cat),
+                    "    {",
+                    "        // intentionally empty",
+                    "    }",
+                    "}"
+                };
+
+                File.WriteAllLines(filename, lines);
                 Console.WriteLine("Wrote " + filename);
             }
         }

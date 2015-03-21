@@ -12,7 +12,7 @@ namespace SpirvNet.Spirv.Ops.Atomic
     /// <summary>
     /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
     /// </summary>
-    public sealed class OpAtomicUMax : Instruction
+    public sealed class OpAtomicUMax : AtomicInstruction
     {
         public override bool IsAtomic => true;
         public override OpCode OpCode => OpCode.AtomicUMax;

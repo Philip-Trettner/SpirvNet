@@ -32,15 +32,21 @@ namespace SpirvNet.Spirv
         /// </summary>
         private readonly List<BlockBuilder> blocks = new List<BlockBuilder>();
 
-        /// <summary>
-        /// Function end instruction
-        /// </summary>
-        private OpFunctionEnd opFunctionEnd;
-
         public FunctionBuilder(string name)
         {
             Name = name;
         }
+
+
+        /// <summary>
+        /// Adds a function parameter
+        /// </summary>
+        public void AddParameter(OpFunctionParameter parameter) => opParameters.Add(parameter);
+
+        /// <summary>
+        /// Adds a block to this func
+        /// </summary>
+        public void AddBlock(BlockBuilder block) => blocks.Add(block);
 
         /// <summary>
         /// Generate func instructions (opFunc - opFuncEnd)
@@ -53,7 +59,7 @@ namespace SpirvNet.Spirv
             foreach (var block in blocks)
                 foreach (var op in block.GenerateInstructions())
                     yield return op;
-            yield return opFunctionEnd;
+            yield return new OpFunctionEnd();
         } 
     }
 }

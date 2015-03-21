@@ -12,7 +12,7 @@ namespace SpirvNet.Spirv.Ops.Function
     /// <summary>
     /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
     /// </summary>
-    public sealed class OpFunctionEnd : Instruction
+    public sealed class OpFunctionEnd : FunctionInstruction
     {
         public override bool IsFunction => true;
         public override OpCode OpCode => OpCode.FunctionEnd;

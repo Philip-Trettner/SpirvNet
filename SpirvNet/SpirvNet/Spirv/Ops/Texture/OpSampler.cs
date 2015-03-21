@@ -12,7 +12,7 @@ namespace SpirvNet.Spirv.Ops.Texture
     /// <summary>
     /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
     /// </summary>
-    public sealed class OpSampler : Instruction
+    public sealed class OpSampler : TextureInstruction
     {
         public override bool IsTexture => true;
         public override OpCode OpCode => OpCode.Sampler;

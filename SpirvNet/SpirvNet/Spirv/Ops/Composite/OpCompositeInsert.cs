@@ -12,7 +12,7 @@ namespace SpirvNet.Spirv.Ops.Composite
     /// <summary>
     /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
     /// </summary>
-    public sealed class OpCompositeInsert : Instruction
+    public sealed class OpCompositeInsert : CompositeInstruction
     {
         public override bool IsComposite => true;
         public override OpCode OpCode => OpCode.CompositeInsert;

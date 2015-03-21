@@ -13,7 +13,7 @@ namespace SpirvNet.Spirv.Ops.RelationalLogical
     /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
     /// </summary>
     [DependsOn(LanguageCapability.Kernel)]
-    public sealed class OpLessOrGreater : Instruction
+    public sealed class OpLessOrGreater : RelationalLogicalInstruction
     {
         public override bool IsRelationalLogical => true;
         public override OpCode OpCode => OpCode.LessOrGreater;

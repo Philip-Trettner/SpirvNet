@@ -12,7 +12,7 @@ namespace SpirvNet.Spirv.Ops.Conversion
     /// <summary>
     /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
     /// </summary>
-    public sealed class OpFConvert : Instruction
+    public sealed class OpFConvert : ConversionInstruction
     {
         public override bool IsConversion => true;
         public override OpCode OpCode => OpCode.FConvert;

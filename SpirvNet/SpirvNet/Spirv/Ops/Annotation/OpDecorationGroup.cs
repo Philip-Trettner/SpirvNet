@@ -12,7 +12,7 @@ namespace SpirvNet.Spirv.Ops.Annotation
     /// <summary>
     /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
     /// </summary>
-    public sealed class OpDecorationGroup : Instruction
+    public sealed class OpDecorationGroup : AnnotationInstruction
     {
         public override bool IsAnnotation => true;
         public override OpCode OpCode => OpCode.DecorationGroup;

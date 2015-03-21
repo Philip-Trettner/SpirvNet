@@ -13,7 +13,7 @@ namespace SpirvNet.Spirv.Ops.ModeSetting
     /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
     /// </summary>
     [DependsOn(LanguageCapability.Kernel)]
-    public sealed class OpCompileFlag : Instruction
+    public sealed class OpCompileFlag : ModeSettingInstruction
     {
         public override bool IsModeSetting => true;
         public override OpCode OpCode => OpCode.CompileFlag;

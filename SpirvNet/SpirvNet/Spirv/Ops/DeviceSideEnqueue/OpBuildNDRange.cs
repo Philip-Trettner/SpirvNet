@@ -13,7 +13,7 @@ namespace SpirvNet.Spirv.Ops.DeviceSideEnqueue
     /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
     /// </summary>
     [DependsOn(LanguageCapability.Kernel)]
-    public sealed class OpBuildNDRange : Instruction
+    public sealed class OpBuildNDRange : DeviceSideEnqueueInstruction
     {
         public override bool IsDeviceSideEnqueue => true;
         public override OpCode OpCode => OpCode.BuildNDRange;

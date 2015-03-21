@@ -13,7 +13,7 @@ namespace SpirvNet.Spirv.Ops.Group
     /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
     /// </summary>
     [DependsOn(LanguageCapability.Kernel)]
-    public sealed class OpGroupUMax : Instruction
+    public sealed class OpGroupUMax : GroupInstruction
     {
         public override bool IsGroup => true;
         public override OpCode OpCode => OpCode.GroupUMax;

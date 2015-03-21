@@ -13,7 +13,7 @@ namespace SpirvNet.Spirv.Ops.Group
     /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
     /// </summary>
     [DependsOn(LanguageCapability.Kernel)]
-    public sealed class OpGroupSMin : Instruction
+    public sealed class OpGroupSMin : GroupInstruction
     {
         public override bool IsGroup => true;
         public override OpCode OpCode => OpCode.GroupSMin;

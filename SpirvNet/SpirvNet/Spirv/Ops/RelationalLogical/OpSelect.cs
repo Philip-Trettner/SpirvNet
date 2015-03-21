@@ -12,7 +12,7 @@ namespace SpirvNet.Spirv.Ops.RelationalLogical
     /// <summary>
     /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
     /// </summary>
-    public sealed class OpSelect : Instruction
+    public sealed class OpSelect : RelationalLogicalInstruction
     {
         public override bool IsRelationalLogical => true;
         public override OpCode OpCode => OpCode.Select;

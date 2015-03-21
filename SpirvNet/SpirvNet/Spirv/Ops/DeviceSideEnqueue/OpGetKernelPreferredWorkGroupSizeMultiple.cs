@@ -13,7 +13,7 @@ namespace SpirvNet.Spirv.Ops.DeviceSideEnqueue
     /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
     /// </summary>
     [DependsOn(LanguageCapability.Kernel)]
-    public sealed class OpGetKernelPreferredWorkGroupSizeMultiple : Instruction
+    public sealed class OpGetKernelPreferredWorkGroupSizeMultiple : DeviceSideEnqueueInstruction
     {
         public override bool IsDeviceSideEnqueue => true;
         public override OpCode OpCode => OpCode.GetKernelPreferredWorkGroupSizeMultiple;

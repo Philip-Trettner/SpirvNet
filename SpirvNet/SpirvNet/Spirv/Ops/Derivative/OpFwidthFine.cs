@@ -13,7 +13,7 @@ namespace SpirvNet.Spirv.Ops.Derivative
     /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
     /// </summary>
     [DependsOn(LanguageCapability.Shader)]
-    public sealed class OpFwidthFine : Instruction
+    public sealed class OpFwidthFine : DerivativeInstruction
     {
         public override bool IsDerivative => true;
         public override OpCode OpCode => OpCode.FwidthFine;

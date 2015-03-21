@@ -12,7 +12,7 @@ namespace SpirvNet.Spirv.Ops.RelationalLogical
     /// <summary>
     /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
     /// </summary>
-    public sealed class OpSLessThan : Instruction
+    public sealed class OpSLessThan : RelationalLogicalInstruction
     {
         public override bool IsRelationalLogical => true;
         public override OpCode OpCode => OpCode.SLessThan;

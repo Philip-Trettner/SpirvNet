@@ -12,7 +12,7 @@ namespace SpirvNet.Spirv.Ops.TypeDeclaration
     /// <summary>
     /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
     /// </summary>
-    public sealed class OpTypeVector : Instruction
+    public sealed class OpTypeVector : TypeDeclarationInstruction
     {
         public override bool IsTypeDeclaration => true;
         public override OpCode OpCode => OpCode.TypeVector;

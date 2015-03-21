@@ -12,7 +12,7 @@ namespace SpirvNet.Spirv.Ops.Memory
     /// <summary>
     /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
     /// </summary>
-    public sealed class OpStore : Instruction
+    public sealed class OpStore : MemoryInstruction
     {
         public override bool IsMemory => true;
         public override OpCode OpCode => OpCode.Store;

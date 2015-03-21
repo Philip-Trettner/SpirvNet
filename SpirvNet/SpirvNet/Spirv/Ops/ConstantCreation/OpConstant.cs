@@ -12,7 +12,7 @@ namespace SpirvNet.Spirv.Ops.ConstantCreation
     /// <summary>
     /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
     /// </summary>
-    public sealed class OpConstant : Instruction
+    public sealed class OpConstant : ConstantCreationInstruction
     {
         public override bool IsConstantCreation => true;
         public override OpCode OpCode => OpCode.Constant;

@@ -13,7 +13,7 @@ namespace SpirvNet.Spirv.Ops.Pipe
     /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
     /// </summary>
     [DependsOn(LanguageCapability.Kernel)]
-    public sealed class OpGroupCommitWritePipe : Instruction
+    public sealed class OpGroupCommitWritePipe : PipeInstruction
     {
         public override bool IsPipe => true;
         public override OpCode OpCode => OpCode.GroupCommitWritePipe;

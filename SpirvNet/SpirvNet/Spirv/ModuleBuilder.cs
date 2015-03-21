@@ -8,6 +8,7 @@ using SpirvNet.Spirv.Ops.Annotation;
 using SpirvNet.Spirv.Ops.Debug;
 using SpirvNet.Spirv.Ops.Extension;
 using SpirvNet.Spirv.Ops.ModeSetting;
+using SpirvNet.Spirv.Ops.TypeDeclaration;
 
 namespace SpirvNet.Spirv
 {
@@ -58,19 +59,17 @@ namespace SpirvNet.Spirv
         // all execution mode decls
         private readonly List<OpExecutionMode> opExecutionModes = new List<OpExecutionMode>();
 
-        // all debug and annotation instructions
+        // debug instructions
         private readonly List<OpString> opStrings = new List<OpString>();
         private readonly List<OpName> opNames = new List<OpName>();
         private readonly List<OpMemberName> opMemberNames = new List<OpMemberName>();
         private readonly List<OpLine> opLines = new List<OpLine>();
-        private readonly List<OpDecorate> opDecorates = new List<OpDecorate>();
-        private readonly List<OpMemberDecorate> opMemberDecorates = new List<OpMemberDecorate>();
-        private readonly List<OpGroupDecorate> opGroupDecorates = new List<OpGroupDecorate>();
-        private readonly List<OpGroupMemberDecorate> opGroupMemberDecorates = new List<OpGroupMemberDecorate>();
-        private readonly List<OpDecorationGroup> opDecorationGroups = new List<OpDecorationGroup>();
+
+        // decorations
+        private readonly List<AnnotationInstruction> decorations = new List<AnnotationInstruction>();
 
         // types
-        // TODO
+        private readonly List<TypeDeclarationInstruction> types = new List<TypeDeclarationInstruction>();
 
         // functions
         private readonly List<FunctionBuilder> functions = new List<FunctionBuilder>();
@@ -85,8 +84,19 @@ namespace SpirvNet.Spirv
         }
 
         /// <summary>
+        /// Adds a new type
+        /// </summary>
+        public void AddType(TypeDeclarationInstruction type) => types.Add(type);
+
+        /// <summary>
+        /// Adds a function (builder)
+        /// (Can be modified until module creation)
+        /// </summary>
+        public void AddFunction(FunctionBuilder function) => functions.Add(function);
+
+        /// <summary>
         /// Creates the model
-        /// (Instructions are shared, so 
+        /// (Instructions are shared, so do not reuse them)
         /// </summary>
         public Module CreateModule()
         {
@@ -108,8 +118,17 @@ namespace SpirvNet.Spirv
             // execution mode
             mod.Instructions.AddRange(opExecutionModes);
 
+            // debug instructions
+            mod.Instructions.AddRange(opStrings);
+            mod.Instructions.AddRange(opNames);
+            mod.Instructions.AddRange(opMemberNames);
+            mod.Instructions.AddRange(opLines);
+
+            // decorations
+            mod.Instructions.AddRange(decorations);
+
             // types
-            // TODO
+            mod.Instructions.AddRange(types);
 
             // functions
             foreach (var func in functions)

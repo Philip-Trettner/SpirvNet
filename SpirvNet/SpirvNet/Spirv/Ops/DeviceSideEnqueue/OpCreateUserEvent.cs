@@ -13,7 +13,7 @@ namespace SpirvNet.Spirv.Ops.DeviceSideEnqueue
     /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
     /// </summary>
     [DependsOn(LanguageCapability.Kernel)]
-    public sealed class OpCreateUserEvent : Instruction
+    public sealed class OpCreateUserEvent : DeviceSideEnqueueInstruction
     {
         public override bool IsDeviceSideEnqueue => true;
         public override OpCode OpCode => OpCode.CreateUserEvent;

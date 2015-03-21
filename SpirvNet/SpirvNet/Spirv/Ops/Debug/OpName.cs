@@ -12,7 +12,7 @@ namespace SpirvNet.Spirv.Ops.Debug
     /// <summary>
     /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
     /// </summary>
-    public sealed class OpName : Instruction
+    public sealed class OpName : DebugInstruction
     {
         public override bool IsDebug => true;
         public override OpCode OpCode => OpCode.Name;

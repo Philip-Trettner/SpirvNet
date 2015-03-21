@@ -13,7 +13,7 @@ namespace SpirvNet.Spirv.Ops.RelationalLogical
     /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
     /// </summary>
     [DependsOn(LanguageCapability.Kernel)]
-    public sealed class OpIsNormal : Instruction
+    public sealed class OpIsNormal : RelationalLogicalInstruction
     {
         public override bool IsRelationalLogical => true;
         public override OpCode OpCode => OpCode.IsNormal;

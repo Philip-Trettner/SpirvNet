@@ -13,7 +13,7 @@ namespace SpirvNet.Spirv.Ops.Composite
     /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
     /// </summary>
     [DependsOn(LanguageCapability.Matrix)]
-    public sealed class OpTranspose : Instruction
+    public sealed class OpTranspose : CompositeInstruction
     {
         public override bool IsComposite => true;
         public override OpCode OpCode => OpCode.Transpose;

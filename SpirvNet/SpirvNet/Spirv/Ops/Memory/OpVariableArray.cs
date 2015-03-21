@@ -13,7 +13,7 @@ namespace SpirvNet.Spirv.Ops.Memory
     /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
     /// </summary>
     [DependsOn(LanguageCapability.Addr)]
-    public sealed class OpVariableArray : Instruction
+    public sealed class OpVariableArray : MemoryInstruction
     {
         public override bool IsMemory => true;
         public override OpCode OpCode => OpCode.VariableArray;

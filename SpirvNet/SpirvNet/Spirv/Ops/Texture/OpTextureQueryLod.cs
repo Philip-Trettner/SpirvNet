@@ -13,7 +13,7 @@ namespace SpirvNet.Spirv.Ops.Texture
     /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
     /// </summary>
     [DependsOn(LanguageCapability.Shader)]
-    public sealed class OpTextureQueryLod : Instruction
+    public sealed class OpTextureQueryLod : TextureInstruction
     {
         public override bool IsTexture => true;
         public override OpCode OpCode => OpCode.TextureQueryLod;

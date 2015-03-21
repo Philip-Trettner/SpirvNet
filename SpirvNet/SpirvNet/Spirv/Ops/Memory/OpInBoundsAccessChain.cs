@@ -12,7 +12,7 @@ namespace SpirvNet.Spirv.Ops.Memory
     /// <summary>
     /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
     /// </summary>
-    public sealed class OpInBoundsAccessChain : Instruction
+    public sealed class OpInBoundsAccessChain : MemoryInstruction
     {
         public override bool IsMemory => true;
         public override OpCode OpCode => OpCode.InBoundsAccessChain;

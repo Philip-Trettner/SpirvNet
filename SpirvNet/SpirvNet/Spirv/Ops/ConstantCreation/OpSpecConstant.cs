@@ -13,7 +13,7 @@ namespace SpirvNet.Spirv.Ops.ConstantCreation
     /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
     /// </summary>
     [DependsOn(LanguageCapability.Shader)]
-    public sealed class OpSpecConstant : Instruction
+    public sealed class OpSpecConstant : ConstantCreationInstruction
     {
         public override bool IsConstantCreation => true;
         public override OpCode OpCode => OpCode.SpecConstant;

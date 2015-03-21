@@ -12,7 +12,7 @@ namespace SpirvNet.Spirv.Ops.Misc
     /// <summary>
     /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
     /// </summary>
-    public sealed class OpUndef : Instruction
+    public sealed class OpUndef : MiscInstruction
     {
         public override bool IsMisc => true;
         public override OpCode OpCode => OpCode.Undef;

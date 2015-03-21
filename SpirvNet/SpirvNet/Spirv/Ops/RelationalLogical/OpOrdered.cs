@@ -13,7 +13,7 @@ namespace SpirvNet.Spirv.Ops.RelationalLogical
     /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
     /// </summary>
     [DependsOn(LanguageCapability.Kernel)]
-    public sealed class OpOrdered : Instruction
+    public sealed class OpOrdered : RelationalLogicalInstruction
     {
         public override bool IsRelationalLogical => true;
         public override OpCode OpCode => OpCode.Ordered;

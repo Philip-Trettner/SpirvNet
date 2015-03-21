@@ -13,7 +13,7 @@ namespace SpirvNet.Spirv.Ops.ConstantCreation
     /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
     /// </summary>
     [DependsOn(LanguageCapability.Kernel)]
-    public sealed class OpConstantSampler : Instruction
+    public sealed class OpConstantSampler : ConstantCreationInstruction
     {
         public override bool IsConstantCreation => true;
         public override OpCode OpCode => OpCode.ConstantSampler;

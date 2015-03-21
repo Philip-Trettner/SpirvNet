@@ -13,7 +13,7 @@ namespace SpirvNet.Spirv.Ops.DeviceSideEnqueue
     /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
     /// </summary>
     [DependsOn(LanguageCapability.Kernel)]
-    public sealed class OpIsValidEvent : Instruction
+    public sealed class OpIsValidEvent : DeviceSideEnqueueInstruction
     {
         public override bool IsDeviceSideEnqueue => true;
         public override OpCode OpCode => OpCode.IsValidEvent;
