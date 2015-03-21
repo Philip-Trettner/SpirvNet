@@ -32,7 +32,7 @@ Resources:
 
 Resources:
 * [Wikipedia: List of Instructions](https://en.wikipedia.org/wiki/List_of_CIL_instructions)
-* [MSDN Reference for Reflection.Emit](https://msdn.microsoft.com/de-de/library/system.reflection.emit.opcodes_fields(v=vs.110).aspx)
+* [MSDN Reference for Reflection.Emit](https://msdn.microsoft.com/en-us/library/system.reflection.emit.opcodes_fields(v=vs.110).aspx)
 
 ## Current Status
 
