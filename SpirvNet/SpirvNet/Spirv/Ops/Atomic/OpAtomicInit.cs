@@ -26,9 +26,9 @@ namespace SpirvNet.Spirv.Ops.Atomic
         protected override void FromCode(uint[] codes, int start)
         {
             System.Diagnostics.Debug.Assert((codes[start] & 0x0000FFFF) == (uint)OpCode.AtomicInit);
-            var i = 1;
-            Pointer = new ID(codes[start + i++]);
-            Value = new ID(codes[start + i++]);
+            var i = start + 1;
+            Pointer = new ID(codes[i++]);
+            Value = new ID(codes[i++]);
         }
 
         protected override void WriteCode(List<uint> code)

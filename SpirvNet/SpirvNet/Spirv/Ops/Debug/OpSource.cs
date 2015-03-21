@@ -26,9 +26,9 @@ namespace SpirvNet.Spirv.Ops.Debug
         protected override void FromCode(uint[] codes, int start)
         {
             System.Diagnostics.Debug.Assert((codes[start] & 0x0000FFFF) == (uint)OpCode.Source);
-            var i = 1;
-            SourceLanguage = (SourceLanguage)codes[start + i++];
-            Version = new LiteralNumber(codes[start + i++]);
+            var i = start + 1;
+            SourceLanguage = (SourceLanguage)codes[i++];
+            Version = new LiteralNumber(codes[i++]);
         }
 
         protected override void WriteCode(List<uint> code)

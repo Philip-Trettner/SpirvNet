@@ -26,9 +26,9 @@ namespace SpirvNet.Spirv.Ops.FlowControl
         protected override void FromCode(uint[] codes, int start)
         {
             System.Diagnostics.Debug.Assert((codes[start] & 0x0000FFFF) == (uint)OpCode.LifetimeStart);
-            var i = 1;
-            Object = new ID(codes[start + i++]);
-            Literal = new LiteralNumber(codes[start + i++]);
+            var i = start + 1;
+            Object = new ID(codes[i++]);
+            Literal = new LiteralNumber(codes[i++]);
         }
 
         protected override void WriteCode(List<uint> code)

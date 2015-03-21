@@ -31,13 +31,13 @@ namespace SpirvNet.Spirv.Ops.DeviceSideEnqueue
         protected override void FromCode(uint[] codes, int start)
         {
             System.Diagnostics.Debug.Assert((codes[start] & 0x0000FFFF) == (uint)OpCode.EnqueueMarker);
-            var i = 1;
-            ResultType = new ID(codes[start + i++]);
-            Result = new ID(codes[start + i++]);
-            q = new ID(codes[start + i++]);
-            NumEvents = new ID(codes[start + i++]);
-            WaitEvents = new ID(codes[start + i++]);
-            RetEvent = new ID(codes[start + i++]);
+            var i = start + 1;
+            ResultType = new ID(codes[i++]);
+            Result = new ID(codes[i++]);
+            q = new ID(codes[i++]);
+            NumEvents = new ID(codes[i++]);
+            WaitEvents = new ID(codes[i++]);
+            RetEvent = new ID(codes[i++]);
         }
 
         protected override void WriteCode(List<uint> code)

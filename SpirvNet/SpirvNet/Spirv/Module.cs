@@ -28,7 +28,7 @@ namespace SpirvNet.Spirv
         /// is allowed to be 0. Using a non-0 value is encouraged, and can be
         /// registered with Khronos.
         /// </summary>
-        public uint Generator { get; private set; } = 42;
+        public uint Generator { get; set; } = 42;
 
         /// <summary>
         /// Bound; where all IDs in this module are guaranteed to satisfy 0 &lt; bound &lt; Bound
@@ -62,6 +62,7 @@ namespace SpirvNet.Spirv
             {
                 MagicNumber,
                 VersionNumber,
+                Generator,
                 Bound,
                 InstructionSchema
             };
@@ -71,13 +72,27 @@ namespace SpirvNet.Spirv
         }
 
         /// <summary>
+        /// Writes this module to a stream
+        /// </summary>
+        public void WriteToStream(Stream s)
+        {
+            var code = GenerateBytecode();
+            foreach (var c in code)
+            {
+                var buffer = BitConverter.GetBytes(c);
+                s.Write(buffer, 0, buffer.Length);
+            }
+        }
+
+        /// <summary>
         /// Creates a module from file by name
         /// </summary>
-        public static Module FromFile(string filename) => FromFile(new FileStream(filename, FileMode.Open));
+        public static Module FromFile(string filename) => FromStream(new FileStream(filename, FileMode.Open));
+
         /// <summary>
-        /// Creates a module from file by stream
+        /// Creates a module from stream
         /// </summary>
-        public static Module FromFile(Stream stream)
+        public static Module FromStream(Stream stream)
         {
             // read bytes
             var bytes = new List<byte>();
@@ -101,10 +116,19 @@ namespace SpirvNet.Spirv
                 throw new FormatException("bytecount not divisible by 4 (" + bytes.Count + ")");
 
             // convert to uint
-            var code = new uint[buffer.Length / sizeof(uint)];
+            var bytearray = bytes.ToArray();
+            var code = new uint[bytes.Count / sizeof(uint)];
             for (var i = 0; i < code.Length; ++i)
-                code[i] = BitConverter.ToUInt32(buffer, i * 4);
+                code[i] = BitConverter.ToUInt32(bytearray, i * 4);
 
+            return FromCode(code);
+        }
+
+        /// <summary>
+        /// Creates a module from words
+        /// </summary>
+        public static Module FromCode(uint[] code)
+        {
             // verify
             if (code[0] != MagicNumber)
                 throw new FormatException("Magic number mismatch: " + code[0].ToString("X") + " vs " + MagicNumber.ToString("X"));
@@ -113,12 +137,13 @@ namespace SpirvNet.Spirv
             var mod = new Module
             {
                 VersionNumber = code[1],
-                Bound = code[2],
-                InstructionSchema = code[3]
+                Generator = code[2],
+                Bound = code[3],
+                InstructionSchema = code[4]
             };
 
             // read instructions
-            var ptr = 4;
+            var ptr = 5;
             while (ptr < code.Length)
             {
                 var instr = Instruction.Read(code, ref ptr);

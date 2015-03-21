@@ -27,10 +27,10 @@ namespace SpirvNet.Spirv.Ops.TypeDeclaration
         protected override void FromCode(uint[] codes, int start)
         {
             System.Diagnostics.Debug.Assert((codes[start] & 0x0000FFFF) == (uint)OpCode.TypePointer);
-            var i = 1;
-            Result = new ID(codes[start + i++]);
-            StorageClass = (StorageClass)codes[start + i++];
-            Type = new ID(codes[start + i++]);
+            var i = start + 1;
+            Result = new ID(codes[i++]);
+            StorageClass = (StorageClass)codes[i++];
+            Type = new ID(codes[i++]);
         }
 
         protected override void WriteCode(List<uint> code)

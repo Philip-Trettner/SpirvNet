@@ -30,12 +30,12 @@ namespace SpirvNet.Spirv.Ops.Texture
         protected override void FromCode(uint[] codes, int start)
         {
             System.Diagnostics.Debug.Assert((codes[start] & 0x0000FFFF) == (uint)OpCode.TextureGather);
-            var i = 1;
-            ResultType = new ID(codes[start + i++]);
-            Result = new ID(codes[start + i++]);
-            Sampler = new ID(codes[start + i++]);
-            Coordinate = new ID(codes[start + i++]);
-            Component = new ID(codes[start + i++]);
+            var i = start + 1;
+            ResultType = new ID(codes[i++]);
+            Result = new ID(codes[i++]);
+            Sampler = new ID(codes[i++]);
+            Coordinate = new ID(codes[i++]);
+            Component = new ID(codes[i++]);
         }
 
         protected override void WriteCode(List<uint> code)

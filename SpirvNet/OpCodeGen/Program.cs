@@ -393,7 +393,7 @@ namespace OpCodeGen
                 yield return string.Format("            System.Diagnostics.Debug.Assert((codes[start] & 0x0000FFFF) == (uint)OpCode.{0});", Name);
                 if (Fields.Length > 0)
                 {
-                    yield return "            var i = 1;";
+                    yield return "            var i = start + 1;";
                     foreach (var field in Fields)
                         foreach (var c in field.ReadCode(field.Name))
                             yield return "            " + c;
@@ -461,7 +461,7 @@ namespace OpCodeGen
             {
                 Type = "ID",
                 Name = name,
-                ReadCode = n => new[] { string.Format("{0} = new ID(codes[start + i++]);", n) },
+                ReadCode = n => new[] { string.Format("{0} = new ID(codes[i++]);", n) },
                 WriteCode = n => new[] { string.Format("code.Add({0}.Value);", n) }
             };
         }
@@ -474,10 +474,10 @@ namespace OpCodeGen
                 Name = name,
                 ReadCode = n => new[]
                 {
-                    "var length = WordCount - i;",
+                    "var length = WordCount - (i - start);",
                     string.Format("{0} = new ID[length];", n),
                     "for (var k = 0; k < length; ++k)",
-                    string.Format("    {0}[k] = new ID(codes[start + i++]);", n),
+                    string.Format("    {0}[k] = new ID(codes[i++]);", n),
                 },
                 WriteCode = n => new[]
                 {
@@ -495,8 +495,10 @@ namespace OpCodeGen
                 Name = name,
                 ReadCode = n => new[]
                 {
-                    "if (i < WordCount)",
-                    string.Format("    {0} = new ID(codes[start + i++]);", n)
+                    "if (i - start < WordCount)",
+                    string.Format("    {0} = new ID(codes[i++]);", n),
+                    "else",
+                    string.Format("    {0} = null;", n),
                 },
                 WriteCode = n => new[]
                 {
@@ -511,7 +513,7 @@ namespace OpCodeGen
             {
                 Type = "LiteralNumber",
                 Name = name,
-                ReadCode = n => new[] { string.Format("{0} = new LiteralNumber(codes[start + i++]);", n) },
+                ReadCode = n => new[] { string.Format("{0} = new LiteralNumber(codes[i++]);", n) },
                 WriteCode = n => new[] { string.Format("code.Add({0}.Value);", n) }
             };
         }
@@ -524,10 +526,10 @@ namespace OpCodeGen
                 Name = name,
                 ReadCode = n => new[]
                 {
-                    "var length = WordCount - i;",
+                    "var length = WordCount - (i - start);",
                     string.Format("{0} = new LiteralNumber[length];", n),
                     "for (var k = 0; k < length; ++k)",
-                    string.Format("    {0}[k] = new LiteralNumber(codes[start + i++]);", n),
+                    string.Format("    {0}[k] = new LiteralNumber(codes[i++]);", n),
                 },
                 WriteCode = n => new[]
                 {
@@ -556,12 +558,12 @@ namespace OpCodeGen
                 Name = name,
                 ReadCode = n => new[]
                 {
-                    "var length = (WordCount - i) / 2;",
+                    "var length = (WordCount - (i - start)) / 2;",
                     string.Format("{0} = new Pair<{1}, {2}>[length];", n, op1.Type, op2.Type),
                     "for (var k = 0; k < length; ++k)",
                     "    {",
-                    string.Format("        var f = new {0}(codes[start + i++]);", op1.Type),
-                    string.Format("        var s = new {0}(codes[start + i++]);", op2.Type),
+                    string.Format("        var f = new {0}(codes[i++]);", op1.Type),
+                    string.Format("        var s = new {0}(codes[i++]);", op2.Type),
                     string.Format("    {0}[k] = new Pair<{1}, {2}>(f, s);", n, op1.Type, op2.Type),
                     "    }",
                 },
@@ -584,7 +586,7 @@ namespace OpCodeGen
             {
                 Type = type,
                 Name = name,
-                ReadCode = n => new[] { string.Format("{0} = ({1})codes[start + i++];", n, type) },
+                ReadCode = n => new[] { string.Format("{0} = ({1})codes[i++];", n, type) },
                 WriteCode = n => new[] { string.Format("code.Add((uint){0});", n) }
             };
         }
@@ -598,10 +600,10 @@ namespace OpCodeGen
                 Name = name,
                 ReadCode = n => new[]
                 {
-                    "var length = WordCount - i;",
+                    "var length = WordCount - (i - start);",
                     string.Format("{0} = new {1}[length];", n, type),
                     "for (var k = 0; k < length; ++k)",
-                    string.Format("    {0}[k] = ({1})codes[start + i++];", n, type),
+                    string.Format("    {0}[k] = ({1})codes[i++];", n, type),
                 },
                 WriteCode = n => new[]
                 {

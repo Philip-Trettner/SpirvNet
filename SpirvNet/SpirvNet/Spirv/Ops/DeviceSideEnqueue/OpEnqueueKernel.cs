@@ -38,23 +38,23 @@ namespace SpirvNet.Spirv.Ops.DeviceSideEnqueue
         protected override void FromCode(uint[] codes, int start)
         {
             System.Diagnostics.Debug.Assert((codes[start] & 0x0000FFFF) == (uint)OpCode.EnqueueKernel);
-            var i = 1;
-            ResultType = new ID(codes[start + i++]);
-            Result = new ID(codes[start + i++]);
-            q = new ID(codes[start + i++]);
-            Flags = (KernelEnqueueFlags)codes[start + i++];
-            NDRange = new ID(codes[start + i++]);
-            NumEvents = new ID(codes[start + i++]);
-            WaitEvents = new ID(codes[start + i++]);
-            RetEvent = new ID(codes[start + i++]);
-            Invoke = new ID(codes[start + i++]);
-            Param = new ID(codes[start + i++]);
-            ParamSize = new ID(codes[start + i++]);
-            ParamAlign = new ID(codes[start + i++]);
-            var length = WordCount - i;
+            var i = start + 1;
+            ResultType = new ID(codes[i++]);
+            Result = new ID(codes[i++]);
+            q = new ID(codes[i++]);
+            Flags = (KernelEnqueueFlags)codes[i++];
+            NDRange = new ID(codes[i++]);
+            NumEvents = new ID(codes[i++]);
+            WaitEvents = new ID(codes[i++]);
+            RetEvent = new ID(codes[i++]);
+            Invoke = new ID(codes[i++]);
+            Param = new ID(codes[i++]);
+            ParamSize = new ID(codes[i++]);
+            ParamAlign = new ID(codes[i++]);
+            var length = WordCount - (i - start);
             LocalSize = new ID[length];
             for (var k = 0; k < length; ++k)
-                LocalSize[k] = new ID(codes[start + i++]);
+                LocalSize[k] = new ID(codes[i++]);
         }
 
         protected override void WriteCode(List<uint> code)

@@ -31,13 +31,13 @@ namespace SpirvNet.Spirv.Ops.Texture
         protected override void FromCode(uint[] codes, int start)
         {
             System.Diagnostics.Debug.Assert((codes[start] & 0x0000FFFF) == (uint)OpCode.TextureSampleProjLodOffset);
-            var i = 1;
-            ResultType = new ID(codes[start + i++]);
-            Result = new ID(codes[start + i++]);
-            Sampler = new ID(codes[start + i++]);
-            Coordinate = new ID(codes[start + i++]);
-            Lod = new ID(codes[start + i++]);
-            Offset = new ID(codes[start + i++]);
+            var i = start + 1;
+            ResultType = new ID(codes[i++]);
+            Result = new ID(codes[i++]);
+            Sampler = new ID(codes[i++]);
+            Coordinate = new ID(codes[i++]);
+            Lod = new ID(codes[i++]);
+            Offset = new ID(codes[i++]);
         }
 
         protected override void WriteCode(List<uint> code)

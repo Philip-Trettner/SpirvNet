@@ -28,14 +28,14 @@ namespace SpirvNet.Spirv.Ops.FlowControl
         protected override void FromCode(uint[] codes, int start)
         {
             System.Diagnostics.Debug.Assert((codes[start] & 0x0000FFFF) == (uint)OpCode.BranchConditional);
-            var i = 1;
-            Condition = new ID(codes[start + i++]);
-            TrueLabel = new ID(codes[start + i++]);
-            FalseLabel = new ID(codes[start + i++]);
-            var length = WordCount - i;
+            var i = start + 1;
+            Condition = new ID(codes[i++]);
+            TrueLabel = new ID(codes[i++]);
+            FalseLabel = new ID(codes[i++]);
+            var length = WordCount - (i - start);
             BranchWeights = new LiteralNumber[length];
             for (var k = 0; k < length; ++k)
-                BranchWeights[k] = new LiteralNumber(codes[start + i++]);
+                BranchWeights[k] = new LiteralNumber(codes[i++]);
         }
 
         protected override void WriteCode(List<uint> code)

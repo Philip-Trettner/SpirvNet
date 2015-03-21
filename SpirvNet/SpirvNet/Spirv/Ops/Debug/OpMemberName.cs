@@ -27,9 +27,9 @@ namespace SpirvNet.Spirv.Ops.Debug
         protected override void FromCode(uint[] codes, int start)
         {
             System.Diagnostics.Debug.Assert((codes[start] & 0x0000FFFF) == (uint)OpCode.MemberName);
-            var i = 1;
-            Target = new ID(codes[start + i++]);
-            Member = new LiteralNumber(codes[start + i++]);
+            var i = start + 1;
+            Target = new ID(codes[i++]);
+            Member = new LiteralNumber(codes[i++]);
             Name = LiteralString.FromCode(codes, ref i);
         }
 

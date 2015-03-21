@@ -31,13 +31,13 @@ namespace SpirvNet.Spirv.Ops.Pipe
         protected override void FromCode(uint[] codes, int start)
         {
             System.Diagnostics.Debug.Assert((codes[start] & 0x0000FFFF) == (uint)OpCode.ReservedReadPipe);
-            var i = 1;
-            ResultType = new ID(codes[start + i++]);
-            Result = new ID(codes[start + i++]);
-            P = new ID(codes[start + i++]);
-            ReserveId = new ID(codes[start + i++]);
-            Index = new ID(codes[start + i++]);
-            Ptr = new ID(codes[start + i++]);
+            var i = start + 1;
+            ResultType = new ID(codes[i++]);
+            Result = new ID(codes[i++]);
+            P = new ID(codes[i++]);
+            ReserveId = new ID(codes[i++]);
+            Index = new ID(codes[i++]);
+            Ptr = new ID(codes[i++]);
         }
 
         protected override void WriteCode(List<uint> code)

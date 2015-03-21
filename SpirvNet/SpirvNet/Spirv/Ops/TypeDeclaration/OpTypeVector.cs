@@ -27,10 +27,10 @@ namespace SpirvNet.Spirv.Ops.TypeDeclaration
         protected override void FromCode(uint[] codes, int start)
         {
             System.Diagnostics.Debug.Assert((codes[start] & 0x0000FFFF) == (uint)OpCode.TypeVector);
-            var i = 1;
-            Result = new ID(codes[start + i++]);
-            ComponentType = new ID(codes[start + i++]);
-            ComponentCount = new LiteralNumber(codes[start + i++]);
+            var i = start + 1;
+            Result = new ID(codes[i++]);
+            ComponentType = new ID(codes[i++]);
+            ComponentCount = new LiteralNumber(codes[i++]);
         }
 
         protected override void WriteCode(List<uint> code)

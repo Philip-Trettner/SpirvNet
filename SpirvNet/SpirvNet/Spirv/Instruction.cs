@@ -91,6 +91,15 @@ namespace SpirvNet.Spirv
             WordCount = (uint)(code.Count - cc);
             code[cc] = InstructionCode; // real val
         }
+        /// <summary>
+        /// Returns the word array for this op
+        /// </summary>
+        public uint[] Generate()
+        {
+            var code = new List<uint>();
+            Generate(code);
+            return code.ToArray();
+        }
 
         /// <summary>
         /// Calculates the highest used ID
@@ -175,6 +184,8 @@ namespace SpirvNet.Spirv
             var icode = codes[ptr];
             var opcode = (OpCode)(icode & 0x0000FFFF);
             var wc = icode >> 16;
+            if (wc <= 0)
+                throw new FormatException("WordCount may not be zero");
             if (ptr + wc > codes.Length)
                 throw new FormatException("End of codes");
 

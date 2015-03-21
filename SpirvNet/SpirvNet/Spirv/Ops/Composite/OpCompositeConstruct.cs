@@ -27,13 +27,13 @@ namespace SpirvNet.Spirv.Ops.Composite
         protected override void FromCode(uint[] codes, int start)
         {
             System.Diagnostics.Debug.Assert((codes[start] & 0x0000FFFF) == (uint)OpCode.CompositeConstruct);
-            var i = 1;
-            ResultType = new ID(codes[start + i++]);
-            Result = new ID(codes[start + i++]);
-            var length = WordCount - i;
+            var i = start + 1;
+            ResultType = new ID(codes[i++]);
+            Result = new ID(codes[i++]);
+            var length = WordCount - (i - start);
             Constituents = new ID[length];
             for (var k = 0; k < length; ++k)
-                Constituents[k] = new ID(codes[start + i++]);
+                Constituents[k] = new ID(codes[i++]);
         }
 
         protected override void WriteCode(List<uint> code)

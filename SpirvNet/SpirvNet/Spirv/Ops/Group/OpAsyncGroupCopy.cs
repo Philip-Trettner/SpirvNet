@@ -33,15 +33,15 @@ namespace SpirvNet.Spirv.Ops.Group
         protected override void FromCode(uint[] codes, int start)
         {
             System.Diagnostics.Debug.Assert((codes[start] & 0x0000FFFF) == (uint)OpCode.AsyncGroupCopy);
-            var i = 1;
-            ResultType = new ID(codes[start + i++]);
-            Result = new ID(codes[start + i++]);
-            Scope = (ExecutionScope)codes[start + i++];
-            Destination = new ID(codes[start + i++]);
-            Source = new ID(codes[start + i++]);
-            NumElements = new ID(codes[start + i++]);
-            Stride = new ID(codes[start + i++]);
-            Event = new ID(codes[start + i++]);
+            var i = start + 1;
+            ResultType = new ID(codes[i++]);
+            Result = new ID(codes[i++]);
+            Scope = (ExecutionScope)codes[i++];
+            Destination = new ID(codes[i++]);
+            Source = new ID(codes[i++]);
+            NumElements = new ID(codes[i++]);
+            Stride = new ID(codes[i++]);
+            Event = new ID(codes[i++]);
         }
 
         protected override void WriteCode(List<uint> code)

@@ -30,13 +30,8 @@ namespace SpirvNet.Spirv
             // encoding
             for (var i = 0; i + 4 <= bytes.Length; i += 4)
             {
-                var b0 = bytes[i + 0];
-                var b1 = bytes[i + 1];
-                var b2 = bytes[i + 2];
-                var b3 = bytes[i + 3];
+                var val = BitConverter.ToUInt32(bytes, i);
                 maxI = i + 4;
-
-                var val = (uint)(b0 + (b1 << 8) + (b2 << 16) + (b3 << 24));
                 code.Add(val);
             }
 
@@ -46,8 +41,9 @@ namespace SpirvNet.Spirv
                 var b1 = maxI + 1 >= bytes.Length ? (byte)0u : bytes[maxI + 1];
                 var b2 = maxI + 2 >= bytes.Length ? (byte)0u : bytes[maxI + 2];
                 var b3 = maxI + 3 >= bytes.Length ? (byte)0u : bytes[maxI + 3];
-
-                var val = (uint)(b0 + (b1 << 8) + (b2 << 16) + (b3 << 24));
+                var zb = new[] {b0, b1, b2, b3};
+                var val = BitConverter.ToUInt32(zb, 0);
+                
                 code.Add(val);
             }
         }

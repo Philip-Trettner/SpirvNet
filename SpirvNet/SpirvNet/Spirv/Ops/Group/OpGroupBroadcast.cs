@@ -30,12 +30,12 @@ namespace SpirvNet.Spirv.Ops.Group
         protected override void FromCode(uint[] codes, int start)
         {
             System.Diagnostics.Debug.Assert((codes[start] & 0x0000FFFF) == (uint)OpCode.GroupBroadcast);
-            var i = 1;
-            ResultType = new ID(codes[start + i++]);
-            Result = new ID(codes[start + i++]);
-            Scope = (ExecutionScope)codes[start + i++];
-            Value = new ID(codes[start + i++]);
-            LocalId = new ID(codes[start + i++]);
+            var i = start + 1;
+            ResultType = new ID(codes[i++]);
+            Result = new ID(codes[i++]);
+            Scope = (ExecutionScope)codes[i++];
+            Value = new ID(codes[i++]);
+            LocalId = new ID(codes[i++]);
         }
 
         protected override void WriteCode(List<uint> code)

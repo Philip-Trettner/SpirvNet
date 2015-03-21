@@ -167,6 +167,7 @@ namespace SpirvNet.DotNet
             yield return string.Format("Max Stack Size;{0}", body.MaxStackSize);
             yield return string.Format("Init Locals;{0}", body.InitLocals);
             yield return string.Format("Exception Handlers;{0}", body.ExceptionHandlers.Count);
+            yield return string.Format("This Parameter;{0}", body.ThisParameter);
             if (body.HasExceptionHandlers)
             {
                 yield return "";

@@ -132,7 +132,7 @@ namespace SpirvNet.Tests
             Assert.AreEqual("BranchingShader", def.Name);
 
             var cfg = new ControlFlowGraph(def);
-            Assert.Greater(cfg.Vertices.Count, 50);
+            Assert.Greater(cfg.Vertices.Count, 30);
 
             //File.WriteAllLines(@"C:\Temp\shadertestdump-branching.csv", CecilLoader.CsvDump(def));
             //File.WriteAllLines(@"C:\Temp\shadertestdump-branching.dot", cfg.DotFile);

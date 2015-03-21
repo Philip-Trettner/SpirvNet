@@ -28,14 +28,14 @@ namespace SpirvNet.Spirv.Ops.Memory
         protected override void FromCode(uint[] codes, int start)
         {
             System.Diagnostics.Debug.Assert((codes[start] & 0x0000FFFF) == (uint)OpCode.InBoundsAccessChain);
-            var i = 1;
-            ResultType = new ID(codes[start + i++]);
-            Result = new ID(codes[start + i++]);
-            Base = new ID(codes[start + i++]);
-            var length = WordCount - i;
+            var i = start + 1;
+            ResultType = new ID(codes[i++]);
+            Result = new ID(codes[i++]);
+            Base = new ID(codes[i++]);
+            var length = WordCount - (i - start);
             Indexes = new ID[length];
             for (var k = 0; k < length; ++k)
-                Indexes[k] = new ID(codes[start + i++]);
+                Indexes[k] = new ID(codes[i++]);
         }
 
         protected override void WriteCode(List<uint> code)

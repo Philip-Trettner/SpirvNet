@@ -29,12 +29,12 @@ namespace SpirvNet.Spirv.Ops.Memory
         protected override void FromCode(uint[] codes, int start)
         {
             System.Diagnostics.Debug.Assert((codes[start] & 0x0000FFFF) == (uint)OpCode.ImagePointer);
-            var i = 1;
-            ResultType = new ID(codes[start + i++]);
-            Result = new ID(codes[start + i++]);
-            Image = new ID(codes[start + i++]);
-            Coordinate = new ID(codes[start + i++]);
-            Sample = new ID(codes[start + i++]);
+            var i = start + 1;
+            ResultType = new ID(codes[i++]);
+            Result = new ID(codes[i++]);
+            Image = new ID(codes[i++]);
+            Coordinate = new ID(codes[i++]);
+            Sample = new ID(codes[i++]);
         }
 
         protected override void WriteCode(List<uint> code)

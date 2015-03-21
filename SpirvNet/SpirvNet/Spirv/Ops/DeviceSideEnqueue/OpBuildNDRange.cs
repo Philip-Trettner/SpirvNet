@@ -30,12 +30,12 @@ namespace SpirvNet.Spirv.Ops.DeviceSideEnqueue
         protected override void FromCode(uint[] codes, int start)
         {
             System.Diagnostics.Debug.Assert((codes[start] & 0x0000FFFF) == (uint)OpCode.BuildNDRange);
-            var i = 1;
-            ResultType = new ID(codes[start + i++]);
-            Result = new ID(codes[start + i++]);
-            GlobalWorkSize = new ID(codes[start + i++]);
-            LocalWorkSize = new ID(codes[start + i++]);
-            GlobalWorkOffset = new ID(codes[start + i++]);
+            var i = start + 1;
+            ResultType = new ID(codes[i++]);
+            Result = new ID(codes[i++]);
+            GlobalWorkSize = new ID(codes[i++]);
+            LocalWorkSize = new ID(codes[i++]);
+            GlobalWorkOffset = new ID(codes[i++]);
         }
 
         protected override void WriteCode(List<uint> code)

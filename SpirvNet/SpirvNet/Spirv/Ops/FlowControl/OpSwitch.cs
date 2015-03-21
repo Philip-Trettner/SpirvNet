@@ -27,15 +27,15 @@ namespace SpirvNet.Spirv.Ops.FlowControl
         protected override void FromCode(uint[] codes, int start)
         {
             System.Diagnostics.Debug.Assert((codes[start] & 0x0000FFFF) == (uint)OpCode.Switch);
-            var i = 1;
-            Selector = new ID(codes[start + i++]);
-            Default = new ID(codes[start + i++]);
-            var length = (WordCount - i) / 2;
+            var i = start + 1;
+            Selector = new ID(codes[i++]);
+            Default = new ID(codes[i++]);
+            var length = (WordCount - (i - start)) / 2;
             Target = new Pair<LiteralNumber, ID>[length];
             for (var k = 0; k < length; ++k)
                 {
-                    var f = new LiteralNumber(codes[start + i++]);
-                    var s = new ID(codes[start + i++]);
+                    var f = new LiteralNumber(codes[i++]);
+                    var s = new ID(codes[i++]);
                 Target[k] = new Pair<LiteralNumber, ID>(f, s);
                 }
         }

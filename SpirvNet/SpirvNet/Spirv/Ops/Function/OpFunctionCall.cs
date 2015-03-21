@@ -28,14 +28,14 @@ namespace SpirvNet.Spirv.Ops.Function
         protected override void FromCode(uint[] codes, int start)
         {
             System.Diagnostics.Debug.Assert((codes[start] & 0x0000FFFF) == (uint)OpCode.FunctionCall);
-            var i = 1;
-            ResultType = new ID(codes[start + i++]);
-            Result = new ID(codes[start + i++]);
-            Function = new ID(codes[start + i++]);
-            var length = WordCount - i;
+            var i = start + 1;
+            ResultType = new ID(codes[i++]);
+            Result = new ID(codes[i++]);
+            Function = new ID(codes[i++]);
+            var length = WordCount - (i - start);
             Arguments = new ID[length];
             for (var k = 0; k < length; ++k)
-                Arguments[k] = new ID(codes[start + i++]);
+                Arguments[k] = new ID(codes[i++]);
         }
 
         protected override void WriteCode(List<uint> code)

@@ -31,14 +31,14 @@ namespace SpirvNet.Spirv.Ops.TypeDeclaration
         protected override void FromCode(uint[] codes, int start)
         {
             System.Diagnostics.Debug.Assert((codes[start] & 0x0000FFFF) == (uint)OpCode.TypeSampler);
-            var i = 1;
-            Result = new ID(codes[start + i++]);
-            SampledType = new ID(codes[start + i++]);
-            Dim = (Dim)codes[start + i++];
-            Content = new LiteralNumber(codes[start + i++]);
-            Arrayed = new LiteralNumber(codes[start + i++]);
-            Compare = new LiteralNumber(codes[start + i++]);
-            MS = new LiteralNumber(codes[start + i++]);
+            var i = start + 1;
+            Result = new ID(codes[i++]);
+            SampledType = new ID(codes[i++]);
+            Dim = (Dim)codes[i++];
+            Content = new LiteralNumber(codes[i++]);
+            Arrayed = new LiteralNumber(codes[i++]);
+            Compare = new LiteralNumber(codes[i++]);
+            MS = new LiteralNumber(codes[i++]);
         }
 
         protected override void WriteCode(List<uint> code)

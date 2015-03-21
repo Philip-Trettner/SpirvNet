@@ -26,7 +26,7 @@ namespace SpirvNet.Spirv.Ops.ModeSetting
         protected override void FromCode(uint[] codes, int start)
         {
             System.Diagnostics.Debug.Assert((codes[start] & 0x0000FFFF) == (uint)OpCode.CompileFlag);
-            var i = 1;
+            var i = start + 1;
             Flag = LiteralString.FromCode(codes, ref i);
         }
 

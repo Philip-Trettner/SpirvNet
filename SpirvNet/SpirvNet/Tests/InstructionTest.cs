@@ -10,6 +10,7 @@ using SpirvNet.Spirv.Enums;
 using SpirvNet.Spirv.Ops;
 using SpirvNet.Spirv.Ops.Debug;
 using SpirvNet.Spirv.Ops.Misc;
+using SpirvNet.Spirv.Ops.ModeSetting;
 
 namespace SpirvNet.Tests
 {
@@ -113,7 +114,7 @@ namespace SpirvNet.Tests
             foreach (var op in ops.Values)
             {
                 var random = new Random(op.GetType().GetHashCode());
-                for (var _ = 0; _ < 20; ++_)
+                for (var _ = 0; _ < 50; ++_)
                 {
                     op.FillWithRandomValues(random);
 
@@ -129,8 +130,31 @@ namespace SpirvNet.Tests
                     for (var i = 0; i < code.Count; ++i)
                         Assert.AreEqual(code[i], code2[i]);
 
+                    // verify string
+                    Assert.AreEqual(op.ToString(), op2.ToString());
+
                     //Console.WriteLine("{0}: {1}", op, code.Select(u => u.ToString("X8")).Aggregate((s1, s2) => s1 + " " + s2));
                 }
+            }
+        }
+
+        [Test]
+        public void RandomCompilerFlag()
+        {
+            var r = new Random(123);
+            for (var _ = 0; _ < 10000; ++_)
+            {
+                var op = new OpCompileFlag();
+                op.FillWithRandomValues(r);
+
+                var code = op.Generate();
+
+                var op2 = Instruction.Read(code);
+                var code2 = op2.Generate();
+
+                Assert.AreEqual(code.Length, code2.Length);
+                for (var i = 0; i < code.Length; ++i)
+                    Assert.AreEqual(code[i], code2[i]);
             }
         }
     }

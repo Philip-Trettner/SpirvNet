@@ -29,15 +29,15 @@ namespace SpirvNet.Spirv.Ops.Composite
         protected override void FromCode(uint[] codes, int start)
         {
             System.Diagnostics.Debug.Assert((codes[start] & 0x0000FFFF) == (uint)OpCode.VectorShuffle);
-            var i = 1;
-            ResultType = new ID(codes[start + i++]);
-            Result = new ID(codes[start + i++]);
-            Vector1 = new ID(codes[start + i++]);
-            Vector2 = new ID(codes[start + i++]);
-            var length = WordCount - i;
+            var i = start + 1;
+            ResultType = new ID(codes[i++]);
+            Result = new ID(codes[i++]);
+            Vector1 = new ID(codes[i++]);
+            Vector2 = new ID(codes[i++]);
+            var length = WordCount - (i - start);
             Components = new LiteralNumber[length];
             for (var k = 0; k < length; ++k)
-                Components[k] = new LiteralNumber(codes[start + i++]);
+                Components[k] = new LiteralNumber(codes[i++]);
         }
 
         protected override void WriteCode(List<uint> code)

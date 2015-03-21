@@ -28,11 +28,11 @@ namespace SpirvNet.Spirv.Ops.Arithmetic
         protected override void FromCode(uint[] codes, int start)
         {
             System.Diagnostics.Debug.Assert((codes[start] & 0x0000FFFF) == (uint)OpCode.Dot);
-            var i = 1;
-            ResultType = new ID(codes[start + i++]);
-            Result = new ID(codes[start + i++]);
-            Vector1 = new ID(codes[start + i++]);
-            Vector2 = new ID(codes[start + i++]);
+            var i = start + 1;
+            ResultType = new ID(codes[i++]);
+            Result = new ID(codes[i++]);
+            Vector1 = new ID(codes[i++]);
+            Vector2 = new ID(codes[i++]);
         }
 
         protected override void WriteCode(List<uint> code)

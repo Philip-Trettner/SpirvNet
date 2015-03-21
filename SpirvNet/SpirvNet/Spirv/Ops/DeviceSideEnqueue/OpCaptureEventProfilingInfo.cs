@@ -28,10 +28,10 @@ namespace SpirvNet.Spirv.Ops.DeviceSideEnqueue
         protected override void FromCode(uint[] codes, int start)
         {
             System.Diagnostics.Debug.Assert((codes[start] & 0x0000FFFF) == (uint)OpCode.CaptureEventProfilingInfo);
-            var i = 1;
-            Event = new ID(codes[start + i++]);
-            Info = (KernelProfilingInfo)codes[start + i++];
-            Value = new ID(codes[start + i++]);
+            var i = start + 1;
+            Event = new ID(codes[i++]);
+            Info = (KernelProfilingInfo)codes[i++];
+            Value = new ID(codes[i++]);
         }
 
         protected override void WriteCode(List<uint> code)
