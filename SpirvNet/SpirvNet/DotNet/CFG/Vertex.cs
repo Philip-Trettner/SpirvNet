@@ -32,7 +32,10 @@ namespace SpirvNet.DotNet.CFG
         /// <summary>
         /// True iff vertex is branching
         /// </summary>
-        public bool IsBranching => Outgoing.Count > 1;
+        public bool IsBranching => IsUnconditionalBranch | IsConditionalBranch || IsSwitch;
+        public bool IsUnconditionalBranch { get; private set; }
+        public bool IsConditionalBranch { get; private set; }
+        public bool IsSwitch { get; private set; }
 
         /// <summary>
         /// If true, this vertex is target of a branch (and thus requires an OpLabel)
@@ -41,6 +44,10 @@ namespace SpirvNet.DotNet.CFG
 
         /// <summary>
         /// Outgoing vertices
+        /// Ordering is:
+        ///   Branch: [Target]
+        ///   BranchCond: [Next, Target]
+        ///   Switch: [Default, C1, C2, ...]
         /// </summary>
         public readonly List<Vertex> Outgoing = new List<Vertex>();
         /// <summary>
@@ -63,31 +70,77 @@ namespace SpirvNet.DotNet.CFG
             if (OpCode.FlowControl == FlowControl.Return)
                 return; // return has no outgoing
 
-            // next op
-            if (Instruction.Next != null &&
-                OpCode.FlowControl != FlowControl.Branch)
-            {
-                var nextIdx = cfg.OffsetToIndex[Instruction.Next.Offset];
-                ConnectTo(cfg.Vertices[nextIdx], false);
-            }
+            Instruction operand;
+            int nextIdx;
 
-            // branching
-            switch (OpCode.FlowControl)
+            switch (OpCode.Code)
             {
-                case FlowControl.Branch:
-                case FlowControl.Cond_Branch:
-                    var operand = Instruction.Operand as Instruction;
-                    if (operand != null)
-                        ConnectTo(cfg.Vertices[cfg.OffsetToIndex[operand.Offset]], true);
-                    else
-                    {
-                        var instructions = Instruction.Operand as Instruction[];
-                        if (instructions != null)
-                            foreach (var instruction in instructions)
-                                ConnectTo(cfg.Vertices[cfg.OffsetToIndex[instruction.Offset]], true);
-                        else
-                            throw new NotSupportedException("Unknown operand");
-                    }
+                // unconditional branches
+                case Code.Br:
+                case Code.Br_S:
+                    // taken
+                    operand = (Instruction)Instruction.Operand;
+                    ConnectTo(cfg.Vertices[cfg.OffsetToIndex[operand.Offset]], true);
+
+                    IsUnconditionalBranch = true;
+                    break;
+
+                // conditional branches
+                case Code.Brfalse:
+                case Code.Brfalse_S:
+                case Code.Brtrue:
+                case Code.Brtrue_S:
+                case Code.Beq_S:
+                case Code.Bge_S:
+                case Code.Bgt_S:
+                case Code.Ble_S:
+                case Code.Blt_S:
+                case Code.Bne_Un_S:
+                case Code.Bge_Un_S:
+                case Code.Bgt_Un_S:
+                case Code.Ble_Un_S:
+                case Code.Blt_Un_S:
+                case Code.Beq:
+                case Code.Bge:
+                case Code.Bgt:
+                case Code.Ble:
+                case Code.Blt:
+                case Code.Bne_Un:
+                case Code.Bge_Un:
+                case Code.Bgt_Un:
+                case Code.Ble_Un:
+                case Code.Blt_Un:
+                    // not taken
+                    nextIdx = cfg.OffsetToIndex[Instruction.Next.Offset];
+                    ConnectTo(cfg.Vertices[nextIdx], true);
+
+                    // taken
+                    operand = (Instruction)Instruction.Operand;
+                    ConnectTo(cfg.Vertices[cfg.OffsetToIndex[operand.Offset]], true);
+
+                    IsConditionalBranch = true;
+                    break;
+
+                // switch
+                case Code.Switch:
+                    // default
+                    nextIdx = cfg.OffsetToIndex[Instruction.Next.Offset];
+                    ConnectTo(cfg.Vertices[nextIdx], true);
+
+                    // cases
+                    var instructions = (Instruction[])Instruction.Operand;
+                    foreach (var instruction in instructions)
+                        ConnectTo(cfg.Vertices[cfg.OffsetToIndex[instruction.Offset]], true);
+                    break;
+
+                // not branching
+                default:
+                    if (OpCode.FlowControl == FlowControl.Branch ||
+                        OpCode.FlowControl == FlowControl.Cond_Branch)
+                        throw new InvalidOperationException("No branching here");
+
+                    nextIdx = cfg.OffsetToIndex[Instruction.Next.Offset];
+                    ConnectTo(cfg.Vertices[nextIdx], false);
                     break;
             }
         }

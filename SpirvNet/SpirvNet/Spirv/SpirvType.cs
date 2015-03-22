@@ -46,6 +46,8 @@ namespace SpirvNet.Spirv
 
         public bool IsVoid => TypeEnum == SpirvTypeEnum.Void;
 
+        public bool IsSigned => Signedness != 0;
+
         public bool IsBoolean => TypeEnum == SpirvTypeEnum.Boolean;
         public bool IsInteger => TypeEnum == SpirvTypeEnum.Integer;
         public bool IsFloating => TypeEnum == SpirvTypeEnum.Floating;

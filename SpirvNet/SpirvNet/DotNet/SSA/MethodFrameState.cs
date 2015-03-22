@@ -10,6 +10,7 @@ using SpirvNet.Spirv;
 using SpirvNet.Spirv.Ops.Arithmetic;
 using SpirvNet.Spirv.Ops.ConstantCreation;
 using SpirvNet.Spirv.Ops.FlowControl;
+using SpirvNet.Spirv.Ops.RelationalLogical;
 using Instruction = SpirvNet.Spirv.Instruction;
 
 namespace SpirvNet.DotNet.SSA
@@ -43,9 +44,17 @@ namespace SpirvNet.DotNet.SSA
         /// </summary>
         public readonly TypedLocation[] LocalVars;
         /// <summary>
+        /// Incoming Local var locations
+        /// </summary>
+        public readonly TypedLocation[] LocalVarsIncoming;
+        /// <summary>
         /// Stack locations
         /// </summary>
         public readonly TypedLocation[] StackLocations;
+        /// <summary>
+        /// Incoming stack
+        /// </summary>
+        public readonly TypedLocation[] StackLocationsIncoming;
 
         /// <summary>
         /// Creates a new typed loc
@@ -55,6 +64,10 @@ namespace SpirvNet.DotNet.SSA
         /// Creates a _new_ typed loc
         /// </summary>
         public TypedLocation CreateLocation(TypedLocation loc) => Frame.CreateLocation(loc.Type);
+        /// <summary>
+        /// Creates a new typed loc
+        /// </summary>
+        public TypedLocation CreateLocation(Type type) => Frame.CreateLocation(CreateType(type));
         /// <summary>
         /// Create a spirv type for a typed ref
         /// </summary>
@@ -79,6 +92,10 @@ namespace SpirvNet.DotNet.SSA
         /// Op block label
         /// </summary>
         public readonly OpLabel BlockLabel;
+        /// <summary>
+        /// ID of the block label (throws if non-block start)
+        /// </summary>
+        public ID BlockID => BlockLabel.Result;
 
         /// <summary>
         /// Position in stack (points to the first free pos)
@@ -97,17 +114,25 @@ namespace SpirvNet.DotNet.SSA
 
         private bool decoded = false; // true iff already decoded
 
+        /// <summary>
+        /// Returns the next (default for switch) state
+        /// </summary>
+        public MethodFrameState NextState => Outgoing.Count > 0 ? Outgoing[0] : null;
+        /// <summary>
+        /// Returns the target state for branches
+        /// </summary>
+        public MethodFrameState TargetState => Outgoing.Count > 1 ? Outgoing[1] : null;
+
+
         public MethodFrameState(Vertex vertex, MethodFrame frame)
         {
             Vertex = vertex;
             Frame = frame;
 
-            // create block label for branch targets
-            if (vertex.IsBranchTarget)
-                Instructions.Add(BlockLabel = new OpLabel { Result = Frame.Allocator.CreateID() });
-
             LocalVars = new TypedLocation[frame.VarCount];
+            LocalVarsIncoming = new TypedLocation[frame.VarCount];
             StackLocations = new TypedLocation[frame.StackSize];
+            StackLocationsIncoming = new TypedLocation[frame.StackSize];
 
             var cin = Vertex.Incoming.Count;
             var cout = Vertex.Outgoing.Count;
@@ -117,6 +142,10 @@ namespace SpirvNet.DotNet.SSA
             if (cin > 1) IsMergingFlow = true;
             if (cout > 1) IsDivergingFlow = true;
             if (cin <= 1 && cout <= 1) IsLinearFlow = true;
+
+            // create block label for branch targets
+            if (vertex.IsBranchTarget || IsEntryPoint)
+                Instructions.Add(BlockLabel = new OpLabel { Result = Frame.Allocator.CreateID() });
         }
 
         /// <summary>
@@ -138,7 +167,7 @@ namespace SpirvNet.DotNet.SSA
         {
             if (location == null)
                 throw new InvalidOperationException();
-            
+
             StackLocations[StackPosition] = location;
             ++StackPosition;
         }
@@ -157,6 +186,80 @@ namespace SpirvNet.DotNet.SSA
         }
 
         /// <summary>
+        /// Ensure type of local var
+        /// </summary>
+        private void EnsureLocalVarType(int loc)
+        {
+            var currLoc = LocalVars[loc];
+            var currType = currLoc.Type;
+            var targetType = Frame.LocalVarTypes[loc];
+
+            // requires conversion?
+            if (currType != targetType)
+            {
+                var res = CreateLocation(targetType);
+
+                if (targetType.IsBoolean)
+                {
+                    var constID = Frame.TypeBuilder.ConstantZero(currType);
+
+                    // convert to bool
+                    switch (currType.TypeEnum)
+                    {
+                        case SpirvTypeEnum.Integer:
+                            Instructions.Add(new OpINotEqual
+                            {
+                                Result = res.ID,
+                                ResultType = targetType.TypeID,
+                                Operand1 = currLoc.ID,
+                                Operand2 = constID
+                            });
+                            break;
+
+                        case SpirvTypeEnum.Floating:
+                            Instructions.Add(new OpFOrdNotEqual
+                            {
+                                Result = res.ID,
+                                ResultType = targetType.TypeID,
+                                Operand1 = currLoc.ID,
+                                Operand2 = constID
+                            });
+                            break;
+
+                        default:
+                            throw new NotSupportedException("type " + currType);
+                    }
+                }
+                else if (currType.IsBoolean)
+                {
+                    var zeroID = Frame.TypeBuilder.ConstantZero(currType);
+                    var oneID = Frame.TypeBuilder.ConstantUnit(currType);
+
+                    // convert from bool
+                    switch (targetType.TypeEnum)
+                    {
+                        case SpirvTypeEnum.Integer:
+                        case SpirvTypeEnum.Floating:
+                            Instructions.Add(new OpSelect
+                            {
+                                Condition = currLoc.ID,
+                                ResultType = targetType.TypeID,
+                                Object1 = oneID,
+                                Object2 = zeroID
+                            });
+                            break;
+
+                        default:
+                            throw new NotSupportedException("type " + currType);
+                    }
+                }
+                else throw new NotImplementedException("Type conversion from " + currType + " to " + targetType);
+
+                LocalVars[loc] = res;
+            }
+        }
+
+        /// <summary>
         /// Decode operation
         /// </summary>
         public void DecodeOp(MethodFrameState incomingState)
@@ -167,33 +270,40 @@ namespace SpirvNet.DotNet.SSA
             if (IsEntryPoint) // entry points take local vars from frame
             {
                 for (var i = 0; i < LocalVars.Length; ++i)
-                    LocalVars[i] = Frame.LocalVars[i];
+                    LocalVarsIncoming[i] = Frame.LocalVars[i];
             }
             else if (IsMergingFlow) // merging flow gets new locations
             {
                 for (var i = 0; i < LocalVars.Length; ++i)
-                    LocalVars[i] = CreateLocation(Frame.LocalVarTypes[i]);
+                    LocalVarsIncoming[i] = CreateLocation(Frame.LocalVarTypes[i]);
 
                 for (var i = 0; i < StackLocations.Length; ++i)
                     if (incomingState.StackLocations[i] != null)
-                        StackLocations[i] = CreateLocation(incomingState.StackLocations[i]);
+                        StackLocationsIncoming[i] = CreateLocation(incomingState.StackLocations[i]);
 
                 StackPosition = incomingState.StackPosition;
             }
             else // non-merging flow copies previous locations
             {
                 for (var i = 0; i < LocalVars.Length; ++i)
-                    LocalVars[i] = incomingState.LocalVars[i];
+                    LocalVarsIncoming[i] = incomingState.LocalVars[i];
                 for (var i = 0; i < StackLocations.Length; ++i)
-                    StackLocations[i] = incomingState.StackLocations[i];
+                    StackLocationsIncoming[i] = incomingState.StackLocations[i];
 
                 StackPosition = incomingState.StackPosition;
             }
 
+            // copy incoming stack, vars
+            for (var i = 0; i < StackLocations.Length; ++i)
+                StackLocations[i] = StackLocationsIncoming[i];
+            for (var i = 0; i < LocalVars.Length; ++i)
+                LocalVars[i] = LocalVarsIncoming[i];
+
             var opc = Vertex.OpCode;
             var ins = Vertex.Instruction;
 
-            TypedLocation loc, t1, t2;
+            TypedLocation loc, t1, t2, t, res, tmp;
+            ID tl, fl;
 
             switch (opc.Code)
             {
@@ -228,15 +338,19 @@ namespace SpirvNet.DotNet.SSA
 
                 case Code.Stloc_0:
                     LocalVars[0] = Pop();
+                    EnsureLocalVarType(0);
                     break;
                 case Code.Stloc_1:
                     LocalVars[1] = Pop();
+                    EnsureLocalVarType(1);
                     break;
                 case Code.Stloc_2:
                     LocalVars[2] = Pop();
+                    EnsureLocalVarType(2);
                     break;
                 case Code.Stloc_3:
                     LocalVars[3] = Pop();
+                    EnsureLocalVarType(3);
                     break;
 
                 case Code.Add:
@@ -244,7 +358,7 @@ namespace SpirvNet.DotNet.SSA
                     t2 = Pop();
                     if (t1.Type != t2.Type)
                         throw new NotSupportedException("incompatible types " + t1 + ", " + t2);
-                    var res = CreateLocation(t1.Type);
+                    res = CreateLocation(t1.Type);
                     Push(res);
                     if (t1.Type.IsInteger)
                         Instructions.Add(new OpIAdd { Operand1 = t1.ID, Operand2 = t2.ID, Result = res.ID, ResultType = res.Type.TypeID });
@@ -252,6 +366,108 @@ namespace SpirvNet.DotNet.SSA
                         Instructions.Add(new OpFAdd { Operand1 = t1.ID, Operand2 = t2.ID, Result = res.ID, ResultType = res.Type.TypeID });
                     else throw new NotSupportedException("Unsupported add: " + t1 + ", " + t2);
                     break;
+                case Code.Sub:
+                    t1 = Pop();
+                    t2 = Pop();
+                    if (t1.Type != t2.Type)
+                        throw new NotSupportedException("incompatible types " + t1 + ", " + t2);
+                    res = CreateLocation(t1.Type);
+                    Push(res);
+                    if (t1.Type.IsInteger)
+                        Instructions.Add(new OpISub { Operand1 = t1.ID, Operand2 = t2.ID, Result = res.ID, ResultType = res.Type.TypeID });
+                    else if (t1.Type.IsFloating)
+                        Instructions.Add(new OpFSub { Operand1 = t1.ID, Operand2 = t2.ID, Result = res.ID, ResultType = res.Type.TypeID });
+                    else throw new NotSupportedException("Unsupported sub: " + t1 + ", " + t2);
+                    break;
+                case Code.Mul:
+                    t1 = Pop();
+                    t2 = Pop();
+                    if (t1.Type != t2.Type)
+                        throw new NotSupportedException("incompatible types " + t1 + ", " + t2);
+                    res = CreateLocation(t1.Type);
+                    Push(res);
+                    if (t1.Type.IsInteger)
+                        Instructions.Add(new OpIMul { Operand1 = t1.ID, Operand2 = t2.ID, Result = res.ID, ResultType = res.Type.TypeID });
+                    else if (t1.Type.IsFloating)
+                        Instructions.Add(new OpFMul { Operand1 = t1.ID, Operand2 = t2.ID, Result = res.ID, ResultType = res.Type.TypeID });
+                    else throw new NotSupportedException("Unsupported mul: " + t1 + ", " + t2);
+                    break;
+                case Code.Div:
+                    t1 = Pop();
+                    t2 = Pop();
+                    if (t1.Type != t2.Type)
+                        throw new NotSupportedException("incompatible types " + t1 + ", " + t2);
+                    res = CreateLocation(t1.Type);
+                    Push(res);
+                    if (t1.Type.IsInteger)
+                        Instructions.Add(new OpSDiv { Operand1 = t1.ID, Operand2 = t2.ID, Result = res.ID, ResultType = res.Type.TypeID });
+                    else if (t1.Type.IsFloating)
+                        Instructions.Add(new OpFDiv { Operand1 = t1.ID, Operand2 = t2.ID, Result = res.ID, ResultType = res.Type.TypeID });
+                    else throw new NotSupportedException("Unsupported div: " + t1 + ", " + t2);
+                    break;
+                case Code.Div_Un:
+                    t1 = Pop();
+                    t2 = Pop();
+                    if (t1.Type != t2.Type)
+                        throw new NotSupportedException("incompatible types " + t1 + ", " + t2);
+                    res = CreateLocation(t1.Type);
+                    Push(res);
+                    if (t1.Type.IsInteger)
+                        Instructions.Add(new OpUDiv { Operand1 = t1.ID, Operand2 = t2.ID, Result = res.ID, ResultType = res.Type.TypeID });
+                    else throw new NotSupportedException("Unsupported unsigned div: " + t1 + ", " + t2);
+                    break;
+
+                case Code.Neg:
+                    t = Pop();
+                    res = CreateLocation(t.Type);
+                    Push(res);
+                    if (t.Type.IsInteger)
+                        Instructions.Add(new OpSNegate { Operand = t.ID, Result = res.ID, ResultType = res.Type.TypeID });
+                    else if (t.Type.IsFloating)
+                        Instructions.Add(new OpFNegate { Operand = t.ID, Result = res.ID, ResultType = res.Type.TypeID });
+                    else throw new NotSupportedException("Unsupported negate: " + t);
+                    break;
+                case Code.Not:
+                    t = Pop();
+                    res = CreateLocation(t.Type);
+                    Push(res);
+                    if (t.Type.IsInteger)
+                        Instructions.Add(new OpNot { Operand = t.ID, Result = res.ID, ResultType = res.Type.TypeID });
+                    else throw new NotSupportedException("Unsupported not: " + t);
+                    break;
+
+                case Code.Rem:
+                    t1 = Pop();
+                    t2 = Pop();
+                    if (t1.Type != t2.Type)
+                        throw new NotSupportedException("incompatible types " + t1 + ", " + t2);
+                    res = CreateLocation(t1.Type);
+                    Push(res);
+                    if (t1.Type.IsInteger && t1.Type.IsSigned)
+                        Instructions.Add(new OpSRem { Operand1 = t1.ID, Operand2 = t2.ID, Result = res.ID, ResultType = res.Type.TypeID });
+                    else if (t1.Type.IsFloating)
+                        Instructions.Add(new OpFRem { Operand1 = t1.ID, Operand2 = t2.ID, Result = res.ID, ResultType = res.Type.TypeID });
+                    else throw new NotSupportedException("Unsupported remainder: " + t1 + ", " + t2);
+                    break;
+                case Code.Rem_Un:
+                    t1 = Pop();
+                    t2 = Pop();
+                    if (t1.Type != t2.Type)
+                        throw new NotSupportedException("incompatible types " + t1 + ", " + t2);
+                    res = CreateLocation(t1.Type);
+                    Push(res);
+                    if (t1.Type.IsInteger && !t1.Type.IsSigned)
+                        Instructions.Add(new OpUMod { Operand1 = t1.ID, Operand2 = t2.ID, Result = res.ID, ResultType = res.Type.TypeID });
+                    else throw new NotSupportedException("Unsupported remainder: " + t1 + ", " + t2);
+                    break;
+
+                case Code.And:
+                case Code.Or:
+                case Code.Xor:
+                case Code.Shl:
+                case Code.Shr:
+                case Code.Shr_Un:
+                    throw new NotImplementedException("unsupported arithmetic op");
 
                 case Code.Ldc_I4:
                     loc = CreateLocation(CreateType(typeof(int)));
@@ -298,8 +514,31 @@ namespace SpirvNet.DotNet.SSA
                     Instructions.Add(new OpBranch { TargetLabel = Outgoing[0].BlockLabel.Result });
                     break;
 
+                case Code.Brfalse:
                 case Code.Brfalse_S:
+                case Code.Brtrue:
                 case Code.Brtrue_S:
+                    if (Outgoing.Count != 2)
+                        throw new InvalidOperationException("Conditional branch with other than two outgoing");
+
+                    if (opc.Code == Code.Brfalse || opc.Code == Code.Brfalse_S)
+                    {
+                        fl = TargetState.BlockID;
+                        tl = NextState.BlockID;
+                    }
+                    else
+                    {
+                        fl = NextState.BlockID;
+                        tl = TargetState.BlockID;
+                    }
+
+                    loc = Pop();
+                    if (loc.Type.IsBoolean)
+                        Instructions.Add(new OpBranchConditional { Condition = loc.ID, FalseLabel = fl, TrueLabel = tl });
+                    else
+                        throw new NotSupportedException("Condition of type " + loc.Type + " not supported");
+                    break;
+
                 case Code.Beq_S:
                 case Code.Bge_S:
                 case Code.Bgt_S:
@@ -310,8 +549,6 @@ namespace SpirvNet.DotNet.SSA
                 case Code.Bgt_Un_S:
                 case Code.Ble_Un_S:
                 case Code.Blt_Un_S:
-                case Code.Brfalse:
-                case Code.Brtrue:
                 case Code.Beq:
                 case Code.Bge:
                 case Code.Bgt:
@@ -322,7 +559,179 @@ namespace SpirvNet.DotNet.SSA
                 case Code.Bgt_Un:
                 case Code.Ble_Un:
                 case Code.Blt_Un:
-                    throw new NotImplementedException("Unimplemented branching op: " + opc.Code);
+                    t1 = Pop();
+                    t2 = Pop();
+                    if (t1.Type != t2.Type)
+                        throw new NotSupportedException("incompatible types " + t1 + ", " + t2);
+                    tmp = CreateLocation(typeof(bool));
+
+                    // comparison
+                    if (t1.Type.IsInteger)
+                        switch (opc.Code)
+                        {
+                            case Code.Beq:
+                            case Code.Beq_S:
+                                Instructions.Add(new OpIEqual { Result = tmp.ID, ResultType = tmp.Type.TypeID, Operand1 = t1.ID, Operand2 = t2.ID });
+                                break;
+                            case Code.Bne_Un:
+                            case Code.Bne_Un_S:
+                                Instructions.Add(new OpINotEqual { Result = tmp.ID, ResultType = tmp.Type.TypeID, Operand1 = t1.ID, Operand2 = t2.ID });
+                                break;
+                            case Code.Bgt:
+                            case Code.Bgt_Un:
+                            case Code.Bgt_S:
+                            case Code.Bgt_Un_S:
+                                if (t1.Type.IsSigned)
+                                    Instructions.Add(new OpSGreaterThan { Result = tmp.ID, ResultType = tmp.Type.TypeID, Operand1 = t1.ID, Operand2 = t2.ID });
+                                else Instructions.Add(new OpUGreaterThan { Result = tmp.ID, ResultType = tmp.Type.TypeID, Operand1 = t1.ID, Operand2 = t2.ID });
+                                break;
+                            case Code.Bge:
+                            case Code.Bge_Un:
+                            case Code.Bge_S:
+                            case Code.Bge_Un_S:
+                                if (t1.Type.IsSigned)
+                                    Instructions.Add(new OpSGreaterThanEqual { Result = tmp.ID, ResultType = tmp.Type.TypeID, Operand1 = t1.ID, Operand2 = t2.ID });
+                                else Instructions.Add(new OpUGreaterThanEqual { Result = tmp.ID, ResultType = tmp.Type.TypeID, Operand1 = t1.ID, Operand2 = t2.ID });
+                                break;
+                            case Code.Blt:
+                            case Code.Blt_Un:
+                            case Code.Blt_S:
+                            case Code.Blt_Un_S:
+                                if (t1.Type.IsSigned)
+                                    Instructions.Add(new OpSLessThan { Result = tmp.ID, ResultType = tmp.Type.TypeID, Operand1 = t1.ID, Operand2 = t2.ID });
+                                else Instructions.Add(new OpULessThan { Result = tmp.ID, ResultType = tmp.Type.TypeID, Operand1 = t1.ID, Operand2 = t2.ID });
+                                break;
+                            case Code.Ble:
+                            case Code.Ble_Un:
+                            case Code.Ble_S:
+                            case Code.Ble_Un_S:
+                                if (t1.Type.IsSigned)
+                                    Instructions.Add(new OpSLessThan { Result = tmp.ID, ResultType = tmp.Type.TypeID, Operand1 = t1.ID, Operand2 = t2.ID });
+                                else Instructions.Add(new OpULessThan { Result = tmp.ID, ResultType = tmp.Type.TypeID, Operand1 = t1.ID, Operand2 = t2.ID });
+                                break;
+                            default:
+                                throw new NotImplementedException();
+                        }
+                    else if (t1.Type.IsFloating)
+                        switch (opc.Code)
+                        {
+                            case Code.Beq:
+                            case Code.Beq_S:
+                                Instructions.Add(new OpFOrdEqual { Result = tmp.ID, ResultType = tmp.Type.TypeID, Operand1 = t1.ID, Operand2 = t2.ID });
+                                break;
+                            case Code.Bne_Un:
+                            case Code.Bne_Un_S:
+                                Instructions.Add(new OpFUnordNotEqual { Result = tmp.ID, ResultType = tmp.Type.TypeID, Operand1 = t1.ID, Operand2 = t2.ID });
+                                break;
+                            case Code.Bgt:
+                            case Code.Bgt_S:
+                                Instructions.Add(new OpFOrdGreaterThan { Result = tmp.ID, ResultType = tmp.Type.TypeID, Operand1 = t1.ID, Operand2 = t2.ID });
+                                break;
+                            case Code.Bgt_Un:
+                            case Code.Bgt_Un_S:
+                                Instructions.Add(new OpFUnordGreaterThan { Result = tmp.ID, ResultType = tmp.Type.TypeID, Operand1 = t1.ID, Operand2 = t2.ID });
+                                break;
+                            case Code.Bge:
+                            case Code.Bge_S:
+                                Instructions.Add(new OpFOrdGreaterThanEqual { Result = tmp.ID, ResultType = tmp.Type.TypeID, Operand1 = t1.ID, Operand2 = t2.ID });
+                                break;
+                            case Code.Bge_Un:
+                            case Code.Bge_Un_S:
+                                Instructions.Add(new OpFUnordGreaterThanEqual { Result = tmp.ID, ResultType = tmp.Type.TypeID, Operand1 = t1.ID, Operand2 = t2.ID });
+                                break;
+                            case Code.Blt:
+                            case Code.Blt_S:
+                                Instructions.Add(new OpFOrdLessThan { Result = tmp.ID, ResultType = tmp.Type.TypeID, Operand1 = t1.ID, Operand2 = t2.ID });
+                                break;
+                            case Code.Blt_Un:
+                            case Code.Blt_Un_S:
+                                Instructions.Add(new OpFUnordLessThan { Result = tmp.ID, ResultType = tmp.Type.TypeID, Operand1 = t1.ID, Operand2 = t2.ID });
+                                break;
+                            case Code.Ble:
+                            case Code.Ble_S:
+                                Instructions.Add(new OpFOrdLessThanEqual { Result = tmp.ID, ResultType = tmp.Type.TypeID, Operand1 = t1.ID, Operand2 = t2.ID });
+                                break;
+                            case Code.Ble_Un:
+                            case Code.Ble_Un_S:
+                                Instructions.Add(new OpFUnordLessThanEqual { Result = tmp.ID, ResultType = tmp.Type.TypeID, Operand1 = t1.ID, Operand2 = t2.ID });
+                                break;
+                            default:
+                                throw new NotImplementedException();
+                        }
+                    else throw new NotSupportedException("Unsupported comparison: " + t1 + ", " + t2);
+
+                    // branch
+                    Instructions.Add(new OpBranchConditional { Condition = tmp.ID, FalseLabel = NextState.BlockID, TrueLabel = TargetState.BlockID });
+                    break;
+
+                case Code.Ceq:
+                case Code.Cgt:
+                case Code.Cgt_Un:
+                case Code.Clt:
+                case Code.Clt_Un:
+                    t1 = Pop();
+                    t2 = Pop();
+                    if (t1.Type != t2.Type)
+                        throw new NotSupportedException("incompatible types " + t1 + ", " + t2);
+                    tmp = CreateLocation(typeof(bool));
+                    res = CreateLocation(typeof(int));
+
+                    // comparison
+                    if (t1.Type.IsInteger)
+                        switch (opc.Code)
+                        {
+                            case Code.Ceq:
+                                Instructions.Add(new OpIEqual { Result = tmp.ID, ResultType = tmp.Type.TypeID, Operand1 = t1.ID, Operand2 = t2.ID });
+                                break;
+                            case Code.Cgt:
+                            case Code.Cgt_Un:
+                                if (t1.Type.IsSigned)
+                                    Instructions.Add(new OpSGreaterThan { Result = tmp.ID, ResultType = tmp.Type.TypeID, Operand1 = t1.ID, Operand2 = t2.ID });
+                                else Instructions.Add(new OpUGreaterThan { Result = tmp.ID, ResultType = tmp.Type.TypeID, Operand1 = t1.ID, Operand2 = t2.ID });
+                                break;
+                            case Code.Clt:
+                            case Code.Clt_Un:
+                                if (t1.Type.IsSigned)
+                                    Instructions.Add(new OpSLessThan { Result = tmp.ID, ResultType = tmp.Type.TypeID, Operand1 = t1.ID, Operand2 = t2.ID });
+                                else Instructions.Add(new OpULessThan { Result = tmp.ID, ResultType = tmp.Type.TypeID, Operand1 = t1.ID, Operand2 = t2.ID });
+                                break;
+                            default:
+                                throw new ArgumentOutOfRangeException();
+                        }
+                    else if (t1.Type.IsFloating)
+                        switch (opc.Code)
+                        {
+                            case Code.Ceq:
+                                Instructions.Add(new OpFOrdEqual { Result = tmp.ID, ResultType = tmp.Type.TypeID, Operand1 = t1.ID, Operand2 = t2.ID });
+                                break;
+                            case Code.Cgt:
+                                Instructions.Add(new OpFOrdGreaterThan { Result = tmp.ID, ResultType = tmp.Type.TypeID, Operand1 = t1.ID, Operand2 = t2.ID });
+                                break;
+                            case Code.Cgt_Un:
+                                Instructions.Add(new OpFUnordGreaterThan { Result = tmp.ID, ResultType = tmp.Type.TypeID, Operand1 = t1.ID, Operand2 = t2.ID });
+                                break;
+                            case Code.Clt:
+                                Instructions.Add(new OpFOrdLessThan { Result = tmp.ID, ResultType = tmp.Type.TypeID, Operand1 = t1.ID, Operand2 = t2.ID });
+                                break;
+                            case Code.Clt_Un:
+                                Instructions.Add(new OpFUnordLessThan { Result = tmp.ID, ResultType = tmp.Type.TypeID, Operand1 = t1.ID, Operand2 = t2.ID });
+                                break;
+                            default:
+                                throw new ArgumentOutOfRangeException();
+                        }
+                    else throw new NotSupportedException("Unsupported comparison: " + t1 + ", " + t2);
+
+                    // conversion
+                    Instructions.Add(new OpSelect
+                    {
+                        Condition = tmp.ID,
+                        Result = res.ID,
+                        ResultType = res.Type.TypeID,
+                        Object1 = Frame.TypeBuilder.ConstantInt32(1),
+                        Object2 = Frame.TypeBuilder.ConstantInt32(0),
+                    });
+                    Push(res);
+                    break;
 
                 case Code.Ldarg_S:
                 case Code.Ldarga_S:
@@ -367,20 +776,6 @@ namespace SpirvNet.DotNet.SSA
                 case Code.Stind_I8:
                 case Code.Stind_R4:
                 case Code.Stind_R8:
-                case Code.Sub:
-                case Code.Mul:
-                case Code.Div:
-                case Code.Div_Un:
-                case Code.Rem:
-                case Code.Rem_Un:
-                case Code.And:
-                case Code.Or:
-                case Code.Xor:
-                case Code.Shl:
-                case Code.Shr:
-                case Code.Shr_Un:
-                case Code.Neg:
-                case Code.Not:
                 case Code.Conv_I1:
                 case Code.Conv_I2:
                 case Code.Conv_I4:
@@ -470,11 +865,6 @@ namespace SpirvNet.DotNet.SSA
                 case Code.Stind_I:
                 case Code.Conv_U:
                 case Code.Arglist:
-                case Code.Ceq:
-                case Code.Cgt:
-                case Code.Cgt_Un:
-                case Code.Clt:
-                case Code.Clt_Un:
                 case Code.Ldftn:
                 case Code.Ldvirtftn:
                 case Code.Ldarg:
@@ -514,18 +904,28 @@ namespace SpirvNet.DotNet.SSA
         /// </summary>
         public void CreatePhis()
         {
-            if (IsMergingFlow)
-                for (var i = 0; i < StackLocations.Length; ++i)
-                    if (StackLocations[i] != null)
+            if (!decoded)
+                throw new InvalidOperationException("Unreachable state");
+
+            for (var i = 0; i < StackLocationsIncoming.Length; ++i)
+                if (StackLocationsIncoming[i] != null &&
+                    Incoming.Any(s => s.StackLocations[i].ID.Value != StackLocationsIncoming[i].ID.Value))
+                    Instructions.Add(new OpPhi
                     {
-                        var op = new OpPhi
-                        {
-                            Result = StackLocations[i].ID,
-                            ResultType = StackLocations[i].Type.TypeID,
-                            IDs = Incoming.Select(s => s.StackLocations[i].ID).ToArray()
-                        };
-                        Instructions.Add(op);
-                    }
+                        Result = StackLocationsIncoming[i].ID,
+                        ResultType = StackLocationsIncoming[i].Type.TypeID,
+                        IDs = Incoming.Select(s => s.StackLocations[i].ID).ToArray()
+                    });
+
+            for (var i = 0; i < Frame.VarCount; ++i)
+                if (LocalVarsIncoming[i] != null &&
+                    Incoming.Any(s => s.LocalVars[i].ID.Value != LocalVarsIncoming[i].ID.Value))
+                    Instructions.Add(new OpPhi
+                    {
+                        Result = LocalVarsIncoming[i].ID,
+                        ResultType = LocalVarsIncoming[i].Type.TypeID,
+                        IDs = Incoming.Select(s => s.LocalVars[i].ID).ToArray()
+                    });
         }
 
         /// <summary>
@@ -534,6 +934,49 @@ namespace SpirvNet.DotNet.SSA
         public IEnumerable<Instruction> CreateOps()
         {
             return Instructions;
+        }
+
+        public IEnumerable<string> DotLines
+        {
+            get
+            {
+                var name = "{" + Vertex.ToString();
+                if (Frame.VarCount > 0)
+                {
+                    name += "|{{";
+                    name += Frame.VarCount.ForUpTo(i => "Var_" + i).Aggregate((s1, s2) => s1 + "|" + s2);
+                    name += "}|{";
+                    name += Frame.VarCount.ForUpTo(i => LocalVars[i]?.ID.ToString()).Aggregate((s1, s2) => s1 + "|" + s2);
+                    name += "}|{";
+                    name += Frame.VarCount.ForUpTo(i => LocalVars[i]?.Type.ToString()).Aggregate((s1, s2) => s1 + "|" + s2);
+                    name += "}}";
+                }
+                if (StackPosition > 0)
+                {
+                    name += "|{{";
+                    name += StackPosition.ForUpTo(i => "Stack_" + i).Aggregate((s1, s2) => s1 + "|" + s2);
+                    name += "}|{";
+                    name += StackPosition.ForUpTo(i => StackLocations[i].ID.ToString()).Aggregate((s1, s2) => s1 + "|" + s2);
+                    name += "}|{";
+                    name += StackPosition.ForUpTo(i => StackLocations[i].Type.ToString()).Aggregate((s1, s2) => s1 + "|" + s2);
+                    name += "}}";
+                }
+                foreach (var instruction in Instructions)
+                    name += "|" + instruction;
+                name += "}";
+
+                var attr = new List<string>
+                {
+                    string.Format("label=\"{0}\"", name),
+                    "shape=record"
+                };
+
+
+                yield return string.Format("v{0} [{1}];", Vertex.Index, attr.Aggregate((s1, s2) => s1 + "," + s2));
+
+                foreach (var v in Outgoing)
+                    yield return string.Format("v{0} -> v{1};", Vertex.Index, v.Vertex.Index);
+            }
         }
     }
 }

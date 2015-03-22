@@ -19,6 +19,22 @@ namespace SpirvNet.Tests
         {
             return a + b + 1;
         }
+        public float SimpleBranch(float a, float b)
+        {
+            if (a < b)
+                return a + 1;
+            else
+                return b - a;
+        }
+        public float SimpleMod(float a, float b)
+        {
+            int i = (int)a;
+            uint u = (uint)b;
+            i = i % 5;
+            u = u % 17;
+            a = b % a;
+            return i + a + u;
+        }
 
         [Test]
         public void SimpleAddTest()
@@ -39,12 +55,46 @@ namespace SpirvNet.Tests
             var mod = modbuilder.CreateModule();
 
             Assert.Greater(mod.Instructions.Count, 10);
-            
+
             //foreach (var line in CecilLoader.CsvDump(def))
             //    Console.WriteLine(line);
             //File.WriteAllLines(@"C:\Temp\simpleadd.dot", cfg.DotFile);
             //File.WriteAllLines(@"C:\Temp\simpleadd.csv", CecilLoader.CsvDump(def));
             //File.WriteAllLines(@"C:\Temp\simpleadd.spirv.csv", mod.CSVDump());
+        }
+
+        [Test]
+        public void SimpleBranchTest()
+        {
+            var def = CecilLoader.DefinitionFor(this, "SimpleBranch");
+            Assert.AreEqual("SimpleBranch", def.Name);
+
+            var cfg = new ControlFlowGraph(def);
+
+            var modbuilder = new ModuleBuilder();
+            modbuilder.CreateFunction(def);
+            var mod = modbuilder.CreateModule();
+
+            var allocator = new IDAllocator();
+            var typeBuilder = new TypeBuilder(allocator);
+            var frame = new MethodFrame(cfg, typeBuilder, allocator);
+
+            //File.WriteAllLines(@"C:\Temp\simplebranch.dot", cfg.DotFile);
+            //File.WriteAllLines(@"C:\Temp\simplebranch.frame.dot", frame.DotFile);
+            //File.WriteAllLines(@"C:\Temp\simplebranch.csv", CecilLoader.CsvDump(def));
+            //File.WriteAllLines(@"C:\Temp\simplebranch.spirv.csv", mod.CSVDump());
+        }
+
+        [Test]
+        public void SimpleModTest()
+        {
+            var def = CecilLoader.DefinitionFor(this, "SimpleMod");
+            Assert.AreEqual("SimpleMod", def.Name);
+
+            var cfg = new ControlFlowGraph(def);
+
+            //File.WriteAllLines(@"C:\Temp\SimpleMod.dot", cfg.DotFile);
+            //File.WriteAllLines(@"C:\Temp\SimpleMod.csv", CecilLoader.CsvDump(def));
         }
 
         [Test]

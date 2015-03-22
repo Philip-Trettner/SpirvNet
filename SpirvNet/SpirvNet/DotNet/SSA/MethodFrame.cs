@@ -174,5 +174,17 @@ namespace SpirvNet.DotNet.SSA
                 foreach (var op in state.CreateOps())
                     builder.AddOp(op);
         }
+
+        public IEnumerable<string> DotFile
+        {
+            get
+            {
+                yield return "digraph MethodFrame {";
+                foreach (var v in States)
+                    foreach (var line in v.DotLines)
+                        yield return "  " + line;
+                yield return "}";
+            }
+        }
     }
 }

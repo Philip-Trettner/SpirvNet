@@ -8,6 +8,7 @@ using SpirvNet.DotNet.CFG;
 using SpirvNet.DotNet.SSA;
 using SpirvNet.Spirv.Enums;
 using SpirvNet.Spirv.Ops.Annotation;
+using SpirvNet.Spirv.Ops.ConstantCreation;
 using SpirvNet.Spirv.Ops.Debug;
 using SpirvNet.Spirv.Ops.Extension;
 using SpirvNet.Spirv.Ops.ModeSetting;
@@ -73,6 +74,7 @@ namespace SpirvNet.Spirv
 
         // types
         private readonly List<TypeDeclarationInstruction> types = new List<TypeDeclarationInstruction>();
+        private readonly List<ConstantCreationInstruction> constants = new List<ConstantCreationInstruction>();
 
         // functions
         private readonly List<FunctionBuilder> functions = new List<FunctionBuilder>();
@@ -196,6 +198,10 @@ namespace SpirvNet.Spirv
         /// Adds a new type
         /// </summary>
         public void AddType(TypeDeclarationInstruction type) => types.Add(type);
+        /// <summary>
+        /// Adds a new constant
+        /// </summary>
+        public void AddConstant(ConstantCreationInstruction constant) => constants.Add(constant);
 
         /// <summary>
         /// Adds a function (builder)
@@ -232,6 +238,10 @@ namespace SpirvNet.Spirv
                 // register types
                 foreach (var type in TypeBuilder.CreateTypeOps())
                     AddType(type);
+
+                // register constants
+                foreach (var constant in TypeBuilder.Constants)
+                    AddConstant(constant);
 
                 // register function types
                 foreach (var func in functions)
@@ -271,6 +281,8 @@ namespace SpirvNet.Spirv
 
             // types
             mod.Instructions.AddRange(types);
+            // constants
+            mod.Instructions.AddRange(constants);
 
             // functions
             foreach (var func in functions)
