@@ -90,8 +90,7 @@ namespace SpirvNet.Spirv
         public IEnumerable<string> CSVDump()
         {
             // get op word counts
-            foreach (var op in Instructions)
-                op.Generate();
+            GenerateBytecode();
 
             yield return string.Format("Magic Number;{0:X8}", MagicNumber);
             yield return string.Format("Version Number;{0}", VersionNumber);

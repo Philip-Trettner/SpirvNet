@@ -21,7 +21,7 @@ namespace OpCodeGen
             yield return Op("Source", Typed("SourceLanguage"), Nr("Version"));
             yield return Op("SourceExtension", Str("Extension"));
             yield return Op("Name", Id("Target"), Str("Name"));
-            yield return Op("MemberName", Id("Target"), Nr("Member"), Str("Name"));
+            yield return Op("MemberName", Id("Type"), Nr("Member"), Str("Name"));
             yield return Op("String", Id("Result"), Str("Name"));
             yield return Op("Line", Id("Target"), Id("File"), Nr("Line"), Nr("Column"));
 
@@ -57,7 +57,7 @@ namespace OpCodeGen
             yield return Op("TypeStruct", Id("Result"), IdArray("MemberTypes"));
             yield return Op("TypeOpaque", Id("Result"), Str("OpaqueType")).Compat("Kernel");
             yield return Op("TypePointer", Id("Result"), Typed("StorageClass"), Id("Type"));
-            yield return Op("TypeFunction", Id("Result"), Id("ReturnType"), IdArray("FunctionTypes"));
+            yield return Op("TypeFunction", Id("Result"), Id("ReturnType"), IdArray("ParameterTypes"));
             yield return Op("TypeEvent", Id("Result")).Compat("Kernel");
             yield return Op("TypeDeviceEvent", Id("Result")).Compat("Kernel");
             yield return Op("TypeReserveId", Id("Result")).Compat("Kernel");

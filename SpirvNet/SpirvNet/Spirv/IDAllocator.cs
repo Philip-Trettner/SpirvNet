@@ -9,7 +9,7 @@ namespace SpirvNet.Spirv
     /// <summary>
     /// SSA ID allocator
     /// </summary>
-    class IDAllocator
+    public class IDAllocator
     {
         /// <summary>
         /// Next usable ID

@@ -1,14 +1,16 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Mono.Cecil;
 using SpirvNet.DotNet;
+using SpirvNet.Spirv.Ops.TypeDeclaration;
 
 namespace SpirvNet.Spirv
 {
     /// <summary>
     /// A builder for types
     /// </summary>
-    class TypeBuilder
+    public class TypeBuilder
     {
         /// <summary>
         /// ID allocator
@@ -24,7 +26,7 @@ namespace SpirvNet.Spirv
         /// Type to type ref mapping
         /// </summary>
         private readonly Dictionary<Type, TypeReference> typeToRef = new Dictionary<Type, TypeReference>();
-
+ 
         public TypeBuilder(IDAllocator allocator)
         {
             this.allocator = allocator;
@@ -52,6 +54,15 @@ namespace SpirvNet.Spirv
 
             typeToRef.Add(type, CecilLoader.TypeReferenceFor(type));
             return Create(typeToRef[type]);
+        }
+
+        /// <summary>
+        /// Creates all type operations
+        /// </summary>
+        public IEnumerable<TypeDeclarationInstruction> CreateTypeOps()
+        {
+            foreach (var type in cilToSpirv.Values)
+                yield return type.CreateOp();
         }
     }
 }

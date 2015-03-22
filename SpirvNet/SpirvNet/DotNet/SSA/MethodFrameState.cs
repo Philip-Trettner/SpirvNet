@@ -10,6 +10,7 @@ using SpirvNet.Spirv;
 using SpirvNet.Spirv.Ops.Arithmetic;
 using SpirvNet.Spirv.Ops.ConstantCreation;
 using SpirvNet.Spirv.Ops.FlowControl;
+using Instruction = SpirvNet.Spirv.Instruction;
 
 namespace SpirvNet.DotNet.SSA
 {
@@ -528,7 +529,26 @@ namespace SpirvNet.DotNet.SSA
         /// </summary>
         public void CreatePhis()
         {
-            // TODO
+            if (IsMergingFlow)
+                for (var i = 0; i < StackLocations.Length; ++i)
+                    if (StackLocations[i] != null)
+                    {
+                        var op = new OpPhi
+                        {
+                            Result = StackLocations[i].ID,
+                            ResultType = StackLocations[i].Type.TypeID,
+                            IDs = Incoming.Select(s => s.StackLocations[i].ID).ToArray()
+                        };
+                        Instructions.Add(op);
+                    }
+        }
+
+        /// <summary>
+        /// Create all ops
+        /// </summary>
+        public IEnumerable<Instruction> CreateOps()
+        {
+            return Instructions;
         }
     }
 }

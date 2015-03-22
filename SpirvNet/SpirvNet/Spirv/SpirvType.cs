@@ -1,12 +1,13 @@
 ﻿using System;
 using Mono.Cecil;
+using SpirvNet.Spirv.Ops.TypeDeclaration;
 
 namespace SpirvNet.Spirv
 {
     /// <summary>
     /// A SPIR-V type
     /// </summary>
-    class SpirvType
+    public class SpirvType
     {
         /// <summary>
         /// ID of the type
@@ -26,17 +27,17 @@ namespace SpirvNet.Spirv
         /// <summary>
         /// Numerical bit width (true iff IsNumerical)
         /// </summary>
-        public readonly int BitWidth;
+        public readonly uint BitWidth;
 
         /// <summary>
         /// Signedness of integer type
         /// </summary>
-        public readonly int Signedness;
+        public readonly uint Signedness;
 
         /// <summary>
         /// Number of vector, matrix, array elements
         /// </summary>
-        public readonly int ElementCount;
+        public readonly uint ElementCount;
 
         /// <summary>
         /// Homogeneous element type (array or vector or matrix)
@@ -72,7 +73,7 @@ namespace SpirvNet.Spirv
                 case "System.Boolean":
                     TypeEnum = SpirvTypeEnum.Boolean;
                     return;
-                    
+
                 case "System.Int32":
                     TypeEnum = SpirvTypeEnum.Integer;
                     BitWidth = 32;
@@ -173,6 +174,23 @@ namespace SpirvNet.Spirv
                 case SpirvTypeEnum.Matrix: return "mat" + ElementCount + "(" + ElementType + ")";
                 case SpirvTypeEnum.Array: return "array" + ElementCount + "(" + ElementType + ")";
                 case SpirvTypeEnum.Structure: return "struct{TODO}";
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        public TypeDeclarationInstruction CreateOp()
+        {
+            switch (TypeEnum)
+            {
+                case SpirvTypeEnum.Void: return new OpTypeVoid { Result = TypeID };
+                case SpirvTypeEnum.Boolean: return new OpTypeBool { Result = TypeID };
+                case SpirvTypeEnum.Integer: return new OpTypeInt { Result = TypeID, Signedness = { Value = Signedness }, Width = { Value = BitWidth } };
+                case SpirvTypeEnum.Floating: return new OpTypeFloat { Result = TypeID, Width = { Value = BitWidth } };
+                case SpirvTypeEnum.Vector: return new OpTypeVector { Result = TypeID, ComponentType = ElementType.TypeID, ComponentCount = { Value = ElementCount } };
+                case SpirvTypeEnum.Matrix: return new OpTypeMatrix { Result = TypeID, ColumnType = ElementType.TypeID, ColumnCount = { Value = ElementCount } };
+                case SpirvTypeEnum.Array: throw new NotImplementedException("Array length is by-ID");
+                case SpirvTypeEnum.Structure: throw new NotImplementedException();
                 default:
                     throw new ArgumentOutOfRangeException();
             }

@@ -1,10 +1,14 @@
-﻿namespace SpirvNet.Spirv.Enums
+﻿using System;
+
+namespace SpirvNet.Spirv.Enums
 {
     /// <summary>
     /// Used by OpFunction.
     /// </summary>
+    [Flags]
     public enum FunctionControlMask
     {
+        None = 0,
         /// <summary>
         /// Strong request, to the extent possible, to inline the function
         /// </summary>

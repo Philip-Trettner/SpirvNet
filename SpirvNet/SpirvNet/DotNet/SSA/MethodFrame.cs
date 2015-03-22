@@ -3,8 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Mono.Cecil;
 using SpirvNet.DotNet.CFG;
 using SpirvNet.Spirv;
+using SpirvNet.Spirv.Enums;
+using SpirvNet.Spirv.Ops.Function;
 
 namespace SpirvNet.DotNet.SSA
 {
@@ -69,6 +72,11 @@ namespace SpirvNet.DotNet.SSA
         public readonly bool HasThis;
 
         /// <summary>
+        /// Method info
+        /// </summary>
+        public readonly MethodDefinition Method;
+
+        /// <summary>
         /// Creates a new SSA location
         /// </summary>
         public TypedLocation CreateLocation(SpirvType type)
@@ -94,11 +102,12 @@ namespace SpirvNet.DotNet.SSA
             CFG = cfg;
             TypeBuilder = typeBuilder;
             Allocator = allocator;
-            ArgCount = cfg.Method.Parameters.Count;
-            VarCount = cfg.Method.Body.Variables.Count;
-            StackSize = cfg.Method.Body.MaxStackSize;
-            InitLocalVars = cfg.Method.Body.InitLocals;
-            HasThis = cfg.Method.HasThis;
+            Method = cfg.Method;
+            ArgCount = Method.Parameters.Count;
+            VarCount = Method.Body.Variables.Count;
+            StackSize = Method.Body.MaxStackSize;
+            InitLocalVars = Method.Body.InitLocals;
+            HasThis = Method.HasThis;
 
             if (HasThis) ++ArgCount; // zero is this
 
@@ -108,10 +117,15 @@ namespace SpirvNet.DotNet.SSA
             for (var i = 0; i < ArgCount; ++i)
             {
                 var pi = !HasThis ? i : i - 1;
-                var argType = i == 0 && HasThis ?
-                    TypeBuilder.Create(typeof(void)) :
-                    TypeBuilder.Create(cfg.Method.Parameters[pi].ParameterType);
-                ArgLocations[i] = CreateLocation(argType);
+                if (i == 0 && HasThis)
+                {
+                    // no-op (this not really supported)
+                }
+                else
+                {
+                    var argType = TypeBuilder.Create(cfg.Method.Parameters[pi].ParameterType);
+                    ArgLocations[i] = CreateLocation(argType);
+                }
             }
 
             // init local var
@@ -134,6 +148,31 @@ namespace SpirvNet.DotNet.SSA
             // finally, phis
             foreach (var state in States)
                 state.CreatePhis();
+        }
+
+        /// <summary>
+        /// Builds this method into a function
+        /// </summary>
+        public void Build(FunctionBuilder builder)
+        {
+            // register parameters
+            for (var i = 0; i < Method.Parameters.Count; ++i)
+            {
+                var para = Method.Parameters[i];
+                var name = para.Name;
+                var argloc = ArgLocations[HasThis ? i + 1 : i];
+
+                builder.AddParameter(new OpFunctionParameter { Result = argloc.ID, ResultType = argloc.Type.TypeID }, name);
+            }
+
+            // setup function
+            var returnType = TypeBuilder.Create(Method.ReturnType);
+            builder.SetupFunction(returnType.TypeID, Allocator);
+
+            // add code
+            foreach (var state in States)
+                foreach (var op in state.CreateOps())
+                    builder.AddOp(op);
         }
     }
 }

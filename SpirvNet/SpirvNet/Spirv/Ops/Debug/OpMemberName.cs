@@ -17,25 +17,25 @@ namespace SpirvNet.Spirv.Ops.Debug
         public override bool IsDebug => true;
         public override OpCode OpCode => OpCode.MemberName;
 
-        public ID Target;
+        public ID Type;
         public LiteralNumber Member;
         public LiteralString Name;
 
         #region Code
-        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(Target) + ", " + StrOf(Member) + ", " + StrOf(Name) + ")";
+        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(Type) + ", " + StrOf(Member) + ", " + StrOf(Name) + ")";
 
         protected override void FromCode(uint[] codes, int start)
         {
             System.Diagnostics.Debug.Assert((codes[start] & 0x0000FFFF) == (uint)OpCode.MemberName);
             var i = start + 1;
-            Target = new ID(codes[i++]);
+            Type = new ID(codes[i++]);
             Member = new LiteralNumber(codes[i++]);
             Name = LiteralString.FromCode(codes, ref i);
         }
 
         protected override void WriteCode(List<uint> code)
         {
-            code.Add(Target.Value);
+            code.Add(Type.Value);
             code.Add(Member.Value);
             Name.WriteCode(code);
         }
@@ -44,7 +44,7 @@ namespace SpirvNet.Spirv.Ops.Debug
         {
             get
             {
-                yield return Target;
+                yield return Type;
             }
         }
         #endregion

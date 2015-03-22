@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Mono.Cecil;
+using SpirvNet.DotNet.CFG;
+using SpirvNet.DotNet.SSA;
 using SpirvNet.Spirv.Enums;
 using SpirvNet.Spirv.Ops.Annotation;
 using SpirvNet.Spirv.Ops.Debug;
@@ -74,14 +77,120 @@ namespace SpirvNet.Spirv
         // functions
         private readonly List<FunctionBuilder> functions = new List<FunctionBuilder>();
 
+        /// <summary>
+        /// ID Allocator
+        /// </summary>
+        public readonly IDAllocator Allocator = new IDAllocator();
+        /// <summary>
+        /// Type Builder
+        /// </summary>
+        public readonly TypeBuilder TypeBuilder;
+
         public ModuleBuilder(AddressingModel addressingModel = AddressingModel.Logical, MemoryModel memoryModel = MemoryModel.Simple)
         {
+            TypeBuilder = new TypeBuilder(Allocator);
+
             opMemoryModel = new OpMemoryModel
             {
                 AddressingModel = addressingModel,
                 MemoryModel = memoryModel
             };
         }
+
+        /// <summary>
+        /// Sets the source language and version
+        /// </summary>
+        public void SetSource(SourceLanguage language, uint version)
+            => opSource = new OpSource { SourceLanguage = language, Version = { Value = version } };
+
+        /// <summary>
+        /// Adds a source extension
+        /// </summary>
+        public void AddSourceExtension(string extension)
+            => opSourceExtensions.Add(new OpSourceExtension { Extension = { Value = extension } });
+
+        /// <summary>
+        /// Adds a compile flag
+        /// </summary>
+        public void AddCompileFlag(string flag)
+            => opCompileFlags.Add(new OpCompileFlag { Flag = { Value = flag } });
+
+        /// <summary>
+        /// Adds an extension
+        /// </summary>
+        public void AddExtension(string extension)
+            => opExtensions.Add(new OpExtension { Name = { Value = extension } });
+
+        /// <summary>
+        /// Adds an import with a name and a given id
+        /// </summary>
+        public void AddImport(ID resultID, string name)
+            => opImports.Add(new OpExtInstImport { Result = resultID, Name = { Value = name } });
+
+        /// <summary>
+        /// Adds an import with a name
+        /// Creates a new ID and returns it
+        /// </summary>
+        public ID AddImport(string name)
+        {
+            var id = Allocator.CreateID();
+            AddImport(id, name);
+            return id;
+        }
+
+        /// <summary>
+        /// Adds a string with a given id
+        /// </summary>
+        public void AddString(ID resultID, string name)
+            => opStrings.Add(new OpString
+            {
+                Result = resultID,
+                Name = { Value = name }
+            });
+
+        /// <summary>
+        /// Adds a string
+        /// Creates a new ID and returns it
+        /// </summary>
+        public ID AddString(string name)
+        {
+            var id = Allocator.CreateID();
+            AddString(id, name);
+            return id;
+        }
+
+        /// <summary>
+        /// Adds a name  with a given id
+        /// </summary>
+        public void AddName(ID resultID, string name)
+            => opNames.Add(new OpName
+            {
+                Target = resultID,
+                Name = { Value = name }
+            });
+
+        /// <summary>
+        /// Adds a member name for a given type
+        /// </summary>
+        public void AddMemberName(ID typeID, uint member, string name)
+            => opMemberNames.Add(new OpMemberName
+            {
+                Type = typeID,
+                Member = { Value = member },
+                Name = { Value = name }
+            });
+
+        /// <summary>
+        /// Adds a line debug info
+        /// </summary>
+        public void AddLine(ID targetID, ID fileID, uint line, uint column)
+            => opLines.Add(new OpLine
+            {
+                Target = targetID,
+                File = fileID,
+                Line = { Value = line },
+                Column = { Value = column }
+            });
 
         /// <summary>
         /// Adds a new type
@@ -95,11 +204,44 @@ namespace SpirvNet.Spirv
         public void AddFunction(FunctionBuilder function) => functions.Add(function);
 
         /// <summary>
+        /// Adds a decoration
+        /// </summary>
+        public void AddDecoration(AnnotationInstruction op) => decorations.Add(op);
+
+        /// <summary>
+        /// Creates a function from a C# function
+        /// </summary>
+        public FunctionBuilder CreateFunction(MethodDefinition method)
+        {
+            var cfg = new ControlFlowGraph(method);
+            var builder = new FunctionBuilder(method.FullName);
+            var frame = new MethodFrame(cfg, TypeBuilder, Allocator);
+            frame.Build(builder);
+            functions.Add(builder);
+            return builder;
+        }
+
+        /// <summary>
         /// Creates the model
         /// (Instructions are shared, so do not reuse them)
         /// </summary>
         public Module CreateModule()
         {
+            // last-minute creations
+            {
+                // register types
+                foreach (var type in TypeBuilder.CreateTypeOps())
+                    AddType(type);
+
+                // register function types
+                foreach (var func in functions)
+                    AddType(func.FunctionType);
+
+                // register function names
+                foreach (var func in functions)
+                    opNames.AddRange(func.AdditionalNames);
+            }
+
             var mod = new Module();
 
             // optional header
