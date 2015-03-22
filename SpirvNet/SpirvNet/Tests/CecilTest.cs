@@ -42,9 +42,9 @@ namespace SpirvNet.Tests
             
             //foreach (var line in CecilLoader.CsvDump(def))
             //    Console.WriteLine(line);
-            File.WriteAllLines(@"C:\Temp\simpleadd.dot", cfg.DotFile);
-            File.WriteAllLines(@"C:\Temp\simpleadd.csv", CecilLoader.CsvDump(def));
-            File.WriteAllLines(@"C:\Temp\simpleadd.spirv.csv", mod.CSVDump());
+            //File.WriteAllLines(@"C:\Temp\simpleadd.dot", cfg.DotFile);
+            //File.WriteAllLines(@"C:\Temp\simpleadd.csv", CecilLoader.CsvDump(def));
+            //File.WriteAllLines(@"C:\Temp\simpleadd.spirv.csv", mod.CSVDump());
         }
 
         [Test]
