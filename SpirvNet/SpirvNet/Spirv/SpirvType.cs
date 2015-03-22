@@ -1,0 +1,181 @@
+﻿using System;
+using Mono.Cecil;
+
+namespace SpirvNet.Spirv
+{
+    /// <summary>
+    /// A SPIR-V type
+    /// </summary>
+    class SpirvType
+    {
+        /// <summary>
+        /// ID of the type
+        /// </summary>
+        public ID TypeID { get; set; }
+
+        /// <summary>
+        /// Represented type
+        /// </summary>
+        public readonly TypeReference RepresentedType;
+
+        /// <summary>
+        /// Type enum
+        /// </summary>
+        public readonly SpirvTypeEnum TypeEnum;
+
+        /// <summary>
+        /// Numerical bit width (true iff IsNumerical)
+        /// </summary>
+        public readonly int BitWidth;
+
+        /// <summary>
+        /// Signedness of integer type
+        /// </summary>
+        public readonly int Signedness;
+
+        /// <summary>
+        /// Number of vector, matrix, array elements
+        /// </summary>
+        public readonly int ElementCount;
+
+        /// <summary>
+        /// Homogeneous element type (array or vector or matrix)
+        /// </summary>
+        public readonly SpirvType ElementType;
+
+        public bool IsVoid => TypeEnum == SpirvTypeEnum.Void;
+
+        public bool IsBoolean => TypeEnum == SpirvTypeEnum.Boolean;
+        public bool IsInteger => TypeEnum == SpirvTypeEnum.Integer;
+        public bool IsFloating => TypeEnum == SpirvTypeEnum.Floating;
+        public bool IsNumerical => IsInteger || IsFloating;
+
+        public bool IsVector => TypeEnum == SpirvTypeEnum.Vector;
+        public bool IsMatrix => TypeEnum == SpirvTypeEnum.Matrix;
+        public bool IsArray => TypeEnum == SpirvTypeEnum.Array;
+        public bool IsStructure => TypeEnum == SpirvTypeEnum.Structure;
+
+        public bool IsAggregate => IsStructure || IsArray;
+        public bool IsComposite => IsAggregate || IsMatrix || IsVector;
+
+        public SpirvType(TypeReference representedType, TypeBuilder builder, IDAllocator allocator)
+        {
+            RepresentedType = representedType;
+            TypeID = allocator.CreateID();
+
+            switch (representedType.FullName)
+            {
+                case "System.Void":
+                    TypeEnum = SpirvTypeEnum.Void;
+                    return;
+
+                case "System.Boolean":
+                    TypeEnum = SpirvTypeEnum.Boolean;
+                    return;
+                    
+                case "System.Int32":
+                    TypeEnum = SpirvTypeEnum.Integer;
+                    BitWidth = 32;
+                    Signedness = 1;
+                    return;
+                case "System.UInt32":
+                    TypeEnum = SpirvTypeEnum.Integer;
+                    BitWidth = 32;
+                    Signedness = 0;
+                    return;
+                case "System.Int64":
+                    TypeEnum = SpirvTypeEnum.Integer;
+                    BitWidth = 64;
+                    Signedness = 1;
+                    return;
+                case "System.UInt64":
+                    TypeEnum = SpirvTypeEnum.Integer;
+                    BitWidth = 64;
+                    Signedness = 0;
+                    return;
+
+                case "System.Single":
+                    TypeEnum = SpirvTypeEnum.Floating;
+                    BitWidth = 32;
+                    return;
+                case "System.Double":
+                    TypeEnum = SpirvTypeEnum.Floating;
+                    BitWidth = 64;
+                    return;
+            }
+
+            switch (representedType.MetadataType)
+            {
+                case MetadataType.Void:
+                    TypeEnum = SpirvTypeEnum.Void;
+                    break;
+
+                case MetadataType.Boolean:
+                    TypeEnum = SpirvTypeEnum.Boolean;
+                    break;
+
+                case MetadataType.Int32:
+                    TypeEnum = SpirvTypeEnum.Integer;
+                    BitWidth = 32;
+                    Signedness = 1;
+                    break;
+                case MetadataType.UInt32:
+                    TypeEnum = SpirvTypeEnum.Integer;
+                    BitWidth = 32;
+                    Signedness = 0;
+                    break;
+                case MetadataType.Int64:
+                    TypeEnum = SpirvTypeEnum.Integer;
+                    BitWidth = 64;
+                    Signedness = 1;
+                    break;
+                case MetadataType.UInt64:
+                    TypeEnum = SpirvTypeEnum.Integer;
+                    BitWidth = 64;
+                    Signedness = 0;
+                    break;
+
+                case MetadataType.Single:
+                    TypeEnum = SpirvTypeEnum.Floating;
+                    BitWidth = 32;
+                    break;
+                case MetadataType.Double:
+                    TypeEnum = SpirvTypeEnum.Floating;
+                    BitWidth = 64;
+                    break;
+
+                case MetadataType.Array:
+                    TypeEnum = SpirvTypeEnum.Array;
+                    ElementType = builder.Create(representedType.GetElementType());
+                    // TODO: Fixed size vs. dynamic size
+                    break;
+
+                case MetadataType.ValueType:
+                    throw new NotImplementedException("Structs, vectors, matrices not implemented");
+
+                case MetadataType.Class:
+                    throw new NotSupportedException("Reference Type not supported: " + representedType);
+
+                default:
+                    throw new NotSupportedException("Type not supported: " + representedType);
+            }
+        }
+
+        public override string ToString()
+        {
+            switch (TypeEnum)
+            {
+                case SpirvTypeEnum.Void: return "void";
+                case SpirvTypeEnum.Boolean: return "bool";
+                case SpirvTypeEnum.Integer: return (Signedness == 0 ? "u" : "") + "int" + BitWidth;
+                case SpirvTypeEnum.Floating: return "float" + BitWidth;
+                case SpirvTypeEnum.Vector: return "vec" + ElementCount + "(" + ElementType + ")";
+                case SpirvTypeEnum.Matrix: return "mat" + ElementCount + "(" + ElementType + ")";
+                case SpirvTypeEnum.Array: return "array" + ElementCount + "(" + ElementType + ")";
+                case SpirvTypeEnum.Structure: return "struct{TODO}";
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+    }
+}

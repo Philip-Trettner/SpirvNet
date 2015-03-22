@@ -35,6 +35,11 @@ namespace SpirvNet.DotNet.CFG
         public bool IsBranching => Outgoing.Count > 1;
 
         /// <summary>
+        /// If true, this vertex is target of a branch (and thus requires an OpLabel)
+        /// </summary>
+        public bool IsBranchTarget { get; private set; }
+
+        /// <summary>
         /// Outgoing vertices
         /// </summary>
         public readonly List<Vertex> Outgoing = new List<Vertex>();
@@ -63,7 +68,7 @@ namespace SpirvNet.DotNet.CFG
                 OpCode.FlowControl != FlowControl.Branch)
             {
                 var nextIdx = cfg.OffsetToIndex[Instruction.Next.Offset];
-                ConnectTo(cfg.Vertices[nextIdx]);
+                ConnectTo(cfg.Vertices[nextIdx], false);
             }
 
             // branching
@@ -73,13 +78,13 @@ namespace SpirvNet.DotNet.CFG
                 case FlowControl.Cond_Branch:
                     var operand = Instruction.Operand as Instruction;
                     if (operand != null)
-                        ConnectTo(cfg.Vertices[cfg.OffsetToIndex[operand.Offset]]);
+                        ConnectTo(cfg.Vertices[cfg.OffsetToIndex[operand.Offset]], true);
                     else
                     {
                         var instructions = Instruction.Operand as Instruction[];
                         if (instructions != null)
                             foreach (var instruction in instructions)
-                                ConnectTo(cfg.Vertices[cfg.OffsetToIndex[instruction.Offset]]);
+                                ConnectTo(cfg.Vertices[cfg.OffsetToIndex[instruction.Offset]], true);
                         else
                             throw new NotSupportedException("Unknown operand");
                     }
@@ -87,8 +92,11 @@ namespace SpirvNet.DotNet.CFG
             }
         }
 
-        private void ConnectTo(Vertex v)
+        private void ConnectTo(Vertex v, bool branchTarget)
         {
+            if (branchTarget)
+                v.IsBranchTarget = true;
+
             v.Incoming.Add(this);
             this.Outgoing.Add(v);
         }

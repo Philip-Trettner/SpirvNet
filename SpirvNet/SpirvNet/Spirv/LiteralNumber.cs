@@ -19,6 +19,26 @@ namespace SpirvNet.Spirv
             Value = val;
         }
 
+        public LiteralNumber(byte[] val, int start)
+        {
+            Value = BitConverter.ToUInt32(val, start);
+        }
+
+        public static LiteralNumber[] ArrayFor(byte[] vals)
+        {
+            var nrs = new LiteralNumber[vals.Length / 4];
+            for (var i = 0; i < vals.Length; i += 4)
+                nrs[i / 4] = new LiteralNumber(vals, i);
+            return nrs;
+        }
+
+        public static LiteralNumber[] ArrayFor(int val) => ArrayFor(BitConverter.GetBytes(val));
+        public static LiteralNumber[] ArrayFor(uint val) => ArrayFor(BitConverter.GetBytes(val));
+        public static LiteralNumber[] ArrayFor(float val) => ArrayFor(BitConverter.GetBytes(val));
+        public static LiteralNumber[] ArrayFor(long val) => ArrayFor(BitConverter.GetBytes(val));
+        public static LiteralNumber[] ArrayFor(ulong val) => ArrayFor(BitConverter.GetBytes(val));
+        public static LiteralNumber[] ArrayFor(double val) => ArrayFor(BitConverter.GetBytes(val));
+
         public override string ToString() => Value.ToString();
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using SpirvNet.Spirv;
 
 namespace SpirvNet.DotNet.SSA
 {
@@ -19,12 +20,12 @@ namespace SpirvNet.DotNet.SSA
         /// <summary>
         /// SSA ID
         /// </summary>
-        public readonly uint ID;
+        public ID ID { get; set; }
 
-        public TypedLocation(SpirvType type, uint id)
+        public TypedLocation(SpirvType type, IDAllocator allocator)
         {
             Type = type;
-            ID = id;
+            ID = allocator.CreateID();
         }
     }
 }

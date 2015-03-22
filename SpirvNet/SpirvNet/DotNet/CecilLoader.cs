@@ -133,7 +133,7 @@ namespace SpirvNet.DotNet
             var paratypename = method.GetParameters().Select(p => p.ParameterType.FullName.CecilFullType()).ToArray();
             var defs = DefinitionFor(type?.Assembly);
             var tfullname = type?.FullName.CecilFullType();
-            
+
             foreach (var def in defs)
                 foreach (var module in def.Modules)
                     foreach (var func in module.GetType(tfullname)?.Methods ?? new Collection<MethodDefinition>())
@@ -144,6 +144,38 @@ namespace SpirvNet.DotNet
 
             throw new KeyNotFoundException("Could not locate " + method.Name);
         }
+
+        /// <summary>
+        /// Returns the type ref for a given type
+        /// </summary>
+        public static TypeReference TypeReferenceFor(Type type)
+        {
+            var defs = DefinitionFor(type.Assembly);
+            var tfullname = type.FullName.CecilFullType();
+
+            foreach (var def in defs)
+                foreach (var module in def.Modules)
+                {
+                    var tref = module.GetType(tfullname);
+                    if (tref != null)
+                        return tref;
+                }
+
+            throw new KeyNotFoundException("Could not locate " + type);
+        }
+
+        /// <summary>
+        /// Returns the definition for a given method
+        /// (Searches through the type and should therefore not be used often)
+        /// </summary>
+        public static MethodDefinition DefinitionFor(Type type, string name) => DefinitionFor(type.GetMethod(name));
+
+
+        /// <summary>
+        /// Returns the definition for a given method
+        /// (Searches through the type and should therefore not be used often)
+        /// </summary>
+        public static MethodDefinition DefinitionFor(object obj, string name) => DefinitionFor(obj.GetType().GetMethod(name));
 
         /// <summary>
         /// Returns the definition for a given method
@@ -168,6 +200,16 @@ namespace SpirvNet.DotNet
             yield return string.Format("Init Locals;{0}", body.InitLocals);
             yield return string.Format("Exception Handlers;{0}", body.ExceptionHandlers.Count);
             yield return string.Format("This Parameter;{0}", body.ThisParameter);
+
+            if (method.Parameters.Count > 0)
+            {
+                yield return "";
+                yield return "Parameters";
+                yield return "Index;Name;Type";
+                foreach (var p in method.Parameters)
+                    yield return string.Format("{0};{1};{2}", p.Index, p.Name, p.ParameterType);
+            }
+
             if (body.HasExceptionHandlers)
             {
                 yield return "";
@@ -176,6 +218,7 @@ namespace SpirvNet.DotNet
                 foreach (var h in body.ExceptionHandlers)
                     yield return string.Format("{0};{1};{2};{3};{4};{5};{6}", h.CatchType, h.FilterStart, h.HandlerType, h.HandlerStart, h.HandlerEnd, h.TryStart, h.TryEnd);
             }
+
             if (body.HasVariables)
             {
                 yield return "";

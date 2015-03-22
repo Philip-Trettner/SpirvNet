@@ -43,7 +43,7 @@ namespace SpirvNet.Spirv
 
         /// <summary>
         /// If non-null, this the result ID of the op
-        /// </summary>
+        /// </summary>Var
         public virtual ID? ResultID => null;
         /// <summary>
         /// If non-null, this the result type ID of the op

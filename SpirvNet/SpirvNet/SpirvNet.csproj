@@ -63,8 +63,9 @@
     <Compile Include="DotNet\SSA\MethodFrame.cs" />
     <Compile Include="DotNet\SSA\MethodFrameState.cs" />
     <Compile Include="DotNet\SSA\PhiFunction.cs" />
-    <Compile Include="DotNet\SSA\SpirvType.cs" />
-    <Compile Include="DotNet\SSA\TypeBuilder.cs" />
+    <Compile Include="Spirv\IDAllocator.cs" />
+    <Compile Include="Spirv\SpirvType.cs" />
+    <Compile Include="Spirv\TypeBuilder.cs" />
     <Compile Include="DotNet\SSA\TypedLocation.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="Spirv\BlockBuilder.cs" />
@@ -392,6 +393,7 @@
     <Compile Include="Spirv\Ops\TypeDeclaration\OpTypeVoid.cs" />
     <Compile Include="Spirv\Ops\TypeDeclaration\TypeDeclarationInstruction.cs" />
     <Compile Include="Spirv\Pair.cs" />
+    <Compile Include="Spirv\SpirvTypeEnum.cs" />
     <Compile Include="Spirv\UniversalLimits.cs" />
     <Compile Include="Spirv\Ops\OpUnknown.cs" />
     <Compile Include="Tests\CecilTest.cs" />

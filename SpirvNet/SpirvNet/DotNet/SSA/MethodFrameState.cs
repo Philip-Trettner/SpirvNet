@@ -6,7 +6,10 @@ using System.Threading.Tasks;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 using SpirvNet.DotNet.CFG;
+using SpirvNet.Spirv;
+using SpirvNet.Spirv.Ops.Arithmetic;
 using SpirvNet.Spirv.Ops.ConstantCreation;
+using SpirvNet.Spirv.Ops.FlowControl;
 
 namespace SpirvNet.DotNet.SSA
 {
@@ -42,10 +45,23 @@ namespace SpirvNet.DotNet.SSA
         /// Stack locations
         /// </summary>
         public readonly TypedLocation[] StackLocations;
+
         /// <summary>
-        /// Stack types
+        /// Creates a new typed loc
         /// </summary>
-        public readonly SpirvType[] StackTypes;
+        public TypedLocation CreateLocation(SpirvType type) => Frame.CreateLocation(type);
+        /// <summary>
+        /// Creates a _new_ typed loc
+        /// </summary>
+        public TypedLocation CreateLocation(TypedLocation loc) => Frame.CreateLocation(loc.Type);
+        /// <summary>
+        /// Create a spirv type for a typed ref
+        /// </summary>
+        public SpirvType CreateType(TypeReference type) => Frame.TypeBuilder.Create(type);
+        /// <summary>
+        /// Create a spirv type for a type
+        /// </summary>
+        public SpirvType CreateType(Type type) => Frame.TypeBuilder.Create(type);
 
         /// <summary>
         /// Phi function on entry
@@ -59,10 +75,25 @@ namespace SpirvNet.DotNet.SSA
         public readonly bool IsDivergingFlow;
 
         /// <summary>
+        /// Op block label
+        /// </summary>
+        public readonly OpLabel BlockLabel;
+
+        /// <summary>
         /// Position in stack (points to the first free pos)
         /// </summary>
         public int StackPosition { get; set; }
-        
+
+        /// <summary>
+        /// Top of stack
+        /// </summary>
+        public TypedLocation StackTop => StackLocations[StackPosition - 1];
+
+        /// <summary>
+        /// List of instruction generators (can use typedlocation)
+        /// </summary>
+        public readonly List<Spirv.Instruction> Instructions = new List<Spirv.Instruction>();
+
         private bool decoded = false; // true iff already decoded
 
         public MethodFrameState(Vertex vertex, MethodFrame frame)
@@ -70,9 +101,12 @@ namespace SpirvNet.DotNet.SSA
             Vertex = vertex;
             Frame = frame;
 
+            // create block label for branch targets
+            if (vertex.IsBranchTarget)
+                Instructions.Add(BlockLabel = new OpLabel { Result = Frame.Allocator.CreateID() });
+
             LocalVars = new TypedLocation[frame.VarCount];
             StackLocations = new TypedLocation[frame.StackSize];
-            StackTypes = new SpirvType[frame.StackSize];
 
             var cin = Vertex.Incoming.Count;
             var cout = Vertex.Outgoing.Count;
@@ -81,7 +115,7 @@ namespace SpirvNet.DotNet.SSA
             if (cout == 0) IsExitPoint = true;
             if (cin > 1) IsMergingFlow = true;
             if (cout > 1) IsDivergingFlow = true;
-            if (cin == 1 && cout == 1) IsLinearFlow = true;
+            if (cin <= 1 && cout <= 1) IsLinearFlow = true;
         }
 
         /// <summary>
@@ -96,12 +130,26 @@ namespace SpirvNet.DotNet.SSA
         }
 
         /// <summary>
+        /// Pushes a typed location of the stack
+        /// CAUTION: DOES NOT INTRODUCE NEW LOC
+        /// </summary>
+        private void Push(TypedLocation location)
+        {
+            if (location == null)
+                throw new InvalidOperationException();
+
+            StackLocations[StackPosition] = location;
+            ++StackPosition;
+        }
+        /// <summary>
         /// Pushes a type of the stack
         /// </summary>
         private void Push(SpirvType type)
         {
-            StackTypes[StackPosition] = type;
-            StackLocations[StackPosition] = Frame.CreateLocation(type);
+            if (type == null)
+                throw new InvalidOperationException();
+
+            StackLocations[StackPosition] = CreateLocation(type);
             ++StackPosition;
         }
         /// <summary>
@@ -112,11 +160,14 @@ namespace SpirvNet.DotNet.SSA
         /// <summary>
         /// Pops a value from the stack (returns the type)
         /// </summary>
-        private SpirvType Pop()
+        private TypedLocation Pop()
         {
-            var type = StackTypes[StackPosition];
             --StackPosition;
-            return type;
+            var loc = StackLocations[StackPosition];
+            if (loc == null)
+                throw new InvalidOperationException("null-location on stack loc");
+            StackLocations[StackPosition] = null;
+            return loc;
         }
 
         /// <summary>
@@ -135,11 +186,11 @@ namespace SpirvNet.DotNet.SSA
             else if (IsMergingFlow) // merging flow gets new locations
             {
                 for (var i = 0; i < LocalVars.Length; ++i)
-                    LocalVars[i] = Frame.CreateLocation(Frame.LocalVarTypes[i]);
+                    LocalVars[i] = CreateLocation(Frame.LocalVarTypes[i]);
 
-                for (var i = 0; i < LocalVars.Length; ++i)
-                    if (StackTypes[i] != null)
-                        StackLocations[i] = Frame.CreateLocation(StackTypes[i]);
+                for (var i = 0; i < StackLocations.Length; ++i)
+                    if (incomingState.StackLocations[i] != null)
+                        StackLocations[i] = CreateLocation(incomingState.StackLocations[i]);
 
                 StackPosition = incomingState.StackPosition;
             }
@@ -147,7 +198,7 @@ namespace SpirvNet.DotNet.SSA
             {
                 for (var i = 0; i < LocalVars.Length; ++i)
                     LocalVars[i] = incomingState.LocalVars[i];
-                for (var i = 0; i < LocalVars.Length; ++i)
+                for (var i = 0; i < StackLocations.Length; ++i)
                     StackLocations[i] = incomingState.StackLocations[i];
 
                 StackPosition = incomingState.StackPosition;
@@ -156,23 +207,137 @@ namespace SpirvNet.DotNet.SSA
             var opc = Vertex.OpCode;
             var ins = Vertex.Instruction;
 
+            TypedLocation loc, t1, t2;
+
             switch (opc.Code)
             {
                 case Code.Nop:
                     break;
-                case Code.Break:
+
                 case Code.Ldarg_0:
+                    Push(Frame.ArgLocations[0]);
+                    break;
                 case Code.Ldarg_1:
+                    Push(Frame.ArgLocations[1]);
+                    break;
                 case Code.Ldarg_2:
+                    Push(Frame.ArgLocations[2]);
+                    break;
                 case Code.Ldarg_3:
+                    Push(Frame.ArgLocations[3]);
+                    break;
+
                 case Code.Ldloc_0:
+                    Push(LocalVars[0]);
+                    break;
                 case Code.Ldloc_1:
+                    Push(LocalVars[1]);
+                    break;
                 case Code.Ldloc_2:
+                    Push(LocalVars[2]);
+                    break;
                 case Code.Ldloc_3:
+                    Push(LocalVars[3]);
+                    break;
+
                 case Code.Stloc_0:
+                    LocalVars[0] = CreateLocation(Pop());
+                    break;
                 case Code.Stloc_1:
+                    LocalVars[1] = CreateLocation(Pop());
+                    break;
                 case Code.Stloc_2:
+                    LocalVars[2] = CreateLocation(Pop());
+                    break;
                 case Code.Stloc_3:
+                    LocalVars[3] = CreateLocation(Pop());
+                    break;
+
+                case Code.Add:
+                    t1 = Pop();
+                    t2 = Pop();
+                    if (t1.Type != t2.Type)
+                        throw new NotSupportedException("incompatible types " + t1 + ", " + t2);
+                    var res = CreateLocation(t1.Type);
+                    Push(res);
+                    if (t1.Type.IsInteger)
+                        Instructions.Add(new OpIAdd { Operand1 = t1.ID, Operand2 = t2.ID, Result = res.ID, ResultType = res.Type.TypeID });
+                    else if (t1.Type.IsFloating)
+                        Instructions.Add(new OpFAdd { Operand1 = t1.ID, Operand2 = t2.ID, Result = res.ID, ResultType = res.Type.TypeID });
+                    else throw new NotSupportedException("Unsupported add: " + t1 + ", " + t2);
+                    break;
+
+                case Code.Ldc_I4:
+                    loc = CreateLocation(CreateType(typeof(int)));
+                    Instructions.Add(new OpConstant { Result = loc.ID, ResultType = loc.Type.TypeID, Value = LiteralNumber.ArrayFor((int)ins.Operand) });
+                    Push(loc);
+                    break;
+                case Code.Ldc_I8:
+                    loc = CreateLocation(CreateType(typeof(long)));
+                    Instructions.Add(new OpConstant { Result = loc.ID, ResultType = loc.Type.TypeID, Value = LiteralNumber.ArrayFor((long)ins.Operand) });
+                    Push(loc);
+                    break;
+                case Code.Ldc_R4:
+                    loc = CreateLocation(CreateType(typeof(float)));
+                    Instructions.Add(new OpConstant { Result = loc.ID, ResultType = loc.Type.TypeID, Value = LiteralNumber.ArrayFor((float)ins.Operand) });
+                    Push(loc);
+                    break;
+                case Code.Ldc_R8:
+                    loc = CreateLocation(CreateType(typeof(double)));
+                    Instructions.Add(new OpConstant { Result = loc.ID, ResultType = loc.Type.TypeID, Value = LiteralNumber.ArrayFor((double)ins.Operand) });
+                    Push(loc);
+                    break;
+
+                case Code.Ret:
+                    switch (StackPosition)
+                    {
+                        case 0:
+                            Instructions.Add(new OpReturn());
+                            break;
+                        case 1:
+                            loc = Pop();
+                            Instructions.Add(new OpReturnValue { Value = loc.ID });
+                            break;
+                        default:
+                            throw new InvalidOperationException("Non-empty stack at return");
+                    }
+                    break;
+
+                case Code.Br:
+                case Code.Br_S:
+                    if (Outgoing.Count != 1)
+                        throw new InvalidOperationException("Unconditional branch with multiple outgoing");
+                    if (Outgoing[0].BlockLabel == null)
+                        throw new InvalidOperationException("Target has no block label");
+                    Instructions.Add(new OpBranch { TargetLabel = Outgoing[0].BlockLabel.Result });
+                    break;
+
+                case Code.Brfalse_S:
+                case Code.Brtrue_S:
+                case Code.Beq_S:
+                case Code.Bge_S:
+                case Code.Bgt_S:
+                case Code.Ble_S:
+                case Code.Blt_S:
+                case Code.Bne_Un_S:
+                case Code.Bge_Un_S:
+                case Code.Bgt_Un_S:
+                case Code.Ble_Un_S:
+                case Code.Blt_Un_S:
+                case Code.Brfalse:
+                case Code.Brtrue:
+                case Code.Beq:
+                case Code.Bge:
+                case Code.Bgt:
+                case Code.Ble:
+                case Code.Blt:
+                case Code.Bne_Un:
+                case Code.Bge_Un:
+                case Code.Bgt_Un:
+                case Code.Ble_Un:
+                case Code.Blt_Un:
+                    throw new NotImplementedException("Unimplemented branching op: " + opc.Code);
+
                 case Code.Ldarg_S:
                 case Code.Ldarga_S:
                 case Code.Starg_S:
@@ -191,43 +356,12 @@ namespace SpirvNet.DotNet.SSA
                 case Code.Ldc_I4_7:
                 case Code.Ldc_I4_8:
                 case Code.Ldc_I4_S:
-                case Code.Ldc_I4:
-                case Code.Ldc_I8:
-                case Code.Ldc_R4:
-                case Code.Ldc_R8:
                 case Code.Dup:
                 case Code.Pop:
                 case Code.Jmp:
                 case Code.Call:
                 case Code.Calli:
                 case Code.Callvirt:
-                case Code.Ret:
-                case Code.Br_S:
-                case Code.Brfalse_S:
-                case Code.Brtrue_S:
-                case Code.Beq_S:
-                case Code.Bge_S:
-                case Code.Bgt_S:
-                case Code.Ble_S:
-                case Code.Blt_S:
-                case Code.Bne_Un_S:
-                case Code.Bge_Un_S:
-                case Code.Bgt_Un_S:
-                case Code.Ble_Un_S:
-                case Code.Blt_Un_S:
-                case Code.Br:
-                case Code.Brfalse:
-                case Code.Brtrue:
-                case Code.Beq:
-                case Code.Bge:
-                case Code.Bgt:
-                case Code.Ble:
-                case Code.Blt:
-                case Code.Bne_Un:
-                case Code.Bge_Un:
-                case Code.Bgt_Un:
-                case Code.Ble_Un:
-                case Code.Blt_Un:
                 case Code.Switch:
                 case Code.Ldind_I1:
                 case Code.Ldind_U1:
@@ -247,7 +381,6 @@ namespace SpirvNet.DotNet.SSA
                 case Code.Stind_I8:
                 case Code.Stind_R4:
                 case Code.Stind_R8:
-                case Code.Add:
                 case Code.Sub:
                 case Code.Mul:
                 case Code.Div:
@@ -378,6 +511,7 @@ namespace SpirvNet.DotNet.SSA
                 case Code.Sizeof:
                 case Code.Refanytype:
                 case Code.Readonly:
+                case Code.Break:
                     throw new NotSupportedException("Unsupported instruction: " + opc.Code);
                 default:
                     throw new ArgumentOutOfRangeException();
