@@ -138,25 +138,10 @@ namespace SpirvNet.DotNet.SSA
         {
             if (location == null)
                 throw new InvalidOperationException();
-
+            
             StackLocations[StackPosition] = location;
             ++StackPosition;
         }
-        /// <summary>
-        /// Pushes a type of the stack
-        /// </summary>
-        private void Push(SpirvType type)
-        {
-            if (type == null)
-                throw new InvalidOperationException();
-
-            StackLocations[StackPosition] = CreateLocation(type);
-            ++StackPosition;
-        }
-        /// <summary>
-        /// Pushes a type of the stack
-        /// </summary>
-        private void Push(TypeReference type) => Push(Frame.TypeBuilder.Create(type));
 
         /// <summary>
         /// Pops a value from the stack (returns the type)
@@ -242,16 +227,16 @@ namespace SpirvNet.DotNet.SSA
                     break;
 
                 case Code.Stloc_0:
-                    LocalVars[0] = CreateLocation(Pop());
+                    LocalVars[0] = Pop();
                     break;
                 case Code.Stloc_1:
-                    LocalVars[1] = CreateLocation(Pop());
+                    LocalVars[1] = Pop();
                     break;
                 case Code.Stloc_2:
-                    LocalVars[2] = CreateLocation(Pop());
+                    LocalVars[2] = Pop();
                     break;
                 case Code.Stloc_3:
-                    LocalVars[3] = CreateLocation(Pop());
+                    LocalVars[3] = Pop();
                     break;
 
                 case Code.Add:
