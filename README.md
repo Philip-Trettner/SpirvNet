@@ -21,7 +21,8 @@ SPIR-V is a new binary intermediate language for representing graphical-shader s
 SPIR-V is in [SSA](http://en.wikipedia.org/wiki/Static_single_assignment_form) form.
 
 Resources:
-* [Provisional SPIR-V Specification](https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf)
+* [Provisional SPIR-V Specification (PDF)](https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf)
+* [Provisional SPIR-V Specification (HTML)](https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.html)
 * [SPIR-V Go Encoder/Verifier/Decoder](https://github.com/jteeuwen/spirv)
 * [GlslangValidator with SPIR-V output](https://www.khronos.org/opengles/sdk/tools/Reference-Compiler/)
 * [LunarGLASS SPIR-V Front-End](http://www.lunarglass.org/)
