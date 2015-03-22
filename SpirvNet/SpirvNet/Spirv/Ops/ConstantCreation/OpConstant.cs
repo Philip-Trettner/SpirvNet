@@ -25,6 +25,7 @@ namespace SpirvNet.Spirv.Ops.ConstantCreation
 
         #region Code
         public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(ResultType) + ", " + StrOf(Result) + ", " + StrOf(Value) + ")";
+        public override string ArgString => "Value: " + StrOf(Value);
 
         protected override void FromCode(uint[] codes, int start)
         {

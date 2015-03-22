@@ -26,6 +26,7 @@ namespace SpirvNet.Spirv.Ops.Composite
 
         #region Code
         public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(ResultType) + ", " + StrOf(Result) + ", " + StrOf(Composite) + ", " + StrOf(Indexes) + ")";
+        public override string ArgString => "Composite: " + StrOf(Composite) + ", " + "Indexes: " + StrOf(Indexes);
 
         protected override void FromCode(uint[] codes, int start)
         {

@@ -24,6 +24,7 @@ namespace SpirvNet.Spirv.Ops.Annotation
 
         #region Code
         public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(StructureType) + ", " + StrOf(Member) + ", " + StrOf(Decoration) + ", " + StrOf(Args) + ")";
+        public override string ArgString => "StructureType: " + StrOf(StructureType) + ", " + "Member: " + StrOf(Member) + ", " + "Decoration: " + StrOf(Decoration) + ", " + "Args: " + StrOf(Args);
 
         protected override void FromCode(uint[] codes, int start)
         {

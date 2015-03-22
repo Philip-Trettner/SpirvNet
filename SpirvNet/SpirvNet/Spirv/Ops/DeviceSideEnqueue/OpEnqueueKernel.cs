@@ -36,6 +36,7 @@ namespace SpirvNet.Spirv.Ops.DeviceSideEnqueue
 
         #region Code
         public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(ResultType) + ", " + StrOf(Result) + ", " + StrOf(q) + ", " + StrOf(Flags) + ", " + StrOf(NDRange) + ", " + StrOf(NumEvents) + ", " + StrOf(WaitEvents) + ", " + StrOf(RetEvent) + ", " + StrOf(Invoke) + ", " + StrOf(Param) + ", " + StrOf(ParamSize) + ", " + StrOf(ParamAlign) + ", " + StrOf(LocalSize) + ")";
+        public override string ArgString => "q: " + StrOf(q) + ", " + "Flags: " + StrOf(Flags) + ", " + "NDRange: " + StrOf(NDRange) + ", " + "NumEvents: " + StrOf(NumEvents) + ", " + "WaitEvents: " + StrOf(WaitEvents) + ", " + "RetEvent: " + StrOf(RetEvent) + ", " + "Invoke: " + StrOf(Invoke) + ", " + "Param: " + StrOf(Param) + ", " + "ParamSize: " + StrOf(ParamSize) + ", " + "ParamAlign: " + StrOf(ParamAlign) + ", " + "LocalSize: " + StrOf(LocalSize);
 
         protected override void FromCode(uint[] codes, int start)
         {

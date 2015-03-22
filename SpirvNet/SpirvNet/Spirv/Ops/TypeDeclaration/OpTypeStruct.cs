@@ -23,6 +23,7 @@ namespace SpirvNet.Spirv.Ops.TypeDeclaration
 
         #region Code
         public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(Result) + ", " + StrOf(MemberTypes) + ")";
+        public override string ArgString => "MemberTypes: " + StrOf(MemberTypes);
 
         protected override void FromCode(uint[] codes, int start)
         {

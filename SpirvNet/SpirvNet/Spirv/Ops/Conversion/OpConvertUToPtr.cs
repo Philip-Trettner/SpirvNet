@@ -26,6 +26,7 @@ namespace SpirvNet.Spirv.Ops.Conversion
 
         #region Code
         public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(ResultType) + ", " + StrOf(Result) + ", " + StrOf(IntegerValue) + ")";
+        public override string ArgString => "IntegerValue: " + StrOf(IntegerValue);
 
         protected override void FromCode(uint[] codes, int start)
         {

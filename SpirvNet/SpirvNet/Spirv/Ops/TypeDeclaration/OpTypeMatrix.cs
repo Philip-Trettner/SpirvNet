@@ -24,6 +24,7 @@ namespace SpirvNet.Spirv.Ops.TypeDeclaration
 
         #region Code
         public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(Result) + ", " + StrOf(ColumnType) + ", " + StrOf(ColumnCount) + ")";
+        public override string ArgString => "ColumnType: " + StrOf(ColumnType) + ", " + "ColumnCount: " + StrOf(ColumnCount);
 
         protected override void FromCode(uint[] codes, int start)
         {

@@ -24,6 +24,7 @@ namespace SpirvNet.Spirv.Ops.TypeDeclaration
 
         #region Code
         public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(Result) + ", " + StrOf(ReturnType) + ", " + StrOf(ParameterTypes) + ")";
+        public override string ArgString => "ReturnType: " + StrOf(ReturnType) + ", " + "ParameterTypes: " + StrOf(ParameterTypes);
 
         protected override void FromCode(uint[] codes, int start)
         {

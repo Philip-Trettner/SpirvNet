@@ -26,6 +26,7 @@ namespace SpirvNet.Spirv.Ops.Texture
 
         #region Code
         public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(ResultType) + ", " + StrOf(Result) + ", " + StrOf(Sampler) + ", " + StrOf(Filter) + ")";
+        public override string ArgString => "Sampler: " + StrOf(Sampler) + ", " + "Filter: " + StrOf(Filter);
 
         protected override void FromCode(uint[] codes, int start)
         {

@@ -22,6 +22,7 @@ namespace SpirvNet.Spirv.Ops.Atomic
 
         #region Code
         public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(Pointer) + ", " + StrOf(Value) + ")";
+        public override string ArgString => "Pointer: " + StrOf(Pointer) + ", " + "Value: " + StrOf(Value);
 
         protected override void FromCode(uint[] codes, int start)
         {

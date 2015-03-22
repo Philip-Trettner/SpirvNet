@@ -36,6 +36,14 @@ namespace SpirvNet.Tests
             return i + a + u;
         }
 
+        public float SimpleLoop(int k)
+        {
+            float f = 3;
+            for (int i = 0; i < k; ++i)
+                f += i;
+            return f;
+        }
+
         [Test]
         public void SimpleAddTest()
         {
@@ -95,6 +103,18 @@ namespace SpirvNet.Tests
 
             //File.WriteAllLines(@"C:\Temp\SimpleMod.dot", cfg.DotFile);
             //File.WriteAllLines(@"C:\Temp\SimpleMod.csv", CecilLoader.CsvDump(def));
+        }
+
+        [Test]
+        public void SimpleLoopTest()
+        {
+            var def = CecilLoader.DefinitionFor(this, "SimpleLoop");
+            Assert.AreEqual("SimpleLoop", def.Name);
+
+            var cfg = new ControlFlowGraph(def);
+
+            //File.WriteAllLines(@"C:\Temp\SimpleLoop.dot", cfg.DotFile);
+            //File.WriteAllLines(@"C:\Temp\SimpleLoop.csv", CecilLoader.CsvDump(def));
         }
 
         [Test]

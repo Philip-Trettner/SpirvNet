@@ -22,6 +22,8 @@ namespace SpirvNet.Spirv.Ops
         /// </summary>
         public override OpCode OpCode { get; }
 
+        public override string ArgString => Args.Count == 0 ? "\"\"" : Args.Select(u => u.ToString("X8")).Aggregate((s1, s2) => s1 + ", " + s2);
+
         public OpUnknown(OpCode opCode)
         {
             OpCode = opCode;

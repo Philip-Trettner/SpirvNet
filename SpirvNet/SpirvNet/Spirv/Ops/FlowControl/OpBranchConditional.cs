@@ -24,6 +24,7 @@ namespace SpirvNet.Spirv.Ops.FlowControl
 
         #region Code
         public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(Condition) + ", " + StrOf(TrueLabel) + ", " + StrOf(FalseLabel) + ", " + StrOf(BranchWeights) + ")";
+        public override string ArgString => "Condition: " + StrOf(Condition) + ", " + "TrueLabel: " + StrOf(TrueLabel) + ", " + "FalseLabel: " + StrOf(FalseLabel) + ", " + "BranchWeights: " + StrOf(BranchWeights);
 
         protected override void FromCode(uint[] codes, int start)
         {

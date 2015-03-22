@@ -31,6 +31,7 @@ namespace SpirvNet.Spirv.Ops.Group
 
         #region Code
         public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(ResultType) + ", " + StrOf(Result) + ", " + StrOf(Scope) + ", " + StrOf(Destination) + ", " + StrOf(Source) + ", " + StrOf(NumElements) + ", " + StrOf(Stride) + ", " + StrOf(Event) + ")";
+        public override string ArgString => "Scope: " + StrOf(Scope) + ", " + "Destination: " + StrOf(Destination) + ", " + "Source: " + StrOf(Source) + ", " + "NumElements: " + StrOf(NumElements) + ", " + "Stride: " + StrOf(Stride) + ", " + "Event: " + StrOf(Event);
 
         protected override void FromCode(uint[] codes, int start)
         {

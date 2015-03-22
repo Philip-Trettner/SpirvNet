@@ -24,6 +24,7 @@ namespace SpirvNet.Spirv.Ops.TypeDeclaration
 
         #region Code
         public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(Result) + ", " + StrOf(StorageClass) + ", " + StrOf(Type) + ")";
+        public override string ArgString => "StorageClass: " + StrOf(StorageClass) + ", " + "Type: " + StrOf(Type);
 
         protected override void FromCode(uint[] codes, int start)
         {

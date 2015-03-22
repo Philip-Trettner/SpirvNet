@@ -27,6 +27,7 @@ namespace SpirvNet.Spirv.Ops.Arithmetic
 
         #region Code
         public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(ResultType) + ", " + StrOf(Result) + ", " + StrOf(Matrix) + ", " + StrOf(Scalar) + ")";
+        public override string ArgString => "Matrix: " + StrOf(Matrix) + ", " + "Scalar: " + StrOf(Scalar);
 
         protected override void FromCode(uint[] codes, int start)
         {

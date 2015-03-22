@@ -28,6 +28,7 @@ namespace SpirvNet.Spirv.Ops.DeviceSideEnqueue
 
         #region Code
         public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(ResultType) + ", " + StrOf(Result) + ", " + StrOf(GlobalWorkSize) + ", " + StrOf(LocalWorkSize) + ", " + StrOf(GlobalWorkOffset) + ")";
+        public override string ArgString => "GlobalWorkSize: " + StrOf(GlobalWorkSize) + ", " + "LocalWorkSize: " + StrOf(LocalWorkSize) + ", " + "GlobalWorkOffset: " + StrOf(GlobalWorkOffset);
 
         protected override void FromCode(uint[] codes, int start)
         {

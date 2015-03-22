@@ -22,6 +22,7 @@ namespace SpirvNet.Spirv.Ops.ModeSetting
 
         #region Code
         public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(AddressingModel) + ", " + StrOf(MemoryModel) + ")";
+        public override string ArgString => "AddressingModel: " + StrOf(AddressingModel) + ", " + "MemoryModel: " + StrOf(MemoryModel);
 
         protected override void FromCode(uint[] codes, int start)
         {

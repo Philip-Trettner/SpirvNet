@@ -26,6 +26,7 @@ namespace SpirvNet.Spirv.Ops.Function
 
         #region Code
         public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(ResultType) + ", " + StrOf(Result) + ", " + StrOf(Function) + ", " + StrOf(Arguments) + ")";
+        public override string ArgString => "Function: " + StrOf(Function) + ", " + "Arguments: " + StrOf(Arguments);
 
         protected override void FromCode(uint[] codes, int start)
         {

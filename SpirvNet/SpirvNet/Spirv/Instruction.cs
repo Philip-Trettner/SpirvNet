@@ -88,6 +88,11 @@ namespace SpirvNet.Spirv
         public abstract OpCode OpCode { get; }
 
         /// <summary>
+        /// Returns a string suited for argument display (without opcode, result and resulttype but with names)
+        /// </summary>
+        public abstract string ArgString { get; }
+
+        /// <summary>
         /// Adds the instruction bytecode to the given list
         /// </summary>
         public void Generate(List<uint> code)

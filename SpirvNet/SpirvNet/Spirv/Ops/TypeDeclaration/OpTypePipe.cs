@@ -25,6 +25,7 @@ namespace SpirvNet.Spirv.Ops.TypeDeclaration
 
         #region Code
         public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(Result) + ", " + StrOf(Type) + ", " + StrOf(AccessQualifier) + ")";
+        public override string ArgString => "Type: " + StrOf(Type) + ", " + "AccessQualifier: " + StrOf(AccessQualifier);
 
         protected override void FromCode(uint[] codes, int start)
         {

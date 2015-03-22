@@ -23,6 +23,7 @@ namespace SpirvNet.Spirv.Ops.FlowControl
 
         #region Code
         public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(Selector) + ", " + StrOf(Default) + ", " + StrOf(Target) + ")";
+        public override string ArgString => "Selector: " + StrOf(Selector) + ", " + "Default: " + StrOf(Default) + ", " + "Target: " + StrOf(Target);
 
         protected override void FromCode(uint[] codes, int start)
         {

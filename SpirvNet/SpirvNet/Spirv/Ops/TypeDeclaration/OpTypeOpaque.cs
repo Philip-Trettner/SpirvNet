@@ -24,6 +24,7 @@ namespace SpirvNet.Spirv.Ops.TypeDeclaration
 
         #region Code
         public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(Result) + ", " + StrOf(OpaqueType) + ")";
+        public override string ArgString => "OpaqueType: " + StrOf(OpaqueType);
 
         protected override void FromCode(uint[] codes, int start)
         {

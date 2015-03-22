@@ -24,6 +24,7 @@ namespace SpirvNet.Spirv.Ops.TypeDeclaration
 
         #region Code
         public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(Result) + ", " + StrOf(ComponentType) + ", " + StrOf(ComponentCount) + ")";
+        public override string ArgString => "ComponentType: " + StrOf(ComponentType) + ", " + "ComponentCount: " + StrOf(ComponentCount);
 
         protected override void FromCode(uint[] codes, int start)
         {

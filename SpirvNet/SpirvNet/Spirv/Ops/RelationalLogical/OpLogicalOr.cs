@@ -26,6 +26,7 @@ namespace SpirvNet.Spirv.Ops.RelationalLogical
 
         #region Code
         public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(ResultType) + ", " + StrOf(Result) + ", " + StrOf(Operand1) + ", " + StrOf(Operand2) + ")";
+        public override string ArgString => "Operand1: " + StrOf(Operand1) + ", " + "Operand2: " + StrOf(Operand2);
 
         protected override void FromCode(uint[] codes, int start)
         {

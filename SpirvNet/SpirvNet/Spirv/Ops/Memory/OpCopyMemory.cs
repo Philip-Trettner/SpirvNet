@@ -23,6 +23,7 @@ namespace SpirvNet.Spirv.Ops.Memory
 
         #region Code
         public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(Target) + ", " + StrOf(Source) + ", " + StrOf(MemoryAccess) + ")";
+        public override string ArgString => "Target: " + StrOf(Target) + ", " + "Source: " + StrOf(Source) + ", " + "MemoryAccess: " + StrOf(MemoryAccess);
 
         protected override void FromCode(uint[] codes, int start)
         {

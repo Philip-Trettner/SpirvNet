@@ -22,6 +22,7 @@ namespace SpirvNet.Spirv.Ops.Annotation
 
         #region Code
         public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(DecorationGroup) + ", " + StrOf(Targets) + ")";
+        public override string ArgString => "DecorationGroup: " + StrOf(DecorationGroup) + ", " + "Targets: " + StrOf(Targets);
 
         protected override void FromCode(uint[] codes, int start)
         {

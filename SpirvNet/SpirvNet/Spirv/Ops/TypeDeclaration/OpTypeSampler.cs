@@ -29,6 +29,7 @@ namespace SpirvNet.Spirv.Ops.TypeDeclaration
 
         #region Code
         public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(Result) + ", " + StrOf(SampledType) + ", " + StrOf(Dim) + ", " + StrOf(Content) + ", " + StrOf(Arrayed) + ", " + StrOf(Compare) + ", " + StrOf(MS) + ", " + StrOf(Qualifier) + ")";
+        public override string ArgString => "SampledType: " + StrOf(SampledType) + ", " + "Dim: " + StrOf(Dim) + ", " + "Content: " + StrOf(Content) + ", " + "Arrayed: " + StrOf(Arrayed) + ", " + "Compare: " + StrOf(Compare) + ", " + "MS: " + StrOf(MS) + ", " + "Qualifier: " + StrOf(Qualifier);
 
         protected override void FromCode(uint[] codes, int start)
         {

@@ -27,6 +27,7 @@ namespace SpirvNet.Spirv.Ops.Conversion
 
         #region Code
         public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(ResultType) + ", " + StrOf(Result) + ", " + StrOf(SourcePointer) + ", " + StrOf(StorageClass) + ")";
+        public override string ArgString => "SourcePointer: " + StrOf(SourcePointer) + ", " + "StorageClass: " + StrOf(StorageClass);
 
         protected override void FromCode(uint[] codes, int start)
         {

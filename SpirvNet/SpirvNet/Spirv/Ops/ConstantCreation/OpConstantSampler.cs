@@ -28,6 +28,7 @@ namespace SpirvNet.Spirv.Ops.ConstantCreation
 
         #region Code
         public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(ResultType) + ", " + StrOf(Result) + ", " + StrOf(Mode) + ", " + StrOf(Param) + ", " + StrOf(Filter) + ")";
+        public override string ArgString => "Mode: " + StrOf(Mode) + ", " + "Param: " + StrOf(Param) + ", " + "Filter: " + StrOf(Filter);
 
         protected override void FromCode(uint[] codes, int start)
         {

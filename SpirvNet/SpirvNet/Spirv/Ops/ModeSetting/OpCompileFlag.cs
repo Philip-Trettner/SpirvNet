@@ -22,6 +22,7 @@ namespace SpirvNet.Spirv.Ops.ModeSetting
 
         #region Code
         public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(Flag) + ")";
+        public override string ArgString => "Flag: " + StrOf(Flag);
 
         protected override void FromCode(uint[] codes, int start)
         {

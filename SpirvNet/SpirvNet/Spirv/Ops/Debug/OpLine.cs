@@ -24,6 +24,7 @@ namespace SpirvNet.Spirv.Ops.Debug
 
         #region Code
         public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(Target) + ", " + StrOf(File) + ", " + StrOf(Line) + ", " + StrOf(Column) + ")";
+        public override string ArgString => "Target: " + StrOf(Target) + ", " + "File: " + StrOf(File) + ", " + "Line: " + StrOf(Line) + ", " + "Column: " + StrOf(Column);
 
         protected override void FromCode(uint[] codes, int start)
         {

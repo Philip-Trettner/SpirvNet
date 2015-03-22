@@ -391,6 +391,10 @@ namespace OpCodeGen
                 yield return "";
                 yield return "        #region Code";
                 yield return string.Format("        public override string ToString() => \"(\" + OpCode + \"(\" + (int)OpCode + \")\"{0} + \")\";", Fields.Length == 0 ? "" : Fields.Select(f => f.Name).Aggregate("", (s1, s2) => string.Format("{0} + \", \" + StrOf({1})", s1, s2)));
+                yield return string.Format("        public override string ArgString => {0};", !Fields.Any(f => f.Name != "Result" && f.Name != "ResultType") ? "\"\"" : Fields.Where(f => f.Name != "Result" && f.Name != "ResultType").Select(f => "\"" + f.Name + ": \" + StrOf(" + f.Name + ")").Aggregate((s1, s2) => string.Format("{0} + \", \" + {1}", s1, s2)));
+
+                //public abstract string ArgString { get; }
+
                 yield return "";
                 yield return "        protected override void FromCode(uint[] codes, int start)";
                 yield return "        {";

@@ -28,6 +28,7 @@ namespace SpirvNet.Spirv.Ops.Pipe
 
         #region Code
         public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(ResultType) + ", " + StrOf(Result) + ", " + StrOf(Scope) + ", " + StrOf(P) + ", " + StrOf(NumPackets) + ")";
+        public override string ArgString => "Scope: " + StrOf(Scope) + ", " + "P: " + StrOf(P) + ", " + "NumPackets: " + StrOf(NumPackets);
 
         protected override void FromCode(uint[] codes, int start)
         {

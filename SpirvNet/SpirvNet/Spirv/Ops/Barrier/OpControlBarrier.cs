@@ -21,6 +21,7 @@ namespace SpirvNet.Spirv.Ops.Barrier
 
         #region Code
         public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(Scope) + ")";
+        public override string ArgString => "Scope: " + StrOf(Scope);
 
         protected override void FromCode(uint[] codes, int start)
         {

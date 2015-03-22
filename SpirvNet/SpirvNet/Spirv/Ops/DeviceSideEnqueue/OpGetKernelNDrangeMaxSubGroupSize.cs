@@ -27,6 +27,7 @@ namespace SpirvNet.Spirv.Ops.DeviceSideEnqueue
 
         #region Code
         public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(ResultType) + ", " + StrOf(Result) + ", " + StrOf(NDRange) + ", " + StrOf(Invoke) + ")";
+        public override string ArgString => "NDRange: " + StrOf(NDRange) + ", " + "Invoke: " + StrOf(Invoke);
 
         protected override void FromCode(uint[] codes, int start)
         {

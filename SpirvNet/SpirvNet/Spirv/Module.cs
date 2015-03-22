@@ -99,11 +99,11 @@ namespace SpirvNet.Spirv
             yield return string.Format("Instruction Schema;{0}", InstructionSchema);
             yield return "";
             yield return "Instructions";
-            yield return "Result ID;Result Type ID;OpCode;Word Count;ToString";
+            yield return "Result ID;Result Type ID;OpCode;Word Count;Args";
             foreach (var op in Instructions)
-                yield return string.Format("{0};{1};{2};{3};{4}", 
-                    op.ResultID, op.ResultTypeID, op.OpCode, op.WordCount, op);
-        } 
+                yield return string.Format("{0};{1};{2};{3};{4}",
+                    op.ResultID, op.ResultTypeID, op.OpCode, op.WordCount, op.ArgString);
+        }
 
         /// <summary>
         /// Creates a module from file by name

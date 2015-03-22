@@ -21,6 +21,7 @@ namespace SpirvNet.Spirv.Ops.Extension
 
         #region Code
         public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(Name) + ")";
+        public override string ArgString => "Name: " + StrOf(Name);
 
         protected override void FromCode(uint[] codes, int start)
         {

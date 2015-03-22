@@ -22,6 +22,7 @@ namespace SpirvNet.Spirv.Ops.ModeSetting
 
         #region Code
         public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(ExecutionModel) + ", " + StrOf(EntryPoint) + ")";
+        public override string ArgString => "ExecutionModel: " + StrOf(ExecutionModel) + ", " + "EntryPoint: " + StrOf(EntryPoint);
 
         protected override void FromCode(uint[] codes, int start)
         {
