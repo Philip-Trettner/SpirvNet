@@ -5,14 +5,15 @@ SPIR-V generator for .NET IL
 
 * Decode, Verify, Encode SPIR-V files
 * Convert (suitable) .NET IL to SPIR-V
-* Write Shaders and Kernels in C#
-* Debug Shaders and Kernels in C# (CPU fallback)
+* Write Shaders and Kernels in .NET/C#
+* Debug Shaders and Kernels in .NET/C# (CPU fallback)
 * Use Gpu.For in addition to Parallel.For
 
 ## Technologies used
 
 * [Mono.Cecil](http://www.mono-project.com/docs/tools+libraries/libraries/Mono.Cecil/)
 * [GlmSharp](https://github.com/Philip-Trettner/GlmSharp)
+* [Spirv Spec To Json](https://github.com/Philip-Trettner/SpirvSpecToJson)
 
 ## About SPIR-V
 
@@ -40,3 +41,4 @@ Resources:
 
 * working OpCode serialization and Module Encode/Decode
 * work-in-progress .NET IL analysis
+* first working simple function conversions
