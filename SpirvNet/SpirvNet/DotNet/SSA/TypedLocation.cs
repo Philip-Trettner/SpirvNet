@@ -27,5 +27,11 @@ namespace SpirvNet.DotNet.SSA
             Type = type;
             ID = allocator.CreateID();
         }
+        
+        public TypedLocation(ID id, Type type, TypeBuilder builder)
+        {
+            ID = id;
+            Type = builder.Create(type);
+        }
     }
 }

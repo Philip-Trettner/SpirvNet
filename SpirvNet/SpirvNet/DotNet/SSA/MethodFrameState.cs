@@ -9,6 +9,7 @@ using SpirvNet.DotNet.CFG;
 using SpirvNet.Spirv;
 using SpirvNet.Spirv.Ops.Arithmetic;
 using SpirvNet.Spirv.Ops.ConstantCreation;
+using SpirvNet.Spirv.Ops.Conversion;
 using SpirvNet.Spirv.Ops.FlowControl;
 using SpirvNet.Spirv.Ops.RelationalLogical;
 using Instruction = SpirvNet.Spirv.Instruction;
@@ -304,12 +305,15 @@ namespace SpirvNet.DotNet.SSA
 
             TypedLocation loc, t1, t2, t, res, tmp;
             ID tl, fl;
+            VariableDefinition vardef;
+            ParameterDefinition argdef;
 
             switch (opc.Code)
             {
                 case Code.Nop:
                     break;
 
+                // load arg into stack
                 case Code.Ldarg_0:
                     Push(Frame.ArgLocations[0]);
                     break;
@@ -322,7 +326,12 @@ namespace SpirvNet.DotNet.SSA
                 case Code.Ldarg_3:
                     Push(Frame.ArgLocations[3]);
                     break;
+                case Code.Ldarg_S:
+                    argdef = (ParameterDefinition)ins.Operand;
+                    Push(Frame.ArgLocations[argdef.Index]);
+                    break;
 
+                // Load from local var
                 case Code.Ldloc_0:
                     Push(LocalVars[0]);
                     break;
@@ -335,7 +344,12 @@ namespace SpirvNet.DotNet.SSA
                 case Code.Ldloc_3:
                     Push(LocalVars[3]);
                     break;
+                case Code.Ldloc_S:
+                    vardef = (VariableDefinition)ins.Operand;
+                    Push(LocalVars[vardef.Index]);
+                    break;
 
+                // Store in local var
                 case Code.Stloc_0:
                     LocalVars[0] = Pop();
                     EnsureLocalVarType(0);
@@ -352,7 +366,13 @@ namespace SpirvNet.DotNet.SSA
                     LocalVars[3] = Pop();
                     EnsureLocalVarType(3);
                     break;
+                case Code.Stloc_S:
+                    vardef = (VariableDefinition)ins.Operand;
+                    LocalVars[vardef.Index] = Pop();
+                    EnsureLocalVarType(vardef.Index);
+                    break;
 
+                // arithmetics
                 case Code.Add:
                     t1 = Pop();
                     t2 = Pop();
@@ -417,6 +437,7 @@ namespace SpirvNet.DotNet.SSA
                     else throw new NotSupportedException("Unsupported unsigned div: " + t1 + ", " + t2);
                     break;
 
+                // not/negate
                 case Code.Neg:
                     t = Pop();
                     res = CreateLocation(t.Type);
@@ -436,6 +457,7 @@ namespace SpirvNet.DotNet.SSA
                     else throw new NotSupportedException("Unsupported not: " + t);
                     break;
 
+                // remainders
                 case Code.Rem:
                     t1 = Pop();
                     t2 = Pop();
@@ -469,6 +491,7 @@ namespace SpirvNet.DotNet.SSA
                 case Code.Shr_Un:
                     throw new NotImplementedException("unsupported arithmetic op");
 
+                // constant loading
                 case Code.Ldc_I4:
                     loc = CreateLocation(CreateType(typeof(int)));
                     Instructions.Add(new OpConstant { Result = loc.ID, ResultType = loc.Type.TypeID, Value = LiteralNumber.ArrayFor((int)ins.Operand) });
@@ -490,6 +513,7 @@ namespace SpirvNet.DotNet.SSA
                     Push(loc);
                     break;
 
+                // return value
                 case Code.Ret:
                     switch (StackPosition)
                     {
@@ -505,6 +529,7 @@ namespace SpirvNet.DotNet.SSA
                     }
                     break;
 
+                // unconditional branching
                 case Code.Br:
                 case Code.Br_S:
                     if (Outgoing.Count != 1)
@@ -514,6 +539,7 @@ namespace SpirvNet.DotNet.SSA
                     Instructions.Add(new OpBranch { TargetLabel = Outgoing[0].BlockLabel.Result });
                     break;
 
+                // conditional boolean branching
                 case Code.Brfalse:
                 case Code.Brfalse_S:
                 case Code.Brtrue:
@@ -539,6 +565,7 @@ namespace SpirvNet.DotNet.SSA
                         throw new NotSupportedException("Condition of type " + loc.Type + " not supported");
                     break;
 
+                // conditional branches
                 case Code.Beq_S:
                 case Code.Bge_S:
                 case Code.Bgt_S:
@@ -664,6 +691,7 @@ namespace SpirvNet.DotNet.SSA
                     Instructions.Add(new OpBranchConditional { Condition = tmp.ID, FalseLabel = NextState.BlockID, TrueLabel = TargetState.BlockID });
                     break;
 
+                // comparisons
                 case Code.Ceq:
                 case Code.Cgt:
                 case Code.Cgt_Un:
@@ -733,24 +761,111 @@ namespace SpirvNet.DotNet.SSA
                     Push(res);
                     break;
 
-                case Code.Ldarg_S:
-                case Code.Ldarga_S:
-                case Code.Starg_S:
-                case Code.Ldloc_S:
-                case Code.Ldloca_S:
-                case Code.Stloc_S:
-                case Code.Ldnull:
+                // const int loads
                 case Code.Ldc_I4_M1:
+                    Push(new TypedLocation(Frame.TypeBuilder.ConstantInt32(-1), typeof(int), Frame.TypeBuilder));
+                    break;
                 case Code.Ldc_I4_0:
+                    Push(new TypedLocation(Frame.TypeBuilder.ConstantInt32(0), typeof(int), Frame.TypeBuilder));
+                    break;
                 case Code.Ldc_I4_1:
+                    Push(new TypedLocation(Frame.TypeBuilder.ConstantInt32(1), typeof(int), Frame.TypeBuilder));
+                    break;
                 case Code.Ldc_I4_2:
+                    Push(new TypedLocation(Frame.TypeBuilder.ConstantInt32(2), typeof(int), Frame.TypeBuilder));
+                    break;
                 case Code.Ldc_I4_3:
+                    Push(new TypedLocation(Frame.TypeBuilder.ConstantInt32(3), typeof(int), Frame.TypeBuilder));
+                    break;
                 case Code.Ldc_I4_4:
+                    Push(new TypedLocation(Frame.TypeBuilder.ConstantInt32(4), typeof(int), Frame.TypeBuilder));
+                    break;
                 case Code.Ldc_I4_5:
+                    Push(new TypedLocation(Frame.TypeBuilder.ConstantInt32(5), typeof(int), Frame.TypeBuilder));
+                    break;
                 case Code.Ldc_I4_6:
+                    Push(new TypedLocation(Frame.TypeBuilder.ConstantInt32(6), typeof(int), Frame.TypeBuilder));
+                    break;
                 case Code.Ldc_I4_7:
+                    Push(new TypedLocation(Frame.TypeBuilder.ConstantInt32(7), typeof(int), Frame.TypeBuilder));
+                    break;
                 case Code.Ldc_I4_8:
+                    Push(new TypedLocation(Frame.TypeBuilder.ConstantInt32(8), typeof(int), Frame.TypeBuilder));
+                    break;
                 case Code.Ldc_I4_S:
+                    Push(new TypedLocation(Frame.TypeBuilder.ConstantInt32((int)ins.Operand), typeof(int), Frame.TypeBuilder));
+                    break;
+
+                // unsupported integer conversion
+                case Code.Conv_I1:
+                case Code.Conv_I2:
+                    throw new NotSupportedException("char and short are not supported");
+
+                // to integer conversion
+                case Code.Conv_I4:
+                case Code.Conv_I8:
+                    tmp = Pop();
+                    res = CreateLocation(opc.Code == Code.Conv_R4 ? typeof(int) : typeof(long));
+                    switch (tmp.Type.TypeEnum)
+                    {
+                        case SpirvTypeEnum.Integer:
+                            if (tmp.Type.IsSigned)
+                                Instructions.Add(new OpSConvert { ResultType = res.Type.TypeID, Result = res.ID, SignedValue = tmp.ID });
+                            else throw new InvalidOperationException("Signed-unsigned conversion?");
+                            break;
+                        case SpirvTypeEnum.Floating:
+                            Instructions.Add(new OpConvertFToS { ResultType = res.Type.TypeID, Result = res.ID, FloatValue = tmp.ID });
+                            break;
+                        default:
+                            throw new NotSupportedException("or not implemented");
+                    }
+                    Push(res);
+                    break;
+                // to floating conversion
+                case Code.Conv_R4:
+                case Code.Conv_R8:
+                    tmp = Pop();
+                    res = CreateLocation(opc.Code == Code.Conv_R4 ? typeof(float) : typeof(double));
+                    switch (tmp.Type.TypeEnum)
+                    {
+                        case SpirvTypeEnum.Integer:
+                            if (tmp.Type.IsSigned)
+                                Instructions.Add(new OpConvertSToF { ResultType = res.Type.TypeID, Result = res.ID, SignedValue = tmp.ID });
+                            else Instructions.Add(new OpConvertUToF { ResultType = res.Type.TypeID, Result = res.ID, UnsignedValue = tmp.ID });
+                            break;
+                        case SpirvTypeEnum.Floating:
+                            Instructions.Add(new OpFConvert { ResultType = res.Type.TypeID, Result = res.ID, FloatValue = tmp.ID });
+                            break;
+                        default:
+                            throw new NotSupportedException("or not implemented");
+                    }
+                    Push(res);
+                    break;
+                // to unsigned conversion
+                case Code.Conv_U4:
+                case Code.Conv_U8:
+                    tmp = Pop();
+                    res = CreateLocation(opc.Code == Code.Conv_R4 ? typeof(uint) : typeof(ulong));
+                    switch (tmp.Type.TypeEnum)
+                    {
+                        case SpirvTypeEnum.Integer:
+                            if (tmp.Type.IsSigned)
+                                throw new InvalidOperationException("Signed-unsigned conversion?");
+                            else Instructions.Add(new OpUConvert { ResultType = res.Type.TypeID, Result = res.ID, UnsignedValue = tmp.ID });
+                            break;
+                        case SpirvTypeEnum.Floating:
+                            Instructions.Add(new OpConvertFToU { ResultType = res.Type.TypeID, Result = res.ID, FloatValue = tmp.ID });
+                            break;
+                        default:
+                            throw new NotSupportedException("or not implemented");
+                    }
+                    Push(res);
+                    break;
+
+                case Code.Starg_S:
+                case Code.Ldarga_S:
+                case Code.Ldloca_S:
+                case Code.Ldnull:
                 case Code.Dup:
                 case Code.Pop:
                 case Code.Jmp:
@@ -776,14 +891,6 @@ namespace SpirvNet.DotNet.SSA
                 case Code.Stind_I8:
                 case Code.Stind_R4:
                 case Code.Stind_R8:
-                case Code.Conv_I1:
-                case Code.Conv_I2:
-                case Code.Conv_I4:
-                case Code.Conv_I8:
-                case Code.Conv_R4:
-                case Code.Conv_R8:
-                case Code.Conv_U4:
-                case Code.Conv_U8:
                 case Code.Cpobj:
                 case Code.Ldobj:
                 case Code.Ldstr:
