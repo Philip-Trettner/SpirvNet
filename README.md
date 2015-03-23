@@ -7,6 +7,7 @@ SPIR-V generator for .NET IL
 * Convert (suitable) .NET IL to SPIR-V
 * Write Shaders and Kernels in .NET/C#
 * Debug Shaders and Kernels in .NET/C# (CPU fallback)
+* SPIR-V Interpreter
 * Use Gpu.For in addition to Parallel.For
 
 ## Technologies used
