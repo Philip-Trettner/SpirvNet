@@ -63,6 +63,7 @@
     <Compile Include="DotNet\SSA\MethodFrame.cs" />
     <Compile Include="DotNet\SSA\MethodFrameState.cs" />
     <Compile Include="DotNet\SSA\PhiFunction.cs" />
+    <Compile Include="Interpreter\Machine.cs" />
     <Compile Include="Spirv\IDAllocator.cs" />
     <Compile Include="Spirv\SpirvType.cs" />
     <Compile Include="Spirv\TypeBuilder.cs" />
@@ -400,6 +401,8 @@
     <Compile Include="Tests\InstructionTest.cs" />
     <Compile Include="Tests\ModuleTest.cs" />
     <Compile Include="Tests\ShaderTest.cs" />
+    <Compile Include="Validation\ValidatedModule.cs" />
+    <Compile Include="Validation\ValidationException.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using SpirvNet.Validation;
 
 namespace SpirvNet.Spirv
 {
@@ -173,6 +174,11 @@ namespace SpirvNet.Spirv
 
             return mod;
         }
+
+        /// <summary>
+        /// Returns a validated version of this module (or throws)
+        /// </summary>
+        public ValidatedModule Validate() => ValidatedModule.Validate(this);
 
         /// <summary>
         /// Returns a deep-copy of all modules
