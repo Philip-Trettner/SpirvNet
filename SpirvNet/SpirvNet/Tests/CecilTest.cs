@@ -123,8 +123,8 @@ namespace SpirvNet.Tests
 
             //File.WriteAllLines(@"C:\Temp\SimpleLoop.dot", cfg.DotFile);
             //File.WriteAllLines(@"C:\Temp\SimpleLoop.csv", CecilLoader.CsvDump(def));
-            File.WriteAllLines(@"C:\Temp\SimpleLoop.frame.dot", frame.DotFile);
-            File.WriteAllLines(@"C:\Temp\SimpleLoop.spirv.csv", mod.CSVDump());
+            //File.WriteAllLines(@"C:\Temp\SimpleLoop.frame.dot", frame.DotFile);
+            //File.WriteAllLines(@"C:\Temp\SimpleLoop.spirv.csv", mod.CSVDump());
         }
 
         [Test]

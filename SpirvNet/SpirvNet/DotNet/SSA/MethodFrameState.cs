@@ -493,24 +493,16 @@ namespace SpirvNet.DotNet.SSA
 
                 // constant loading
                 case Code.Ldc_I4:
-                    loc = CreateLocation(CreateType(typeof(int)));
-                    Instructions.Add(new OpConstant { Result = loc.ID, ResultType = loc.Type.TypeID, Value = LiteralNumber.ArrayFor((int)ins.Operand) });
-                    Push(loc);
+                    Push(new TypedLocation(Frame.TypeBuilder.ConstantInt32((int)ins.Operand), typeof(int), Frame.TypeBuilder));
                     break;
                 case Code.Ldc_I8:
-                    loc = CreateLocation(CreateType(typeof(long)));
-                    Instructions.Add(new OpConstant { Result = loc.ID, ResultType = loc.Type.TypeID, Value = LiteralNumber.ArrayFor((long)ins.Operand) });
-                    Push(loc);
+                    Push(new TypedLocation(Frame.TypeBuilder.ConstantInt64((long)ins.Operand), typeof(long), Frame.TypeBuilder));
                     break;
                 case Code.Ldc_R4:
-                    loc = CreateLocation(CreateType(typeof(float)));
-                    Instructions.Add(new OpConstant { Result = loc.ID, ResultType = loc.Type.TypeID, Value = LiteralNumber.ArrayFor((float)ins.Operand) });
-                    Push(loc);
+                    Push(new TypedLocation(Frame.TypeBuilder.ConstantFloat32((float)ins.Operand), typeof(float), Frame.TypeBuilder));
                     break;
                 case Code.Ldc_R8:
-                    loc = CreateLocation(CreateType(typeof(double)));
-                    Instructions.Add(new OpConstant { Result = loc.ID, ResultType = loc.Type.TypeID, Value = LiteralNumber.ArrayFor((double)ins.Operand) });
-                    Push(loc);
+                    Push(new TypedLocation(Frame.TypeBuilder.ConstantFloat64((double)ins.Operand), typeof(double), Frame.TypeBuilder));
                     break;
 
                 // return value
