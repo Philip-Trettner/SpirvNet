@@ -23,8 +23,8 @@
         MV13_1_OpFunctionParameters,
         MV13_2_0_OpFunctionBlockLabel,
         MV13_2_1_OpFunctionBlockVars,
-        MV13_2_2_OpFunctionBlockInstruction,
-        MV13_2_3_OpFunctionBlockBranch,
+        MV13_2_2_OpFunctionBlockPhis,
+        MV13_2_3_OpFunctionBlockInstruction,
         MV13_3_OpFunctionEnd,
     }
 }

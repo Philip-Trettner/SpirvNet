@@ -9,6 +9,7 @@ using SpirvNet.Spirv.Ops.Annotation;
 using SpirvNet.Spirv.Ops.ConstantCreation;
 using SpirvNet.Spirv.Ops.Debug;
 using SpirvNet.Spirv.Ops.Extension;
+using SpirvNet.Spirv.Ops.FlowControl;
 using SpirvNet.Spirv.Ops.Function;
 using SpirvNet.Spirv.Ops.TypeDeclaration;
 
@@ -29,7 +30,7 @@ namespace SpirvNet.Validation
         /// </summary>
         Type,
         /// <summary>
-        /// An Intermediate
+        /// An Intermediate (function instructions)
         /// </summary>
         Intermediate,
         /// <summary>
@@ -44,6 +45,10 @@ namespace SpirvNet.Validation
         /// A function (from an OpFunction)
         /// </summary>
         Function,
+        /// <summary>
+        /// A function parameter (from an OpFunctionParameter)
+        /// </summary>
+        FunctionParameter,
         /// <summary>
         /// An imported instruction (from an OpExtInstImport)
         /// </summary>
@@ -88,6 +93,20 @@ namespace SpirvNet.Validation
         /// Function control mask (valid for functions)
         /// </summary>
         public FunctionControlMask FunctionControlMask { get; private set; }
+        /// <summary>
+        /// List of function paras (valid for function)
+        /// </summary>
+        public List<Location> FunctionParameters { get; private set; }
+
+        /// <summary>
+        /// Location of parent block
+        /// </summary>
+        public Location ParentBlock { get; private set; }
+
+        /// <summary>
+        /// Inside-a-function instruction
+        /// </summary>
+        public Instruction IntermediateOp { get; private set; }
 
         /// <summary>
         /// Name of the instruction iff this is an instruction
@@ -265,6 +284,38 @@ namespace SpirvNet.Validation
         }
 
         /// <summary>
+        /// Fills this location with a function parameter decl
+        /// </summary>
+        public void FillFromFunctionParameter(OpFunctionParameter op, ITypeProvider typeProvider)
+        {
+            LocationType = LocationType.FunctionParameter;
+            SpirvType = typeProvider.TypeFor(op.ResultType, op);
+        }
+
+        /// <summary>
+        /// Fills this location from a label
+        /// </summary>
+        public void FillFromLabel(OpLabel op, Location parentBlock)
+        {
+            LocationType = LocationType.Label;
+            ParentBlock = parentBlock;
+            if (ParentBlock.LocationType != LocationType.Label)
+                throw new ValidationException(op, "Parent block not-a-block");
+        }
+
+        /// <summary>
+        /// Fills this location for a function instruction
+        /// </summary>
+        public void FillFromFunctionInstruction(Instruction op, Location parentBlock, ITypeProvider typeProvider)
+        {
+            LocationType = LocationType.Intermediate;
+            IntermediateOp = op;
+            ParentBlock = parentBlock;
+
+            // TODO: Type deduction
+        }
+
+        /// <summary>
         /// Adds line information to this loccation
         /// </summary>
         public void AddLineInfo(string file, uint line, uint col)
@@ -272,6 +323,26 @@ namespace SpirvNet.Validation
             if (SourceLocations == null)
                 SourceLocations = new List<SourceLocation>();
             SourceLocations.Add(new SourceLocation(file, line, col));
+        }
+
+        /// <summary>
+        /// Adds a reference to a function parameter and performs type validation
+        /// </summary>
+        public void AddFunctionParameter(Location loc, OpFunctionParameter op, ITypeProvider typeProvider)
+        {
+            if (LocationType != LocationType.Function)
+                throw new ValidationException(op, "Function parameter for non-function location " + LocationID);
+
+            var paraIdx = FunctionParameters.Count;
+            if (paraIdx >= SpirvType.ParameterTypes.Length)
+                throw new ValidationException(op, "More actual parameters than function type declared.");
+
+            var paraType = typeProvider.TypeFor(op.ResultType, op);
+            if (paraType.ToString() != SpirvType.ParameterTypes[paraIdx].ToString())
+                throw new ValidationException(op, string.Format("Actual parameter type differs from declared type: ({0} ({2}) vs. {1} ({3}))",
+                    paraType, SpirvType.ParameterTypes[paraIdx], paraType.TypeID, SpirvType.ParameterTypes[paraIdx].TypeID));
+
+            FunctionParameters.Add(loc);
         }
 
         /// <summary>

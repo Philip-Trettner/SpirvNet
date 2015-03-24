@@ -40,7 +40,7 @@ namespace SpirvNet.Spirv
         public readonly uint ElementCount;
 
         /// <summary>
-        /// Homogeneous element type (array or vector or matrix)
+        /// Homogeneous element type (array or vector or matrix or pointer)
         /// </summary>
         public readonly SpirvType ElementType;
 

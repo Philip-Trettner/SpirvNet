@@ -11,6 +11,7 @@ using SpirvNet.Spirv.Ops.Annotation;
 using SpirvNet.Spirv.Ops.ConstantCreation;
 using SpirvNet.Spirv.Ops.Debug;
 using SpirvNet.Spirv.Ops.Extension;
+using SpirvNet.Spirv.Ops.FlowControl;
 using SpirvNet.Spirv.Ops.Function;
 using SpirvNet.Spirv.Ops.Memory;
 using SpirvNet.Spirv.Ops.ModeSetting;
@@ -146,6 +147,9 @@ namespace SpirvNet.Validation
             var memberNames = new List<OpMemberName>();
 
             OpFunction currFunc = null;
+            List<OpFunctionParameter> funcParas = null;
+            OpLabel firstBlock = null;
+            List<Location> blocks = null;
 
             while (i < instructions.Count)
             {
@@ -373,25 +377,159 @@ namespace SpirvNet.Validation
                         {
                             if (currFunc != null)
                                 throw new ValidationException(inst, "Nested functions are not allowed.");
+
                             var op = inst as OpFunction;
                             AssertEmptyLocation(op);
                             Locations[op.Result.Value].FillFromFunction(op, this);
                             currFunc = op;
+                            firstBlock = null;
+                            blocks = new List<Location>();
+                            funcParas = new List<OpFunctionParameter>();
                             ++i;
                             state = ModuleValidationState.MV13_1_OpFunctionParameters;
                         }
                         else throw new ValidationException(inst, "Unexpected instruction. Expected OpFunction instruction.");
                         break;
                     case ModuleValidationState.MV13_1_OpFunctionParameters:
+                        if (inst is OpFunctionParameter)
+                        {
+                            if (currFunc == null)
+                                throw new ValidationException(inst, "Function parameter outside of a function.");
+
+                            var op = inst as OpFunctionParameter;
+                            AssertEmptyLocation(op);
+                            Locations[op.Result.Value].FillFromFunctionParameter(op, this);
+                            funcParas.Add(op);
+                            Locations[currFunc.Result.Value].AddFunctionParameter(Locations[op.Result.Value], op, this);
+                            ++i;
+                        }
+                        else // Op*
+                            state = ModuleValidationState.MV13_2_0_OpFunctionBlockLabel;
                         break;
                     // blocks
                     case ModuleValidationState.MV13_2_0_OpFunctionBlockLabel:
+                        if (inst is OpLabel)
+                        {
+                            if (currFunc == null)
+                                throw new ValidationException(inst, "Block label outside of a function.");
+
+                            var op = inst as OpLabel;
+                            AssertEmptyLocation(op);
+                            Locations[op.Result.Value].FillFromLabel(op, blocks.Count == 0 ? null : blocks.Last());
+                            ++i;
+
+                            if (firstBlock == null)
+                                firstBlock = op;
+                            blocks.Add(Locations[op.Result.Value]);
+
+                            state = ModuleValidationState.MV13_2_1_OpFunctionBlockVars;
+                        }
+                        else throw new ValidationException(inst, "Unexpected instruction. Expected OpLabel instruction (first of block).");
                         break;
                     case ModuleValidationState.MV13_2_1_OpFunctionBlockVars:
+                        if (inst is OpVariable)
+                        {
+                            if (currFunc == null)
+                                throw new ValidationException(inst, "Block variable outside of a function.");
+
+                            if (blocks.Count == 1)
+                                throw new ValidationException(inst, "Block variables are only allowed in topmost block.");
+
+                            var op = inst as OpVariable;
+                            AssertEmptyLocation(op);
+                            Locations[op.Result.Value].FillFromFunctionInstruction(op, blocks.Last(), this);
+                            ++i;
+                        }
+                        else if (inst is OpVariableArray)
+                        {
+                            if (currFunc == null)
+                                throw new ValidationException(inst, "Block variable outside of a function.");
+
+                            if (blocks.Count == 1)
+                                throw new ValidationException(inst, "Block variables are only allowed in topmost block.");
+
+                            var op = inst as OpVariableArray;
+                            AssertEmptyLocation(op);
+                            Locations[op.Result.Value].FillFromFunctionInstruction(op, blocks.Last(), this);
+                            ++i;
+                        }
+                        else // Op*
+                            state = ModuleValidationState.MV13_2_2_OpFunctionBlockPhis;
                         break;
-                    case ModuleValidationState.MV13_2_2_OpFunctionBlockInstruction:
+                    case ModuleValidationState.MV13_2_2_OpFunctionBlockPhis:
+                        if (inst is OpPhi)
+                        {
+                            if (currFunc == null)
+                                throw new ValidationException(inst, "Block OpPhi outside of a function.");
+
+                            var op = inst as OpPhi;
+                            AssertEmptyLocation(op);
+                            Locations[op.Result.Value].FillFromFunctionInstruction(op, blocks.Last(), this);
+                            ++i;
+                        }
+                        else // Op*
+                            state = ModuleValidationState.MV13_2_3_OpFunctionBlockInstruction;
                         break;
-                    case ModuleValidationState.MV13_2_3_OpFunctionBlockBranch:
+                    case ModuleValidationState.MV13_2_3_OpFunctionBlockInstruction:
+                        if (inst.IsFlowControl)
+                        {
+                            if (inst is OpBranch)
+                            {
+
+                            }
+                            else if (inst is OpBranchConditional)
+                            {
+
+                            }
+                            else if (inst is OpSwitch)
+                            {
+
+                            }
+                            else if (inst is OpKill)
+                            {
+
+                            }
+                            else if (inst is OpReturn)
+                            {
+
+                            }
+                            else if (inst is OpReturnValue)
+                            {
+
+                            }
+                            else if (inst is OpUnreachable)
+                            {
+
+                            }
+                            else if (inst is OpPhi)
+                            {
+                                throw new ValidationException(inst, "Phis may only appear at the start of a block.");
+                            }
+                            else throw new NotImplementedException("Not implemented");
+
+                            ++i;
+                            // new block
+                            state = ModuleValidationState.MV13_2_0_OpFunctionBlockLabel;
+                        }
+                        else if (inst is OpLabel)
+                        {
+                            throw new ValidationException(inst, "Nested blocks are not allowed.");
+                        }
+                        else if (inst is OpFunctionEnd)
+                        {
+                            throw new ValidationException(inst, "Function cannot end before block ended.");
+                        }
+                        else
+                        {
+                            var op = inst;
+                            if (op.ResultID.HasValue)
+                            {
+                                AssertEmptyLocation(op);
+                                Locations[op.ResultID.Value.Value].FillFromFunctionInstruction(op, blocks.Last(), this);
+                            }
+                            // TODO: Block construction
+                            ++i;
+                        }
                         break;
                     // function end
                     case ModuleValidationState.MV13_3_OpFunctionEnd:
@@ -399,7 +537,11 @@ namespace SpirvNet.Validation
                         {
                             if (currFunc == null)
                                 throw new ValidationException(inst, "Must be inside an OpFunction.");
+
                             currFunc = null;
+                            funcParas = null;
+                            firstBlock = null;
+                            blocks = null;
                             ++i;
                             state = ModuleValidationState.MV13_0_OpFunction;
                         }
