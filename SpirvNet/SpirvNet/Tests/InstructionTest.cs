@@ -11,6 +11,7 @@ using SpirvNet.Spirv.Ops;
 using SpirvNet.Spirv.Ops.Debug;
 using SpirvNet.Spirv.Ops.Misc;
 using SpirvNet.Spirv.Ops.ModeSetting;
+using SpirvNet.Spirv.Ops.Pipe;
 
 namespace SpirvNet.Tests
 {
@@ -155,6 +156,26 @@ namespace SpirvNet.Tests
                 Assert.AreEqual(code.Length, code2.Length);
                 for (var i = 0; i < code.Length; ++i)
                     Assert.AreEqual(code[i], code2[i]);
+            }
+        }
+
+        [Test]
+        public void CapabilityTests()
+        {
+            {
+                var op = new OpNop();
+                Assert.AreEqual(op.RequiredCapabilities(), LanguageCapability.None);
+            }
+            {
+                var op = new OpCommitWritePipe();
+                Assert.AreEqual(op.RequiredCapabilities(), LanguageCapability.Kernel);
+            }
+            {
+                var op = new OpEntryPoint();
+                op.ExecutionModel = ExecutionModel.Fragment;
+                Assert.AreEqual(LanguageCapability.Shader, op.RequiredCapabilities());
+                op.ExecutionModel = ExecutionModel.TessellationControl;
+                Assert.AreEqual(LanguageCapability.Tess, op.RequiredCapabilities());
             }
         }
     }

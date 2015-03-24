@@ -285,5 +285,42 @@ namespace SpirvNet.Spirv
                     throw new NotSupportedException("Unsupported field type: " + ftype + " of " + field);
             }
         }
+
+        /// <summary>
+        /// Calculates all required capabilities (using reflection)
+        /// </summary>
+        public LanguageCapability RequiredCapabilities()
+        {
+            var cap = LanguageCapability.None;
+
+            // capabilities of Opcode class
+            foreach (var attr in Attribute.GetCustomAttributes(GetType(), typeof(DependsOnAttribute)))
+                cap |= ((DependsOnAttribute)attr).Capability;
+
+            foreach (var member in GetType().GetMembers())
+            {
+                // members caps
+                foreach (var attr in Attribute.GetCustomAttributes(member, typeof(DependsOnAttribute)))
+                    cap |= ((DependsOnAttribute)attr).Capability;
+
+                if (member is FieldInfo)
+                {
+                    var field = member as FieldInfo;
+                    if (field.FieldType.IsEnum)
+                    {
+                        // enum members
+                        var val = field.GetValue(this);
+
+                        var enummeminfos = field.FieldType.GetMember(val.ToString());
+
+                        foreach (var enummeminfo in enummeminfos)
+                            foreach (var attr in Attribute.GetCustomAttributes(enummeminfo, typeof(DependsOnAttribute)))
+                                cap |= ((DependsOnAttribute)attr).Capability;
+                    }
+                }
+            }
+
+            return cap;
+        }
     }
 }

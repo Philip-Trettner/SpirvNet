@@ -401,6 +401,10 @@
     <Compile Include="Tests\InstructionTest.cs" />
     <Compile Include="Tests\ModuleTest.cs" />
     <Compile Include="Tests\ShaderTest.cs" />
+    <Compile Include="Validation\EntryPoint.cs" />
+    <Compile Include="Validation\Location.cs" />
+    <Compile Include="Validation\ModuleValidationState.cs" />
+    <Compile Include="Validation\SourceLocation.cs" />
     <Compile Include="Validation\ValidatedModule.cs" />
     <Compile Include="Validation\ValidationException.cs" />
   </ItemGroup>

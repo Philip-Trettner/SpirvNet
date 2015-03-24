@@ -22,7 +22,7 @@ namespace SpirvNet.Spirv.Ops.Composite
         public ID ResultType;
         public ID Result;
         public ID Composite;
-        public ID[] Indexes = { };
+        public LiteralNumber[] Indexes = { };
 
         #region Code
         public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(ResultType) + ", " + StrOf(Result) + ", " + StrOf(Composite) + ", " + StrOf(Indexes) + ")";
@@ -36,9 +36,9 @@ namespace SpirvNet.Spirv.Ops.Composite
             Result = new ID(codes[i++]);
             Composite = new ID(codes[i++]);
             var length = WordCount - (i - start);
-            Indexes = new ID[length];
+            Indexes = new LiteralNumber[length];
             for (var k = 0; k < length; ++k)
-                Indexes[k] = new ID(codes[i++]);
+                Indexes[k] = new LiteralNumber(codes[i++]);
         }
 
         protected override void WriteCode(List<uint> code)
@@ -58,9 +58,6 @@ namespace SpirvNet.Spirv.Ops.Composite
                 yield return ResultType;
                 yield return Result;
                 yield return Composite;
-                if (Indexes != null)
-                    foreach (var id in Indexes)
-                        yield return id;
             }
         }
         #endregion

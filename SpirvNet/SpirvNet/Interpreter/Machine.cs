@@ -28,7 +28,7 @@ namespace SpirvNet.Interpreter
         {
             Module = module;
 
-            values = new object[Module.OriginalModule.Bound];
+            values = new object[Module.Bound];
         }
     }
 }

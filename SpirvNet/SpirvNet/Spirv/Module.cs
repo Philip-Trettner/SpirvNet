@@ -86,6 +86,16 @@ namespace SpirvNet.Spirv
         }
 
         /// <summary>
+        /// Removes all debug infos
+        /// </summary>
+        public void RemoveDebugInfo()
+        {
+            for (var i = Instructions.Count - 1; i >= 0; --i)
+                if (Instructions[i].IsDebug)
+                    Instructions.RemoveAt(i);
+        }
+
+        /// <summary>
         /// Generate CSV Dump
         /// </summary>
         public IEnumerable<string> CSVDump()

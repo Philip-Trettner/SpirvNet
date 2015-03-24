@@ -144,8 +144,8 @@ namespace OpCodeGen
             yield return Op("VectorInsertDynamic", Id("ResultType"), Id("Result"), Id("Component"), Id("Index"));
             yield return Op("VectorShuffle", Id("ResultType"), Id("Result"), Id("Vector1"), Id("Vector2"), NrArray("Components"));
             yield return Op("CompositeConstruct", Id("ResultType"), Id("Result"), IdArray("Constituents"));
-            yield return Op("CompositeExtract", Id("ResultType"), Id("Result"), Id("Composite"), IdArray("Indexes"));
-            yield return Op("CompositeInsert", Id("ResultType"), Id("Result"), Id("Object"), Id("Composite"), IdArray("Indexes"));
+            yield return Op("CompositeExtract", Id("ResultType"), Id("Result"), Id("Composite"), NrArray("Indexes"));
+            yield return Op("CompositeInsert", Id("ResultType"), Id("Result"), Id("Object"), Id("Composite"), NrArray("Indexes"));
             yield return Op("CopyObject", Id("ResultType"), Id("Result"), Id("Operand"));
             yield return Op("Transpose", Id("ResultType"), Id("Result"), Id("Matrix")).Compat("Matrix");
 

@@ -10,6 +10,7 @@ namespace SpirvNet.Spirv.Enums
     [Flags]
     public enum LanguageCapability
     {
+        None = 0x0,
         /// <summary>
         /// Native matrices
         /// </summary>

@@ -12,12 +12,38 @@ namespace SpirvNet.Spirv
     /// </summary>
     [Serializable]
     [StructLayout(LayoutKind.Sequential)]
-    public struct ID
+    public struct ID : IEquatable<ID>
     {
         /// <summary>
         /// Numerical value
         /// </summary>
         public readonly uint Value;
+
+        public bool Equals(ID other)
+        {
+            return Value == other.Value;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            return obj is ID && Equals((ID)obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return (int)Value;
+        }
+
+        public static bool operator ==(ID left, ID right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(ID left, ID right)
+        {
+            return !left.Equals(right);
+        }
 
         public ID(uint id)
         {

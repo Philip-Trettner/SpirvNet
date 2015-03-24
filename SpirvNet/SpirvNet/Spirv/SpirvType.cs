@@ -15,7 +15,7 @@ namespace SpirvNet.Spirv
         public ID TypeID { get; set; }
 
         /// <summary>
-        /// Represented type
+        /// Represented type (can be null)
         /// </summary>
         public readonly TypeReference RepresentedType;
 
@@ -61,6 +61,23 @@ namespace SpirvNet.Spirv
         public bool IsAggregate => IsStructure || IsArray;
         public bool IsComposite => IsAggregate || IsMatrix || IsVector;
 
+        /// <summary>
+        /// Explicit ctor
+        /// </summary>
+        public SpirvType(ID typeID, SpirvTypeEnum typeEnum, uint bitWidth = 0, uint signedness = 0,
+            uint elementCount = 0, SpirvType elementType = null)
+        {
+            TypeID = typeID;
+            TypeEnum = typeEnum;
+            BitWidth = bitWidth;
+            Signedness = signedness;
+            ElementCount = elementCount;
+            ElementType = elementType;
+        }
+
+        /// <summary>
+        /// From .NET ctor
+        /// </summary>
         public SpirvType(TypeReference representedType, TypeBuilder builder, IDAllocator allocator)
         {
             RepresentedType = representedType;
