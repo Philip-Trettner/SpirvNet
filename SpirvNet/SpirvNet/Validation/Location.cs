@@ -99,9 +99,9 @@ namespace SpirvNet.Validation
         public List<Location> FunctionParameters { get; private set; }
 
         /// <summary>
-        /// Location of parent block
+        /// Location of instruction block
         /// </summary>
-        public Location ParentBlock { get; private set; }
+        public ValidatedBlock Block { get; private set; }
 
         /// <summary>
         /// Inside-a-function instruction
@@ -295,22 +295,20 @@ namespace SpirvNet.Validation
         /// <summary>
         /// Fills this location from a label
         /// </summary>
-        public void FillFromLabel(OpLabel op, Location parentBlock)
+        public void FillFromLabel(OpLabel op, ValidatedBlock block)
         {
             LocationType = LocationType.Label;
-            ParentBlock = parentBlock;
-            if (ParentBlock.LocationType != LocationType.Label)
-                throw new ValidationException(op, "Parent block not-a-block");
+            Block = block;
         }
 
         /// <summary>
         /// Fills this location for a function instruction
         /// </summary>
-        public void FillFromFunctionInstruction(Instruction op, Location parentBlock, ITypeProvider typeProvider)
+        public void FillFromFunctionInstruction(Instruction op, ValidatedBlock block, ITypeProvider typeProvider)
         {
             LocationType = LocationType.Intermediate;
             IntermediateOp = op;
-            ParentBlock = parentBlock;
+            Block = block;
 
             // TODO: Type deduction
         }

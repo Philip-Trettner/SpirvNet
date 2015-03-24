@@ -146,10 +146,8 @@ namespace SpirvNet.Validation
 
             var memberNames = new List<OpMemberName>();
 
-            OpFunction currFunc = null;
-            List<OpFunctionParameter> funcParas = null;
-            OpLabel firstBlock = null;
-            List<Location> blocks = null;
+            ValidatedFunction currFunc = null;
+            ValidatedBlock currBlock = null;
 
             while (i < instructions.Count)
             {
@@ -381,10 +379,8 @@ namespace SpirvNet.Validation
                             var op = inst as OpFunction;
                             AssertEmptyLocation(op);
                             Locations[op.Result.Value].FillFromFunction(op, this);
-                            currFunc = op;
-                            firstBlock = null;
-                            blocks = new List<Location>();
-                            funcParas = new List<OpFunctionParameter>();
+                            currFunc = new ValidatedFunction(Locations[op.Result.Value]);
+                            currBlock = null;
                             ++i;
                             state = ModuleValidationState.MV13_1_OpFunctionParameters;
                         }
@@ -399,8 +395,7 @@ namespace SpirvNet.Validation
                             var op = inst as OpFunctionParameter;
                             AssertEmptyLocation(op);
                             Locations[op.Result.Value].FillFromFunctionParameter(op, this);
-                            funcParas.Add(op);
-                            Locations[currFunc.Result.Value].AddFunctionParameter(Locations[op.Result.Value], op, this);
+                            currFunc.DeclarationLocation.AddFunctionParameter(Locations[op.Result.Value], op, this);
                             ++i;
                         }
                         else // Op*
@@ -413,14 +408,14 @@ namespace SpirvNet.Validation
                             if (currFunc == null)
                                 throw new ValidationException(inst, "Block label outside of a function.");
 
+                            if (currBlock != null)
+                                throw new ValidationException(inst, "No nested blocks.");
+
                             var op = inst as OpLabel;
                             AssertEmptyLocation(op);
-                            Locations[op.Result.Value].FillFromLabel(op, blocks.Count == 0 ? null : blocks.Last());
+                            currBlock = new ValidatedBlock(op, currFunc);
+                            Locations[op.Result.Value].FillFromLabel(op, currBlock);
                             ++i;
-
-                            if (firstBlock == null)
-                                firstBlock = op;
-                            blocks.Add(Locations[op.Result.Value]);
 
                             state = ModuleValidationState.MV13_2_1_OpFunctionBlockVars;
                         }
@@ -432,12 +427,12 @@ namespace SpirvNet.Validation
                             if (currFunc == null)
                                 throw new ValidationException(inst, "Block variable outside of a function.");
 
-                            if (blocks.Count == 1)
+                            if (currBlock != currFunc.FirstBlock)
                                 throw new ValidationException(inst, "Block variables are only allowed in topmost block.");
 
                             var op = inst as OpVariable;
                             AssertEmptyLocation(op);
-                            Locations[op.Result.Value].FillFromFunctionInstruction(op, blocks.Last(), this);
+                            Locations[op.Result.Value].FillFromFunctionInstruction(op, currBlock, this);
                             ++i;
                         }
                         else if (inst is OpVariableArray)
@@ -445,12 +440,12 @@ namespace SpirvNet.Validation
                             if (currFunc == null)
                                 throw new ValidationException(inst, "Block variable outside of a function.");
 
-                            if (blocks.Count == 1)
+                            if (currBlock != currFunc.FirstBlock)
                                 throw new ValidationException(inst, "Block variables are only allowed in topmost block.");
 
                             var op = inst as OpVariableArray;
                             AssertEmptyLocation(op);
-                            Locations[op.Result.Value].FillFromFunctionInstruction(op, blocks.Last(), this);
+                            Locations[op.Result.Value].FillFromFunctionInstruction(op, currBlock, this);
                             ++i;
                         }
                         else // Op*
@@ -464,7 +459,7 @@ namespace SpirvNet.Validation
 
                             var op = inst as OpPhi;
                             AssertEmptyLocation(op);
-                            Locations[op.Result.Value].FillFromFunctionInstruction(op, blocks.Last(), this);
+                            Locations[op.Result.Value].FillFromFunctionInstruction(op, currBlock, this);
                             ++i;
                         }
                         else // Op*
@@ -475,31 +470,31 @@ namespace SpirvNet.Validation
                         {
                             if (inst is OpBranch)
                             {
-
+                                throw new NotImplementedException("TODO");
                             }
                             else if (inst is OpBranchConditional)
                             {
-
+                                throw new NotImplementedException("TODO");
                             }
                             else if (inst is OpSwitch)
                             {
-
+                                throw new NotImplementedException("TODO");
                             }
                             else if (inst is OpKill)
                             {
-
+                                throw new NotImplementedException("TODO");
                             }
                             else if (inst is OpReturn)
                             {
-
+                                throw new NotImplementedException("TODO");
                             }
                             else if (inst is OpReturnValue)
                             {
-
+                                throw new NotImplementedException("TODO");
                             }
                             else if (inst is OpUnreachable)
                             {
-
+                                throw new NotImplementedException("TODO");
                             }
                             else if (inst is OpPhi)
                             {
@@ -509,6 +504,7 @@ namespace SpirvNet.Validation
 
                             ++i;
                             // new block
+                            currBlock = null;
                             state = ModuleValidationState.MV13_2_0_OpFunctionBlockLabel;
                         }
                         else if (inst is OpLabel)
@@ -525,9 +521,9 @@ namespace SpirvNet.Validation
                             if (op.ResultID.HasValue)
                             {
                                 AssertEmptyLocation(op);
-                                Locations[op.ResultID.Value.Value].FillFromFunctionInstruction(op, blocks.Last(), this);
+                                Locations[op.ResultID.Value.Value].FillFromFunctionInstruction(op, currBlock, this);
                             }
-                            // TODO: Block construction
+                            currBlock.AddInstruction(op);
                             ++i;
                         }
                         break;
@@ -539,9 +535,7 @@ namespace SpirvNet.Validation
                                 throw new ValidationException(inst, "Must be inside an OpFunction.");
 
                             currFunc = null;
-                            funcParas = null;
-                            firstBlock = null;
-                            blocks = null;
+                            currBlock = null;
                             ++i;
                             state = ModuleValidationState.MV13_0_OpFunction;
                         }
