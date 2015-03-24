@@ -9,6 +9,18 @@
         Vector,
         Matrix,
         Array,
-        Structure
+        Structure,
+
+        Sampler,
+        Filter,
+        RuntimeArray,
+        Opaque,
+        Pointer,
+        Function,
+        Event,
+        DeviceEvent,
+        ReserveId,
+        Queue,
+        Pipe
     }
 }

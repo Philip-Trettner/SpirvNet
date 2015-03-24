@@ -41,4 +41,15 @@ namespace SpirvNet.Spirv
 
         public override string ToString() => Value.ToString();
     }
+
+    public static class LiteralNumberExtensions
+    {
+        public static byte[] ToByteArray(this LiteralNumber[] nrs) => nrs.SelectMany(nr => BitConverter.GetBytes(nr.Value)).ToArray();
+        public static int ToInt32(this LiteralNumber[] nrs) => BitConverter.ToInt32(nrs.ToByteArray(), 0);
+        public static uint ToUInt32(this LiteralNumber[] nrs) => BitConverter.ToUInt32(nrs.ToByteArray(), 0);
+        public static long ToInt64(this LiteralNumber[] nrs) => BitConverter.ToInt64(nrs.ToByteArray(), 0);
+        public static ulong ToUInt64(this LiteralNumber[] nrs) => BitConverter.ToUInt64(nrs.ToByteArray(), 0);
+        public static float ToFloat32(this LiteralNumber[] nrs) => BitConverter.ToSingle(nrs.ToByteArray(), 0);
+        public static double ToFloat64(this LiteralNumber[] nrs) => BitConverter.ToDouble(nrs.ToByteArray(), 0);
+    }
 }

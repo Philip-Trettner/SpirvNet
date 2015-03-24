@@ -44,6 +44,16 @@ namespace SpirvNet.Spirv
         /// </summary>
         public readonly SpirvType ElementType;
 
+        /// <summary>
+        /// Return type (valid for functions)
+        /// </summary>
+        public readonly SpirvType ReturnType;
+        /// <summary>
+        /// Parameter types (valid for function)
+        /// </summary>
+        public readonly SpirvType[] ParameterTypes;
+
+
         public bool IsVoid => TypeEnum == SpirvTypeEnum.Void;
 
         public bool IsSigned => Signedness != 0;
@@ -65,7 +75,7 @@ namespace SpirvNet.Spirv
         /// Explicit ctor
         /// </summary>
         public SpirvType(ID typeID, SpirvTypeEnum typeEnum, uint bitWidth = 0, uint signedness = 0,
-            uint elementCount = 0, SpirvType elementType = null)
+            uint elementCount = 0, SpirvType elementType = null, SpirvType returnType = null, SpirvType[] parameterTypes = null)
         {
             TypeID = typeID;
             TypeEnum = typeEnum;
@@ -73,6 +83,8 @@ namespace SpirvNet.Spirv
             Signedness = signedness;
             ElementCount = elementCount;
             ElementType = elementType;
+            ReturnType = returnType;
+            ParameterTypes = parameterTypes;
         }
 
         /// <summary>

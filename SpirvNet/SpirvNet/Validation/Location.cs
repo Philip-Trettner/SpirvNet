@@ -4,21 +4,28 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using SpirvNet.Spirv;
+using SpirvNet.Spirv.Enums;
 using SpirvNet.Spirv.Ops.Annotation;
+using SpirvNet.Spirv.Ops.ConstantCreation;
 using SpirvNet.Spirv.Ops.Debug;
 using SpirvNet.Spirv.Ops.Extension;
+using SpirvNet.Spirv.Ops.Function;
+using SpirvNet.Spirv.Ops.TypeDeclaration;
 
 namespace SpirvNet.Validation
 {
     public enum LocationType
     {
+        /// <summary>
+        /// Unallocated
+        /// </summary>
         None,
         /// <summary>
-        /// A named string
+        /// A named string (from an OpString)
         /// </summary>
         String,
         /// <summary>
-        /// An OpTypeXYZ
+        /// An OpTypeXYZ (from a TypeDeclarationInstruction)
         /// </summary>
         Type,
         /// <summary>
@@ -26,19 +33,23 @@ namespace SpirvNet.Validation
         /// </summary>
         Intermediate,
         /// <summary>
-        /// A target label
+        /// A constant (from a ConstantCreationInstruction)
+        /// </summary>
+        Constant,
+        /// <summary>
+        /// A target label (from an OpLabel)
         /// </summary>
         Label,
         /// <summary>
-        /// A function
+        /// A function (from an OpFunction)
         /// </summary>
         Function,
         /// <summary>
-        /// An importet instruction
+        /// An imported instruction (from an OpExtInstImport)
         /// </summary>
         ImportedInstruction,
         /// <summary>
-        /// A decoration group
+        /// A decoration group (from an OpDecorationGroup)
         /// </summary>
         DecorationGroup
     }
@@ -52,6 +63,11 @@ namespace SpirvNet.Validation
         /// Location ID
         /// </summary>
         public readonly uint ID;
+
+        /// <summary>
+        /// Location ID (as ID)
+        /// </summary>
+        public ID LocationID => new ID(ID);
 
         /// <summary>
         /// Debug name of this location
@@ -69,10 +85,20 @@ namespace SpirvNet.Validation
         public SpirvType SpirvType { get; private set; }
 
         /// <summary>
+        /// Function control mask (valid for functions)
+        /// </summary>
+        public FunctionControlMask FunctionControlMask { get; private set; }
+
+        /// <summary>
         /// Name of the instruction iff this is an instruction
         /// Name of the string iff this is a string
         /// </summary>
         public string Name { get; private set; }
+
+        /// <summary>
+        /// A constant value
+        /// </summary>
+        public object Constant { get; private set; }
 
         /// <summary>
         /// If non-null, contains all original source locations
@@ -104,6 +130,15 @@ namespace SpirvNet.Validation
         }
 
         /// <summary>
+        /// Throws a validation exceptin if types do not match
+        /// </summary>
+        private void TypeCheck(SpirvType found, SpirvType expected, Instruction op)
+        {
+            if (found.ToString() != expected.ToString())
+                throw new ValidationException(op, string.Format("Expected type {0} ({2}) but found {1} ({3}).", expected, found, expected.TypeID, found.TypeID));
+        }
+
+        /// <summary>
         /// fills this location from an OpExtInstImport
         /// </summary>
         public void FillFromExtInstImport(OpExtInstImport op)
@@ -129,6 +164,107 @@ namespace SpirvNet.Validation
         }
 
         /// <summary>
+        /// Fills this location from a type declaration
+        /// </summary>
+        public void FillFromType(TypeDeclarationInstruction op, ITypeProvider typeProvider)
+        {
+            LocationType = LocationType.Type;
+            var opInt = op as OpTypeInt;
+            var opFloat = op as OpTypeFloat;
+            var opVector = op as OpTypeVector;
+            var opMatrix = op as OpTypeMatrix;
+
+            if (op is OpTypeVoid)
+                SpirvType = new SpirvType(LocationID, SpirvTypeEnum.Void);
+            else if (op is OpTypeBool)
+                SpirvType = new SpirvType(LocationID, SpirvTypeEnum.Boolean);
+            else if (opInt != null)
+                SpirvType = new SpirvType(LocationID, SpirvTypeEnum.Integer, opInt.Width.Value, opInt.Signedness.Value);
+            else if (opFloat != null)
+                SpirvType = new SpirvType(LocationID, SpirvTypeEnum.Floating, opFloat.Width.Value);
+            else if (opVector != null)
+                SpirvType = new SpirvType(LocationID, SpirvTypeEnum.Vector, elementCount: opVector.ComponentCount.Value, elementType: typeProvider.TypeFor(opVector.ComponentType, op));
+            else if (opMatrix != null)
+                SpirvType = new SpirvType(LocationID, SpirvTypeEnum.Matrix, elementCount: opMatrix.ColumnCount.Value, elementType: typeProvider.TypeFor(opMatrix.ColumnType, op));
+            else throw new NotImplementedException("Unknown type decl: " + op);
+            // TODO: More types!
+        }
+
+        /// <summary>
+        /// Fills this location from a type declaration
+        /// </summary>
+        public void FillFromConstant(ConstantCreationInstruction op, ITypeProvider typeProvider)
+        {
+            LocationType = LocationType.Constant;
+            var opConstTrue = op as OpConstantTrue;
+            var opConstFalse = op as OpConstantFalse;
+            var opConst = op as OpConstant;
+            if (!op.ResultTypeID.HasValue)
+                throw new ValidationException(op, "ConstantCreationInstruction without ResultType.");
+            var type = typeProvider.TypeFor(op.ResultTypeID.Value, op);
+
+            if (opConstTrue != null)
+            {
+                if (!type.IsBoolean)
+                    throw new ValidationException(op, "Expected boolean type, found " + type);
+                Constant = opConstTrue;
+            }
+            else if (opConstFalse != null)
+            {
+                if (!type.IsBoolean)
+                    throw new ValidationException(op, "Expected boolean type, found " + type);
+                Constant = false;
+            }
+            else if (opConst != null)
+            {
+                switch (type.TypeEnum)
+                {
+                    case SpirvTypeEnum.Integer:
+                        if (type.IsSigned && type.BitWidth == 32)
+                            Constant = opConst.Value.ToInt32();
+                        else if (type.IsSigned && type.BitWidth == 64)
+                            Constant = opConst.Value.ToInt64();
+                        else if (!type.IsSigned && type.BitWidth == 32)
+                            Constant = opConst.Value.ToUInt32();
+                        else if (!type.IsSigned && type.BitWidth == 64)
+                            Constant = opConst.Value.ToUInt64();
+                        else
+                            throw new ValidationException(op, "Only 32 or 64 bit width valid, found " + type);
+                        break;
+                    case SpirvTypeEnum.Floating:
+                        if (type.BitWidth == 32)
+                            Constant = opConst.Value.ToFloat32();
+                        else if (type.BitWidth == 64)
+                            Constant = opConst.Value.ToFloat64();
+                        else
+                            throw new ValidationException(op, "Only 32 or 64 bit width valid, found " + type);
+                        break;
+
+                    default:
+                        throw new ValidationException(op, "OpConstant only valid for scalar integer and floating types, found " + type);
+                }
+            }
+            else throw new NotImplementedException("Unknown constant creation: " + op);
+            // TODO: More constants!
+        }
+
+        /// <summary>
+        /// Fills this location with a function decl
+        /// </summary>
+        public void FillFromFunction(OpFunction op, ITypeProvider typeProvider)
+        {
+            LocationType = LocationType.Function;
+            SpirvType = typeProvider.TypeFor(op.FunctionType, op);
+            FunctionControlMask = op.FunctionControlMask;
+
+            if (SpirvType.TypeEnum != SpirvTypeEnum.Function)
+                throw new ValidationException(op, "FunctionType must be a function type, but found " + SpirvType);
+            var resType = typeProvider.TypeFor(op.ResultType, op);
+            if (op.ResultType != SpirvType.ReturnType.TypeID)
+                throw new ValidationException(op, string.Format("Result type does not match with declared return type ({0} ({2}) vs. {1} ({3}))", resType, SpirvType.ReturnType, op.ResultType, SpirvType.ReturnType.TypeID));
+        }
+
+        /// <summary>
         /// Adds line information to this loccation
         /// </summary>
         public void AddLineInfo(string file, uint line, uint col)
@@ -150,6 +286,7 @@ namespace SpirvNet.Validation
                 Decorations = new List<OpDecorate>();
             Decorations.Add(op);
         }
+
         /// <summary>
         /// Adds a member decoration to this location
         /// </summary>

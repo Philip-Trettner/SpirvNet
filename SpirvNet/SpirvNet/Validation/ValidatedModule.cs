@@ -8,16 +8,20 @@ using NUnit.Framework;
 using SpirvNet.Spirv;
 using SpirvNet.Spirv.Enums;
 using SpirvNet.Spirv.Ops.Annotation;
+using SpirvNet.Spirv.Ops.ConstantCreation;
 using SpirvNet.Spirv.Ops.Debug;
 using SpirvNet.Spirv.Ops.Extension;
+using SpirvNet.Spirv.Ops.Function;
+using SpirvNet.Spirv.Ops.Memory;
 using SpirvNet.Spirv.Ops.ModeSetting;
+using SpirvNet.Spirv.Ops.TypeDeclaration;
 
 namespace SpirvNet.Validation
 {
     /// <summary>
     /// A validated and analysed version of a module
     /// </summary>
-    public class ValidatedModule
+    public class ValidatedModule : ITypeProvider
     {
         /// <summary>
         /// Reference to original module
@@ -141,6 +145,8 @@ namespace SpirvNet.Validation
 
             var memberNames = new List<OpMemberName>();
 
+            OpFunction currFunc = null;
+
             while (i < instructions.Count)
             {
                 var inst = instructions[i];
@@ -211,7 +217,7 @@ namespace SpirvNet.Validation
                             state = ModuleValidationState.MV06_OpEntryPoint;
                             ++i;
                         }
-                        else throw new ValidationException(inst, "Missing OpMemoryModel instruction.");
+                        else throw new ValidationException(inst, "Unexpected instruction. Expected OpMemoryModel instruction.");
                         break;
 
                     // entry points
@@ -333,13 +339,52 @@ namespace SpirvNet.Validation
 
                     // types, constants, global vars
                     case ModuleValidationState.MV12_OpTypesConstantsGlobalVars:
+                        if (inst.IsTypeDeclaration)
+                        {
+                            var res = inst.ResultID.Value;
+                            AssertEmptyLocation(inst);
+                            Locations[res.Value].FillFromType(inst as TypeDeclarationInstruction, this);
+                            ++i;
+                        }
+                        else if (inst.IsConstantCreation)
+                        {
+                            var res = inst.ResultID.Value;
+                            AssertEmptyLocation(inst);
+                            Locations[res.Value].FillFromConstant(inst as ConstantCreationInstruction, this);
+                            ++i;
+                        }
+                        else if (inst is OpVariable)
+                        {
+                            ++i;
+                            throw new NotImplementedException();
+                        }
+                        else if (inst is OpVariableArray)
+                        {
+                            ++i;
+                            throw new NotImplementedException();
+                        }
+                        else // Op*
+                            state = ModuleValidationState.MV13_0_OpFunction;
                         break;
 
                     // functions
                     case ModuleValidationState.MV13_0_OpFunction:
+                        if (inst is OpFunction)
+                        {
+                            if (currFunc != null)
+                                throw new ValidationException(inst, "Nested functions are not allowed.");
+                            var op = inst as OpFunction;
+                            AssertEmptyLocation(op);
+                            Locations[op.Result.Value].FillFromFunction(op, this);
+                            currFunc = op;
+                            ++i;
+                            state = ModuleValidationState.MV13_1_OpFunctionParameters;
+                        }
+                        else throw new ValidationException(inst, "Unexpected instruction. Expected OpFunction instruction.");
                         break;
                     case ModuleValidationState.MV13_1_OpFunctionParameters:
                         break;
+                    // blocks
                     case ModuleValidationState.MV13_2_0_OpFunctionBlockLabel:
                         break;
                     case ModuleValidationState.MV13_2_1_OpFunctionBlockVars:
@@ -348,7 +393,17 @@ namespace SpirvNet.Validation
                         break;
                     case ModuleValidationState.MV13_2_3_OpFunctionBlockBranch:
                         break;
+                    // function end
                     case ModuleValidationState.MV13_3_OpFunctionEnd:
+                        if (inst is OpFunctionEnd)
+                        {
+                            if (currFunc == null)
+                                throw new ValidationException(inst, "Must be inside an OpFunction.");
+                            currFunc = null;
+                            ++i;
+                            state = ModuleValidationState.MV13_0_OpFunction;
+                        }
+                        else throw new ValidationException(inst, "Unexpected instruction. Expected OpFunctionEnd instruction.");
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();
@@ -369,6 +424,12 @@ namespace SpirvNet.Validation
             var vmod = new ValidatedModule(module);
             vmod.Analyse();
             return vmod;
+        }
+
+        public SpirvType TypeFor(ID typeId, Instruction instruction)
+        {
+            LocationTypeCheck(typeId, LocationType.Type, instruction);
+            return Locations[typeId.Value].SpirvType;
         }
     }
 }
