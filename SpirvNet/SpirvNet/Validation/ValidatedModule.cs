@@ -481,6 +481,7 @@ namespace SpirvNet.Validation
                             var op = inst as OpVariable;
                             AssertEmptyLocation(op);
                             Locations[op.Result.Value].FillFromFunctionInstruction(op, currBlock, this);
+                            currBlock.Instructions.Add(op);
                             ++i;
                         }
                         else if (inst is OpVariableArray)
@@ -494,6 +495,7 @@ namespace SpirvNet.Validation
                             var op = inst as OpVariableArray;
                             AssertEmptyLocation(op);
                             Locations[op.Result.Value].FillFromFunctionInstruction(op, currBlock, this);
+                            currBlock.Instructions.Add(op);
                             ++i;
                         }
                         else // Op*
@@ -508,6 +510,7 @@ namespace SpirvNet.Validation
                             var op = inst as OpPhi;
                             AssertEmptyLocation(op);
                             Locations[op.Result.Value].FillFromFunctionInstruction(op, currBlock, this);
+                            currBlock.Instructions.Add(op);
                             ++i;
                         }
                         else // Op*
@@ -568,6 +571,7 @@ namespace SpirvNet.Validation
 
                             ++i;
                             // new block
+                            currBlock.Instructions.Add(inst);
                             currBlock.BlockEnd = inst as FlowControlInstruction;
                             currBlock = null;
                             state = ModuleValidationState.MV13_2_0_OpFunctionBlockLabel;

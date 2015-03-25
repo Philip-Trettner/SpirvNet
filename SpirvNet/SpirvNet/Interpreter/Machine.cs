@@ -97,19 +97,25 @@ namespace SpirvNet.Interpreter
                 var location = function.ParameterLocations[i];
                 if (!location.SpirvType.IsInstance(args[i]))
                     throw new ExecutionException(null, "Parameter " + i + " is not of type " + location.SpirvType);
+
+                values[location.ID] = args[i];
             }
 
             // execute function
             while (true)
+            {
+                // execute current block
                 foreach (var instruction in currBlock.Instructions)
                 {
                     var type = TypeOf(instruction.ResultTypeID ?? new ID(0));
+                    //Console.WriteLine(instruction);
 
                     switch (instruction.OpCode)
                     {
                         // arithmetics
                         case OpCode.FAdd:
                             {
+                                Debug.Assert(type != null);
                                 var op = (OpFAdd)instruction;
                                 if (type.IsFloating && type.BitWidth == 32)
                                     Set(op.Result, Get<float>(op.Operand1) + Get<float>(op.Operand2), op);
@@ -121,7 +127,7 @@ namespace SpirvNet.Interpreter
 
                         // flow-control
                         case OpCode.Branch:
-                            Debug.Assert(currBlock.OutgoingBlocks.Count == 0);
+                            Debug.Assert(currBlock.OutgoingBlocks.Count > 0);
                             nextBlock = currBlock.DefaultTarget;
                             break;
 
@@ -131,13 +137,14 @@ namespace SpirvNet.Interpreter
                         default:
                             throw new NotImplementedException("Instruction " + instruction + " is either not supported or not implemented.");
                     }
-
-                    // next block
-                    if (nextBlock == null)
-                        throw new InvalidOperationException("Unknown next block is kinda invalid.");
-                    prevBlock = currBlock;
-                    currBlock = nextBlock;
                 }
+
+                // next block
+                if (nextBlock == null)
+                    throw new InvalidOperationException("Unknown next block is kinda invalid.");
+                prevBlock = currBlock;
+                currBlock = nextBlock;
+            }
 
             // unreachable
         }
