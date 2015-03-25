@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using NUnit.Framework;
 using SpirvNet.Spirv;
 using SpirvNet.Spirv.Enums;
+using SpirvNet.Spirv.Ops;
 using SpirvNet.Spirv.Ops.Annotation;
 using SpirvNet.Spirv.Ops.ConstantCreation;
 using SpirvNet.Spirv.Ops.Debug;
@@ -76,7 +77,7 @@ namespace SpirvNet.Validation
         /// <summary>
         /// List of validated functions
         /// </summary>
-        public readonly List<ValidatedFunction> Functions = new List<ValidatedFunction>(); 
+        public readonly List<ValidatedFunction> Functions = new List<ValidatedFunction>();
 
         /// <summary>
         /// Locations and location info used by the module
@@ -160,6 +161,10 @@ namespace SpirvNet.Validation
                 throw new ValidationException(null, "Bound too small.");
             if (OriginalModule.Instructions.Count == 0)
                 throw new ValidationException(null, "No instructions found.");
+
+            foreach (var instruction in OriginalModule.Instructions)
+                if (instruction is OpUnknown)
+                    throw new ValidationException(instruction, "Unknown instructions cannot be validated.");
 
             var instructions = OriginalModule.Instructions;
             var i = 0;
@@ -427,6 +432,7 @@ namespace SpirvNet.Validation
                             AssertEmptyLocation(op);
                             Locations[op.Result.Value].FillFromFunctionParameter(op, currFunc, this);
                             currFunc.DeclarationLocation.AddFunctionParameter(Locations[op.Result.Value], op, this);
+                            currFunc.ParameterLocations.Add(Locations[op.Result.Value]);
                             ++i;
                         }
                         else // Op*
@@ -445,6 +451,7 @@ namespace SpirvNet.Validation
                             var op = inst as OpLabel;
                             AssertEmptyLocation(op);
                             currBlock = new ValidatedBlock(op, currFunc);
+                            currFunc.AddBlock(currBlock);
                             Locations[op.Result.Value].FillFromLabel(op, currBlock);
                             ++i;
 
@@ -468,7 +475,7 @@ namespace SpirvNet.Validation
                             if (currFunc == null)
                                 throw new ValidationException(inst, "Block variable outside of a function.");
 
-                            if (currBlock != currFunc.FirstBlock)
+                            if (currBlock != currFunc.StartBlock)
                                 throw new ValidationException(inst, "Block variables are only allowed in topmost block.");
 
                             var op = inst as OpVariable;
@@ -481,7 +488,7 @@ namespace SpirvNet.Validation
                             if (currFunc == null)
                                 throw new ValidationException(inst, "Block variable outside of a function.");
 
-                            if (currBlock != currFunc.FirstBlock)
+                            if (currBlock != currFunc.StartBlock)
                                 throw new ValidationException(inst, "Block variables are only allowed in topmost block.");
 
                             var op = inst as OpVariableArray;

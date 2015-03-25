@@ -15,7 +15,7 @@ namespace SpirvNet.Validation
         /// <summary>
         /// Start block
         /// </summary>
-        public ValidatedBlock FirstBlock { get; private set; }
+        public ValidatedBlock StartBlock { get; private set; }
 
         /// <summary>
         /// Parent module
@@ -46,6 +46,11 @@ namespace SpirvNet.Validation
         public readonly List<ValidatedBlock> Blocks = new List<ValidatedBlock>();
 
         /// <summary>
+        /// List of parameter locations
+        /// </summary>
+        public readonly List<Location> ParameterLocations = new List<Location>(); 
+
+        /// <summary>
         /// Mapping from label to block
         /// </summary>
         public readonly Dictionary<uint, ValidatedBlock> LabelToBlock = new Dictionary<uint, ValidatedBlock>();
@@ -64,8 +69,8 @@ namespace SpirvNet.Validation
         /// </summary>
         public void AddBlock(ValidatedBlock block)
         {
-            if (FirstBlock != null)
-                FirstBlock = block;
+            if (StartBlock == null)
+                StartBlock = block;
 
             Blocks.Add(block);
             LabelToBlock.Add(block.BlockLabel.Result.Value, block);

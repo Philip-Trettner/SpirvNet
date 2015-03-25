@@ -90,6 +90,40 @@ namespace SpirvNet.Spirv
         }
 
         /// <summary>
+        /// Returns true iff the given object is an instance of this type
+        /// </summary>
+        public bool IsInstance(object obj)
+        {
+            switch (TypeEnum)
+            {
+                case SpirvTypeEnum.Void:
+                    return false;
+                case SpirvTypeEnum.Boolean:
+                    return obj is Boolean;
+                case SpirvTypeEnum.Integer:
+                    if (IsSigned && BitWidth == 32)
+                        return obj is Int32;
+                    else if (IsSigned && BitWidth == 64)
+                        return obj is Int64;
+                    else if (!IsSigned && BitWidth == 32)
+                        return obj is UInt32;
+                    else if (!IsSigned && BitWidth == 64)
+                        return obj is UInt64;
+                    else
+                        throw new NotSupportedException("Integer with non-32/64 width.");
+                case SpirvTypeEnum.Floating:
+                    if (BitWidth == 32)
+                        return obj is Single;
+                    else if (BitWidth == 64)
+                        return obj is Double;
+                    else
+                        throw new NotSupportedException("FP with non-32/64 width.");
+                default:
+                    throw new NotImplementedException("Type detection for " + this + " is not implemented yet.");
+            }
+        }
+
+        /// <summary>
         /// From .NET ctor
         /// </summary>
         public SpirvType(TypeReference representedType, TypeBuilder builder, IDAllocator allocator)

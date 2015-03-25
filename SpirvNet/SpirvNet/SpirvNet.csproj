@@ -63,6 +63,7 @@
     <Compile Include="DotNet\SSA\MethodFrame.cs" />
     <Compile Include="DotNet\SSA\MethodFrameState.cs" />
     <Compile Include="DotNet\SSA\PhiFunction.cs" />
+    <Compile Include="Interpreter\ExecutionException.cs" />
     <Compile Include="Interpreter\Machine.cs" />
     <Compile Include="Spirv\IDAllocator.cs" />
     <Compile Include="Spirv\SpirvType.cs" />
@@ -399,6 +400,7 @@
     <Compile Include="Spirv\Ops\OpUnknown.cs" />
     <Compile Include="Tests\CecilTest.cs" />
     <Compile Include="Tests\InstructionTest.cs" />
+    <Compile Include="Tests\IntegrationTest.cs" />
     <Compile Include="Tests\ModuleTest.cs" />
     <Compile Include="Tests\ShaderTest.cs" />
     <Compile Include="Tests\ValidationTests.cs" />
