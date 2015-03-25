@@ -33,6 +33,26 @@ namespace SpirvNet.Validation
         /// </summary>
         public readonly List<Instruction> Instructions = new List<Instruction>();
 
+        /// <summary>
+        /// Blocks that branch into this one
+        /// </summary>
+        public readonly List<ValidatedBlock> IncomingBlocks = new List<ValidatedBlock>();
+        /// <summary>
+        /// Blocks that this one branches into
+        /// </summary>
+        public readonly List<ValidatedBlock> OutgoingBlocks = new List<ValidatedBlock>();
+
+        /// <summary>
+        /// Literal to target (OpSwitch)
+        /// 1 -> TrueLabel, 0 -> FalseLabel (OpBranchConditional)
+        /// </summary>
+        public readonly Dictionary<uint, ValidatedBlock> LiteralTargets = new Dictionary<uint, ValidatedBlock>();
+        /// <summary>
+        /// Unconditional target (OpBranch)
+        /// Default target (OpSwitch)
+        /// </summary>
+        public ValidatedBlock DefaultTarget { get; private set; }
+
         public ValidatedBlock(OpLabel blockLabel, ValidatedFunction function)
         {
             BlockLabel = blockLabel;
@@ -50,6 +70,28 @@ namespace SpirvNet.Validation
         public void AddInstruction(Instruction op)
         {
             Instructions.Add(op);
+        }
+
+        /// <summary>
+        /// Adds a branch target block
+        /// </summary>
+        public void AddBranchTarget(ValidatedBlock block, uint? literal, Instruction op)
+        {
+            OutgoingBlocks.Add(block);
+            block.IncomingBlocks.Add(this);
+
+            if (literal.HasValue)
+            {
+                if (LiteralTargets.ContainsKey(literal.Value))
+                    throw new ValidationException(op, "Literal " + literal + " is specified multiple times.");
+                LiteralTargets.Add(literal.Value, block);
+            }
+            else
+            {
+                if (DefaultTarget != null)
+                    throw new ValidationException(op, "Unconditional/default target specified multiple times.");
+                DefaultTarget = block;
+            }
         }
     }
 }

@@ -27,12 +27,31 @@ namespace SpirvNet.Validation
         /// <summary>
         /// Execution modes
         /// </summary>
-        public readonly List<OpExecutionMode> ExecutionModes = new List<OpExecutionMode>(); 
+        public readonly List<OpExecutionMode> ExecutionModes = new List<OpExecutionMode>();
 
-        public EntryPoint(ID enryPointID, ExecutionModel executionModel)
+        /// <summary>
+        /// Function
+        /// </summary>
+        public ValidatedFunction Function { get; private set; }
+
+        /// <summary>
+        /// Instruction
+        /// </summary>
+        public readonly OpEntryPoint Instruction;
+
+        public EntryPoint(ID enryPointID, ExecutionModel executionModel, OpEntryPoint instruction)
         {
             EnryPointID = enryPointID;
             ExecutionModel = executionModel;
+            Instruction = instruction;
+        }
+
+        /// <summary>
+        /// Sets the validated function
+        /// </summary>
+        public void SetFunction(ValidatedFunction f)
+        {
+            Function = f;
         }
     }
 }

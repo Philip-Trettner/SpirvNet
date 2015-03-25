@@ -30,13 +30,9 @@ namespace SpirvNet.Validation
         /// </summary>
         Type,
         /// <summary>
-        /// An Intermediate (function instructions)
+        /// An Intermediate (function instructions) or A constant (from a ConstantCreationInstruction)
         /// </summary>
         Intermediate,
-        /// <summary>
-        /// A constant (from a ConstantCreationInstruction)
-        /// </summary>
-        Constant,
         /// <summary>
         /// A target label (from an OpLabel)
         /// </summary>
@@ -102,9 +98,14 @@ namespace SpirvNet.Validation
         /// Location of instruction block
         /// </summary>
         public ValidatedBlock Block { get; private set; }
+        /// <summary>
+        /// Location inside a Function
+        /// </summary>
+        public ValidatedFunction Function { get; private set; }
 
         /// <summary>
         /// Inside-a-function instruction
+        /// If null, this is a constant
         /// </summary>
         public Instruction IntermediateOp { get; private set; }
 
@@ -192,6 +193,7 @@ namespace SpirvNet.Validation
             var opFloat = op as OpTypeFloat;
             var opVector = op as OpTypeVector;
             var opMatrix = op as OpTypeMatrix;
+            var opFunction = op as OpTypeFunction;
 
             if (op is OpTypeVoid)
                 SpirvType = new SpirvType(LocationID, SpirvTypeEnum.Void);
@@ -205,6 +207,10 @@ namespace SpirvNet.Validation
                 SpirvType = new SpirvType(LocationID, SpirvTypeEnum.Vector, elementCount: opVector.ComponentCount.Value, elementType: typeProvider.TypeFor(opVector.ComponentType, op));
             else if (opMatrix != null)
                 SpirvType = new SpirvType(LocationID, SpirvTypeEnum.Matrix, elementCount: opMatrix.ColumnCount.Value, elementType: typeProvider.TypeFor(opMatrix.ColumnType, op));
+            else if (opFunction != null)
+                SpirvType = new SpirvType(LocationID, SpirvTypeEnum.Function,
+                    returnType: typeProvider.TypeFor(opFunction.ReturnType, op),
+                    parameterTypes: opFunction.ParameterTypes.Select(p => typeProvider.TypeFor(p, op)).ToArray());
             else throw new NotImplementedException("Unknown type decl: " + op);
             // TODO: More types!
         }
@@ -214,7 +220,7 @@ namespace SpirvNet.Validation
         /// </summary>
         public void FillFromConstant(ConstantCreationInstruction op, ITypeProvider typeProvider)
         {
-            LocationType = LocationType.Constant;
+            LocationType = LocationType.Intermediate;
             var opConstTrue = op as OpConstantTrue;
             var opConstFalse = op as OpConstantFalse;
             var opConst = op as OpConstant;
@@ -270,11 +276,12 @@ namespace SpirvNet.Validation
         /// <summary>
         /// Fills this location with a function decl
         /// </summary>
-        public void FillFromFunction(OpFunction op, ITypeProvider typeProvider)
+        public void FillFromFunction(OpFunction op, ValidatedFunction function, ITypeProvider typeProvider)
         {
             LocationType = LocationType.Function;
             SpirvType = typeProvider.TypeFor(op.FunctionType, op);
             FunctionControlMask = op.FunctionControlMask;
+            Function = function;
 
             if (SpirvType.TypeEnum != SpirvTypeEnum.Function)
                 throw new ValidationException(op, "FunctionType must be a function type, but found " + SpirvType);
@@ -286,10 +293,11 @@ namespace SpirvNet.Validation
         /// <summary>
         /// Fills this location with a function parameter decl
         /// </summary>
-        public void FillFromFunctionParameter(OpFunctionParameter op, ITypeProvider typeProvider)
+        public void FillFromFunctionParameter(OpFunctionParameter op, ValidatedFunction function, ITypeProvider typeProvider)
         {
             LocationType = LocationType.FunctionParameter;
             SpirvType = typeProvider.TypeFor(op.ResultType, op);
+            Function = function;
         }
 
         /// <summary>
@@ -299,6 +307,7 @@ namespace SpirvNet.Validation
         {
             LocationType = LocationType.Label;
             Block = block;
+            Function = Block.Function;
         }
 
         /// <summary>
@@ -309,8 +318,14 @@ namespace SpirvNet.Validation
             LocationType = LocationType.Intermediate;
             IntermediateOp = op;
             Block = block;
+            Function = Block.Function;
 
             // TODO: Type deduction
+            if (op.ResultTypeID.HasValue)
+            {
+                SpirvType = typeProvider.TypeFor(op.ResultTypeID.Value, op);
+            }
+            else throw new NotImplementedException("Add missing type deduction");
         }
 
         /// <summary>

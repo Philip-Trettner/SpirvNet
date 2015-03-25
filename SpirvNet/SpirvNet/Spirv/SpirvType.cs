@@ -71,6 +71,8 @@ namespace SpirvNet.Spirv
         public bool IsAggregate => IsStructure || IsArray;
         public bool IsComposite => IsAggregate || IsMatrix || IsVector;
 
+        public bool IsFunction => TypeEnum == SpirvTypeEnum.Function;
+
         /// <summary>
         /// Explicit ctor
         /// </summary>
@@ -225,6 +227,14 @@ namespace SpirvNet.Spirv
                 default:
                     throw new ArgumentOutOfRangeException();
             }
+        }
+
+        /// <summary>
+        /// True iff two types are compatible
+        /// </summary>
+        public static bool Compatible(SpirvType t1, SpirvType t2)
+        {
+            return t1.ToString() == t2.ToString();
         }
     }
 }

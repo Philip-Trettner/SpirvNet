@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using SpirvNet.Spirv;
 
 namespace SpirvNet.Validation
 {
@@ -15,6 +16,19 @@ namespace SpirvNet.Validation
         /// Start block
         /// </summary>
         public ValidatedBlock FirstBlock { get; private set; }
+
+        /// <summary>
+        /// Function return type
+        /// </summary>
+        public readonly SpirvType ReturnType;
+        /// <summary>
+        /// Function parameter types
+        /// </summary>
+        public readonly List<SpirvType> ParameterTypes = new List<SpirvType>();
+        /// <summary>
+        /// Function decl type
+        /// </summary>
+        public readonly SpirvType FunctionType;
 
         /// <summary>
         /// Location where function is declared
@@ -31,9 +45,12 @@ namespace SpirvNet.Validation
         /// </summary>
         public readonly Dictionary<uint, ValidatedBlock> LabelToBlock = new Dictionary<uint, ValidatedBlock>();
 
-        public ValidatedFunction(Location declarationLocation)
+        public ValidatedFunction(Location declarationLocation, SpirvType functionType)
         {
             DeclarationLocation = declarationLocation;
+            FunctionType = functionType;
+            ReturnType = FunctionType.ReturnType;
+            ParameterTypes.AddRange(FunctionType.ParameterTypes);
         }
 
         /// <summary>

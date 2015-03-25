@@ -73,6 +73,10 @@ namespace SpirvNet.Validation
         /// List of entry points
         /// </summary>
         public readonly List<EntryPoint> EntryPoints = new List<EntryPoint>();
+        /// <summary>
+        /// List of validated functions
+        /// </summary>
+        public readonly List<ValidatedFunction> Functions = new List<ValidatedFunction>(); 
 
         /// <summary>
         /// Locations and location info used by the module
@@ -107,10 +111,22 @@ namespace SpirvNet.Validation
         }
 
         /// <summary>
+        /// Throws a validation exception if the location is not an intermediate with a given predicate
+        /// </summary>
+        private void IntermediateTypeCheck(ID id, Func<SpirvType, bool> pred, Instruction instruction, string msg)
+        {
+            LocationTypeCheck(id, LocationType.Intermediate, instruction);
+            if (!pred(Locations[id.Value].SpirvType))
+                throw new ValidationException(instruction, msg);
+        }
+
+        /// <summary>
         /// Throws a validation exception if id not in range
         /// </summary>
         private void RangeCheck(ID id, Instruction instruction)
         {
+            if (id.Value == 0)
+                throw new ValidationException(instruction, "ID cannot be zero.");
             if (id.Value >= Locations.Length)
                 throw new ValidationException(instruction, "ID access out of bounds.");
         }
@@ -140,6 +156,11 @@ namespace SpirvNet.Validation
         [SuppressMessage("ReSharper", "HeuristicUnreachableCode")]
         private void Analyse()
         {
+            if (OriginalModule.Bound < Bound)
+                throw new ValidationException(null, "Bound too small.");
+            if (OriginalModule.Instructions.Count == 0)
+                throw new ValidationException(null, "No instructions found.");
+
             var instructions = OriginalModule.Instructions;
             var i = 0;
             var state = ModuleValidationState.MV00_OpSource;
@@ -148,6 +169,12 @@ namespace SpirvNet.Validation
 
             ValidatedFunction currFunc = null;
             ValidatedBlock currBlock = null;
+            var branches = new List<Tuple<FlowControlInstruction, ValidatedBlock, ID, uint?>>();
+
+            // range checks
+            foreach (var op in instructions)
+                foreach (var id in op.AllIDs)
+                    RangeCheck(id, op);
 
             while (i < instructions.Count)
             {
@@ -227,7 +254,7 @@ namespace SpirvNet.Validation
                         if (inst is OpEntryPoint)
                         {
                             var op = inst as OpEntryPoint;
-                            EntryPoints.Add(new EntryPoint(op.EntryPoint, op.ExecutionModel));
+                            EntryPoints.Add(new EntryPoint(op.EntryPoint, op.ExecutionModel, op));
                             ++i;
                         }
                         else // Op*
@@ -378,8 +405,12 @@ namespace SpirvNet.Validation
 
                             var op = inst as OpFunction;
                             AssertEmptyLocation(op);
-                            Locations[op.Result.Value].FillFromFunction(op, this);
-                            currFunc = new ValidatedFunction(Locations[op.Result.Value]);
+                            LocationTypeCheck(op.FunctionType, LocationType.Type, op);
+                            if (!Locations[op.FunctionType.Value].SpirvType.IsFunction)
+                                throw new ValidationException(op, "FunctionType not a function type.");
+                            currFunc = new ValidatedFunction(Locations[op.Result.Value], Locations[op.FunctionType.Value].SpirvType);
+                            Functions.Add(currFunc);
+                            Locations[op.Result.Value].FillFromFunction(op, currFunc, this);
                             currBlock = null;
                             ++i;
                             state = ModuleValidationState.MV13_1_OpFunctionParameters;
@@ -394,7 +425,7 @@ namespace SpirvNet.Validation
 
                             var op = inst as OpFunctionParameter;
                             AssertEmptyLocation(op);
-                            Locations[op.Result.Value].FillFromFunctionParameter(op, this);
+                            Locations[op.Result.Value].FillFromFunctionParameter(op, currFunc, this);
                             currFunc.DeclarationLocation.AddFunctionParameter(Locations[op.Result.Value], op, this);
                             ++i;
                         }
@@ -418,6 +449,16 @@ namespace SpirvNet.Validation
                             ++i;
 
                             state = ModuleValidationState.MV13_2_1_OpFunctionBlockVars;
+                        }
+                        else if (inst is OpFunctionEnd)
+                        {
+                            if (currFunc == null)
+                                throw new ValidationException(inst, "Must be inside an OpFunction.");
+
+                            currFunc = null;
+                            currBlock = null;
+                            ++i;
+                            state = ModuleValidationState.MV13_0_OpFunction;
                         }
                         else throw new ValidationException(inst, "Unexpected instruction. Expected OpLabel instruction (first of block).");
                         break;
@@ -466,35 +507,51 @@ namespace SpirvNet.Validation
                             state = ModuleValidationState.MV13_2_3_OpFunctionBlockInstruction;
                         break;
                     case ModuleValidationState.MV13_2_3_OpFunctionBlockInstruction:
+                        if (currFunc == null)
+                            throw new ValidationException(inst, "FlowControl outside of a function.");
+
                         if (inst.IsFlowControl)
                         {
                             if (inst is OpBranch)
                             {
-                                throw new NotImplementedException("TODO");
+                                var op = inst as OpBranch;
+                                RangeCheck(op.TargetLabel, op);
+                                branches.Add(new Tuple<FlowControlInstruction, ValidatedBlock, ID, uint?>(op, currBlock, op.TargetLabel, null));
                             }
                             else if (inst is OpBranchConditional)
                             {
-                                throw new NotImplementedException("TODO");
+                                var op = inst as OpBranchConditional;
+                                RangeCheck(op.TrueLabel, op);
+                                RangeCheck(op.FalseLabel, op);
+                                branches.Add(new Tuple<FlowControlInstruction, ValidatedBlock, ID, uint?>(op, currBlock, op.FalseLabel, 0u));
+                                branches.Add(new Tuple<FlowControlInstruction, ValidatedBlock, ID, uint?>(op, currBlock, op.TrueLabel, 1u));
                             }
                             else if (inst is OpSwitch)
                             {
-                                throw new NotImplementedException("TODO");
+                                var op = inst as OpSwitch;
+                                RangeCheck(op.Default, op);
+                                branches.Add(new Tuple<FlowControlInstruction, ValidatedBlock, ID, uint?>(op, currBlock, op.Default, null));
+                                foreach (var kvp in op.Target)
+                                    branches.Add(new Tuple<FlowControlInstruction, ValidatedBlock, ID, uint?>(op, currBlock, kvp.Second, kvp.First.Value));
                             }
                             else if (inst is OpKill)
                             {
-                                throw new NotImplementedException("TODO");
+                                // no-op
                             }
                             else if (inst is OpReturn)
                             {
-                                throw new NotImplementedException("TODO");
+                                if (!currFunc.ReturnType.IsVoid)
+                                    throw new ValidationException(inst, "OpReturn in non-void function.");
                             }
                             else if (inst is OpReturnValue)
                             {
-                                throw new NotImplementedException("TODO");
+                                var op = inst as OpReturnValue;
+                                RangeCheck(op.Value, op);
+                                IntermediateTypeCheck(op.Value, t => SpirvType.Compatible(t, currFunc.ReturnType), op, "ReturnValue does not match func return type.");
                             }
                             else if (inst is OpUnreachable)
                             {
-                                throw new NotImplementedException("TODO");
+                                // no-op
                             }
                             else if (inst is OpPhi)
                             {
@@ -504,6 +561,7 @@ namespace SpirvNet.Validation
 
                             ++i;
                             // new block
+                            currBlock.BlockEnd = inst as FlowControlInstruction;
                             currBlock = null;
                             state = ModuleValidationState.MV13_2_0_OpFunctionBlockLabel;
                         }
@@ -523,33 +581,44 @@ namespace SpirvNet.Validation
                                 AssertEmptyLocation(op);
                                 Locations[op.ResultID.Value.Value].FillFromFunctionInstruction(op, currBlock, this);
                             }
+                            else
+                            {
+                                // TODO: need decoding?
+                            }
                             currBlock.AddInstruction(op);
                             ++i;
                         }
                         break;
-                    // function end
-                    case ModuleValidationState.MV13_3_OpFunctionEnd:
-                        if (inst is OpFunctionEnd)
-                        {
-                            if (currFunc == null)
-                                throw new ValidationException(inst, "Must be inside an OpFunction.");
 
-                            currFunc = null;
-                            currBlock = null;
-                            ++i;
-                            state = ModuleValidationState.MV13_0_OpFunction;
-                        }
-                        else throw new ValidationException(inst, "Unexpected instruction. Expected OpFunctionEnd instruction.");
-                        break;
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
             }
 
-            // TODO's
-            throw new NotImplementedException("Entry point validation");
-            throw new NotImplementedException("Validate " + memberNames);
-            throw new NotImplementedException("Validate member decorations");
+            if (state != ModuleValidationState.MV13_0_OpFunction)
+                throw new ValidationException(OriginalModule.Instructions.Last(), "Function is not finished.");
+
+            // Entry point validation
+            foreach (var ep in EntryPoints)
+            {
+                LocationTypeCheck(ep.EnryPointID, LocationType.Function, ep.Instruction);
+                ep.SetFunction(Locations[ep.EnryPointID.Value].Function);
+            }
+
+            // Branches
+            foreach (var branch in branches)
+            {
+                var op = branch.Item1;
+                var block = branch.Item2;
+                var id = branch.Item3;
+                var literal = branch.Item4;
+
+                LocationTypeCheck(id, LocationType.Label, op);
+                block.AddBranchTarget(Locations[id.Value].Block, literal, op);
+            }
+
+            // TODO: member names
+            // TODO: member decorations
         }
 
         /// <summary>

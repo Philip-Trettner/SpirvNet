@@ -27,7 +27,7 @@ namespace SpirvNet.Validation
         {
         }
 
-        public ValidationException(Instruction instruction, string message) : base(message)
+        public ValidationException(Instruction instruction, string message) : base((instruction == null ? "" : instruction + ": ") + message)
         {
             Instruction = instruction;
         }

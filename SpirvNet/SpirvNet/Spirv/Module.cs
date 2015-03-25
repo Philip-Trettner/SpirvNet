@@ -48,6 +48,14 @@ namespace SpirvNet.Spirv
         public readonly List<Instruction> Instructions = new List<Instruction>();
 
         /// <summary>
+        /// manually sets the bound
+        /// </summary>
+        public void SetBoundManually(uint bound)
+        {
+            Bound = bound;
+        }
+
+        /// <summary>
         /// Generates the bytecode for this module
         /// </summary>
         public List<uint> GenerateBytecode()
@@ -189,6 +197,22 @@ namespace SpirvNet.Spirv
         /// Returns a validated version of this module (or throws)
         /// </summary>
         public ValidatedModule Validate() => ValidatedModule.Validate(this);
+        /// <summary>
+        /// Returns true iff module is valid
+        /// </summary>
+        public bool CheckValidity()
+        {
+            try
+            {
+                Validate();
+            }
+            catch (ValidationException)
+            {
+                return false;
+            }
+
+            return true;
+        }
 
         /// <summary>
         /// Returns a deep-copy of all modules
