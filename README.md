@@ -42,4 +42,6 @@ Resources:
 
 * working OpCode serialization and Module Encode/Decode
 * work-in-progress .NET IL analysis
+* work-in-progress SPIR-V module verification and validation
+* work-in-progress SPIR-V function execution
 * first working simple function conversions
