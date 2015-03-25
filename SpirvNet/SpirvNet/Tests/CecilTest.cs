@@ -9,6 +9,7 @@ using SpirvNet.DotNet;
 using SpirvNet.DotNet.CFG;
 using SpirvNet.DotNet.SSA;
 using SpirvNet.Spirv;
+using SpirvNet.Validation;
 
 namespace SpirvNet.Tests
 {
@@ -64,10 +65,15 @@ namespace SpirvNet.Tests
 
             Assert.Greater(mod.Instructions.Count, 10);
 
+            mod.SetBoundAutomatically();
+            ValidatedModule vmod = null;
+            Assert.DoesNotThrow(() => vmod = mod.Validate());
+            Assert.AreEqual(1, vmod.Functions.Count);
+
             //foreach (var line in CecilLoader.CsvDump(def))
             //    Console.WriteLine(line);
             //File.WriteAllLines(@"C:\Temp\simpleadd.dot", cfg.DotFile);
-            File.WriteAllLines(@"C:\Temp\simpleadd.csv", CecilLoader.CsvDump(def));
+            //File.WriteAllLines(@"C:\Temp\simpleadd.csv", CecilLoader.CsvDump(def));
             //File.WriteAllLines(@"C:\Temp\simpleadd.spirv.csv", mod.CSVDump());
         }
 

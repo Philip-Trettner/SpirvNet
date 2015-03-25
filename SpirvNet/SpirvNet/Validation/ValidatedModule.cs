@@ -408,7 +408,7 @@ namespace SpirvNet.Validation
                             LocationTypeCheck(op.FunctionType, LocationType.Type, op);
                             if (!Locations[op.FunctionType.Value].SpirvType.IsFunction)
                                 throw new ValidationException(op, "FunctionType not a function type.");
-                            currFunc = new ValidatedFunction(Locations[op.Result.Value], Locations[op.FunctionType.Value].SpirvType);
+                            currFunc = new ValidatedFunction(Locations[op.Result.Value], Locations[op.FunctionType.Value].SpirvType, this);
                             Functions.Add(currFunc);
                             Locations[op.Result.Value].FillFromFunction(op, currFunc, this);
                             currBlock = null;

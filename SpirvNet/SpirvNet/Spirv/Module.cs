@@ -54,6 +54,18 @@ namespace SpirvNet.Spirv
         {
             Bound = bound;
         }
+        /// <summary>
+        /// Sets the bound automatically
+        /// </summary>
+        public void SetBoundAutomatically()
+        {
+            var maxID = 1u;
+            foreach (var instruction in Instructions)
+                foreach (var id in instruction.AllIDs)
+                    if (id.Value > maxID)
+                        maxID = id.Value;
+            Bound = maxID + 1;
+        }
 
         /// <summary>
         /// Generates the bytecode for this module

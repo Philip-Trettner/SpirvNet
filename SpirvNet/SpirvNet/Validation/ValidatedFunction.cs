@@ -18,6 +18,11 @@ namespace SpirvNet.Validation
         public ValidatedBlock FirstBlock { get; private set; }
 
         /// <summary>
+        /// Parent module
+        /// </summary>
+        public readonly ValidatedModule Module;
+
+        /// <summary>
         /// Function return type
         /// </summary>
         public readonly SpirvType ReturnType;
@@ -45,10 +50,11 @@ namespace SpirvNet.Validation
         /// </summary>
         public readonly Dictionary<uint, ValidatedBlock> LabelToBlock = new Dictionary<uint, ValidatedBlock>();
 
-        public ValidatedFunction(Location declarationLocation, SpirvType functionType)
+        public ValidatedFunction(Location declarationLocation, SpirvType functionType, ValidatedModule module)
         {
             DeclarationLocation = declarationLocation;
             FunctionType = functionType;
+            Module = module;
             ReturnType = FunctionType.ReturnType;
             ParameterTypes.AddRange(FunctionType.ParameterTypes);
         }

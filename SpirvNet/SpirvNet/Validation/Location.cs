@@ -108,6 +108,10 @@ namespace SpirvNet.Validation
         /// If null, this is a constant
         /// </summary>
         public Instruction IntermediateOp { get; private set; }
+        /// <summary>
+        /// If true, this is a constant
+        /// </summary>
+        public bool IsConstant => IntermediateOp == null && LocationType == LocationType.Intermediate;
 
         /// <summary>
         /// Name of the instruction iff this is an instruction
@@ -232,7 +236,7 @@ namespace SpirvNet.Validation
             {
                 if (!type.IsBoolean)
                     throw new ValidationException(op, "Expected boolean type, found " + type);
-                Constant = opConstTrue;
+                Constant = true;
             }
             else if (opConstFalse != null)
             {
@@ -282,6 +286,7 @@ namespace SpirvNet.Validation
             SpirvType = typeProvider.TypeFor(op.FunctionType, op);
             FunctionControlMask = op.FunctionControlMask;
             Function = function;
+            FunctionParameters = new List<Location>();
 
             if (SpirvType.TypeEnum != SpirvTypeEnum.Function)
                 throw new ValidationException(op, "FunctionType must be a function type, but found " + SpirvType);
