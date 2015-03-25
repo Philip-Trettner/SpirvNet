@@ -374,8 +374,8 @@ namespace SpirvNet.DotNet.SSA
 
                 // arithmetics
                 case Code.Add:
-                    t1 = Pop();
                     t2 = Pop();
+                    t1 = Pop();
                     if (t1.Type != t2.Type)
                         throw new NotSupportedException("incompatible types " + t1 + ", " + t2);
                     res = CreateLocation(t1.Type);
@@ -387,8 +387,8 @@ namespace SpirvNet.DotNet.SSA
                     else throw new NotSupportedException("Unsupported add: " + t1 + ", " + t2);
                     break;
                 case Code.Sub:
-                    t1 = Pop();
                     t2 = Pop();
+                    t1 = Pop();
                     if (t1.Type != t2.Type)
                         throw new NotSupportedException("incompatible types " + t1 + ", " + t2);
                     res = CreateLocation(t1.Type);
@@ -400,8 +400,8 @@ namespace SpirvNet.DotNet.SSA
                     else throw new NotSupportedException("Unsupported sub: " + t1 + ", " + t2);
                     break;
                 case Code.Mul:
-                    t1 = Pop();
                     t2 = Pop();
+                    t1 = Pop();
                     if (t1.Type != t2.Type)
                         throw new NotSupportedException("incompatible types " + t1 + ", " + t2);
                     res = CreateLocation(t1.Type);
@@ -413,8 +413,8 @@ namespace SpirvNet.DotNet.SSA
                     else throw new NotSupportedException("Unsupported mul: " + t1 + ", " + t2);
                     break;
                 case Code.Div:
-                    t1 = Pop();
                     t2 = Pop();
+                    t1 = Pop();
                     if (t1.Type != t2.Type)
                         throw new NotSupportedException("incompatible types " + t1 + ", " + t2);
                     res = CreateLocation(t1.Type);
@@ -426,8 +426,8 @@ namespace SpirvNet.DotNet.SSA
                     else throw new NotSupportedException("Unsupported div: " + t1 + ", " + t2);
                     break;
                 case Code.Div_Un:
-                    t1 = Pop();
                     t2 = Pop();
+                    t1 = Pop();
                     if (t1.Type != t2.Type)
                         throw new NotSupportedException("incompatible types " + t1 + ", " + t2);
                     res = CreateLocation(t1.Type);
@@ -459,8 +459,8 @@ namespace SpirvNet.DotNet.SSA
 
                 // remainders
                 case Code.Rem:
-                    t1 = Pop();
                     t2 = Pop();
+                    t1 = Pop();
                     if (t1.Type != t2.Type)
                         throw new NotSupportedException("incompatible types " + t1 + ", " + t2);
                     res = CreateLocation(t1.Type);
@@ -472,8 +472,8 @@ namespace SpirvNet.DotNet.SSA
                     else throw new NotSupportedException("Unsupported remainder: " + t1 + ", " + t2);
                     break;
                 case Code.Rem_Un:
-                    t1 = Pop();
                     t2 = Pop();
+                    t1 = Pop();
                     if (t1.Type != t2.Type)
                         throw new NotSupportedException("incompatible types " + t1 + ", " + t2);
                     res = CreateLocation(t1.Type);
@@ -578,8 +578,8 @@ namespace SpirvNet.DotNet.SSA
                 case Code.Bgt_Un:
                 case Code.Ble_Un:
                 case Code.Blt_Un:
-                    t1 = Pop();
                     t2 = Pop();
+                    t1 = Pop();
                     if (t1.Type != t2.Type)
                         throw new NotSupportedException("incompatible types " + t1 + ", " + t2);
                     tmp = CreateLocation(typeof(bool));
@@ -689,8 +689,8 @@ namespace SpirvNet.DotNet.SSA
                 case Code.Cgt_Un:
                 case Code.Clt:
                 case Code.Clt_Un:
-                    t1 = Pop();
                     t2 = Pop();
+                    t1 = Pop();
                     if (t1.Type != t2.Type)
                         throw new NotSupportedException("incompatible types " + t1 + ", " + t2);
                     tmp = CreateLocation(typeof(bool));

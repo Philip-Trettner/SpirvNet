@@ -124,11 +124,121 @@ namespace SpirvNet.Interpreter
                                 else throw new NotImplementedException();
                             }
                             break;
+                        case OpCode.IAdd:
+                            {
+                                Debug.Assert(type != null);
+                                var op = (OpIAdd)instruction;
+                                if (type.IsInteger && type.IsSigned && type.BitWidth == 32)
+                                    Set(op.Result, Get<int>(op.Operand1) + Get<int>(op.Operand2), op);
+                                else if (type.IsInteger && type.IsSigned && type.BitWidth == 64)
+                                    Set(op.Result, Get<long>(op.Operand1) + Get<long>(op.Operand2), op);
+                                else if (type.IsInteger && !type.IsSigned && type.BitWidth == 32)
+                                    Set(op.Result, Get<uint>(op.Operand1) + Get<uint>(op.Operand2), op);
+                                else if (type.IsInteger && !type.IsSigned && type.BitWidth == 64)
+                                    Set(op.Result, Get<ulong>(op.Operand1) + Get<ulong>(op.Operand2), op);
+                                else throw new NotImplementedException();
+                            }
+                            break;
+                        case OpCode.FSub:
+                            {
+                                Debug.Assert(type != null);
+                                var op = (OpFSub)instruction;
+                                if (type.IsFloating && type.BitWidth == 32)
+                                    Set(op.Result, Get<float>(op.Operand1) - Get<float>(op.Operand2), op);
+                                else if (type.IsFloating && type.BitWidth == 64)
+                                    Set(op.Result, Get<double>(op.Operand1) - Get<double>(op.Operand2), op);
+                                else throw new NotImplementedException();
+                            }
+                            break;
+                        case OpCode.ISub:
+                            {
+                                Debug.Assert(type != null);
+                                var op = (OpISub)instruction;
+                                if (type.IsInteger && type.IsSigned && type.BitWidth == 32)
+                                    Set(op.Result, Get<int>(op.Operand1) - Get<int>(op.Operand2), op);
+                                else if (type.IsInteger && type.IsSigned && type.BitWidth == 64)
+                                    Set(op.Result, Get<long>(op.Operand1) - Get<long>(op.Operand2), op);
+                                else if (type.IsInteger && !type.IsSigned && type.BitWidth == 32)
+                                    Set(op.Result, Get<uint>(op.Operand1) - Get<uint>(op.Operand2), op);
+                                else if (type.IsInteger && !type.IsSigned && type.BitWidth == 64)
+                                    Set(op.Result, Get<ulong>(op.Operand1) - Get<ulong>(op.Operand2), op);
+                                else throw new NotImplementedException();
+                            }
+                            break;
+                        case OpCode.FMul:
+                            {
+                                Debug.Assert(type != null);
+                                var op = (OpFMul)instruction;
+                                if (type.IsFloating && type.BitWidth == 32)
+                                    Set(op.Result, Get<float>(op.Operand1) * Get<float>(op.Operand2), op);
+                                else if (type.IsFloating && type.BitWidth == 64)
+                                    Set(op.Result, Get<double>(op.Operand1) * Get<double>(op.Operand2), op);
+                                else throw new NotImplementedException();
+                            }
+                            break;
+                        case OpCode.IMul:
+                            {
+                                Debug.Assert(type != null);
+                                var op = (OpIMul)instruction;
+                                if (type.IsInteger && type.IsSigned && type.BitWidth == 32)
+                                    Set(op.Result, Get<int>(op.Operand1) * Get<int>(op.Operand2), op);
+                                else if (type.IsInteger && type.IsSigned && type.BitWidth == 64)
+                                    Set(op.Result, Get<long>(op.Operand1) * Get<long>(op.Operand2), op);
+                                else if (type.IsInteger && !type.IsSigned && type.BitWidth == 32)
+                                    Set(op.Result, Get<uint>(op.Operand1) * Get<uint>(op.Operand2), op);
+                                else if (type.IsInteger && !type.IsSigned && type.BitWidth == 64)
+                                    Set(op.Result, Get<ulong>(op.Operand1) * Get<ulong>(op.Operand2), op);
+                                else throw new NotImplementedException();
+                            }
+                            break;
+                        case OpCode.FDiv:
+                            {
+                                Debug.Assert(type != null);
+                                var op = (OpFDiv)instruction;
+                                if (type.IsFloating && type.BitWidth == 32)
+                                    Set(op.Result, Get<float>(op.Operand1) / Get<float>(op.Operand2), op);
+                                else if (type.IsFloating && type.BitWidth == 64)
+                                    Set(op.Result, Get<double>(op.Operand1) / Get<double>(op.Operand2), op);
+                                else throw new NotImplementedException();
+                            }
+                            break;
+                        case OpCode.UDiv:
+                            {
+                                Debug.Assert(type != null);
+                                var op = (OpUDiv)instruction;
+                                if (type.IsInteger && !type.IsSigned && type.BitWidth == 32)
+                                    Set(op.Result, Get<uint>(op.Operand1) / Get<uint>(op.Operand2), op);
+                                else if (type.IsInteger && !type.IsSigned && type.BitWidth == 64)
+                                    Set(op.Result, Get<ulong>(op.Operand1) / Get<ulong>(op.Operand2), op);
+                                else throw new NotImplementedException();
+                            }
+                            break;
+                        case OpCode.SDiv: // TODO: is this implemented correctly?
+                            {
+                                Debug.Assert(type != null);
+                                var op = (OpUDiv)instruction;
+                                if (type.IsInteger && type.IsSigned && type.BitWidth == 32)
+                                    Set(op.Result, Get<int>(op.Operand1) / Get<int>(op.Operand2), op);
+                                else if (type.IsInteger && type.IsSigned && type.BitWidth == 64)
+                                    Set(op.Result, Get<long>(op.Operand1) / Get<long>(op.Operand2), op);
+                                else if (type.IsInteger && !type.IsSigned && type.BitWidth == 32)
+                                    Set(op.Result, Get<uint>(op.Operand1) / Get<uint>(op.Operand2), op);
+                                else if (type.IsInteger && !type.IsSigned && type.BitWidth == 64)
+                                    Set(op.Result, Get<ulong>(op.Operand1) / Get<ulong>(op.Operand2), op);
+                                else throw new NotImplementedException();
+                            }
+                            break;
 
                         // flow-control
                         case OpCode.Branch:
-                            Debug.Assert(currBlock.OutgoingBlocks.Count > 0);
+                            Debug.Assert(currBlock.OutgoingBlocks.Count == 1);
                             nextBlock = currBlock.DefaultTarget;
+                            break;
+                        case OpCode.BranchConditional:
+                            Debug.Assert(currBlock.LiteralTargets.Count == 2);
+                            nextBlock = Get<bool>(((OpBranchConditional)instruction).Condition) ?
+                                currBlock.LiteralTargets[1] :
+                                currBlock.LiteralTargets[0];
                             break;
 
                         case OpCode.ReturnValue:

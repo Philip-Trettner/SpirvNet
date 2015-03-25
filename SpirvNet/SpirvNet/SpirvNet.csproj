@@ -402,6 +402,7 @@
     <Compile Include="Tests\InstructionTest.cs" />
     <Compile Include="Tests\IntegrationTest.cs" />
     <Compile Include="Tests\ModuleTest.cs" />
+    <Compile Include="Tests\OperationTest.cs" />
     <Compile Include="Tests\ShaderTest.cs" />
     <Compile Include="Tests\ValidationTests.cs" />
     <Compile Include="Validation\EntryPoint.cs" />

@@ -53,6 +53,18 @@ namespace SpirvNet.Tests
 
             var res = machine.Execute(func, 1f, 2f);
             Assert.AreEqual(1f + 2f + 3, (float)res);
+            Assert.AreEqual(SimpleAdd(1f, 2f), (float)res);
+
+            var random = new Random(123);
+            for (var i = 0; i < 100; ++i)
+            {
+                var a = (float)random.NextDouble() * 100 - 50;
+                var b = (float)random.NextDouble() * 100 - 50;
+
+                res = machine.Execute(func, a, b);
+                Assert.AreEqual(a + b + 3, (float)res);
+                Assert.AreEqual(SimpleAdd(a, b), (float)res);
+            }
         }
     }
 }
