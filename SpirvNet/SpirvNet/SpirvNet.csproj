@@ -30,8 +30,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="GlmSharp">
-      <HintPath>..\packages\GlmSharp.0.9.5\lib\Net45\GlmSharp.dll</HintPath>
+    <Reference Include="GlmSharp, Version=0.9.5.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\GlmSharp.0.9.7\lib\Net45\GlmSharp.dll</HintPath>
     </Reference>
     <Reference Include="Mono.Cecil">
       <HintPath>..\packages\Mono.Cecil.0.9.5.4\lib\net40\Mono.Cecil.dll</HintPath>
