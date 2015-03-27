@@ -125,6 +125,11 @@ namespace SpirvNet.DotNet.SSA
         /// </summary>
         public MethodFrameState TargetState => Outgoing.Count > 1 ? Outgoing[1] : null;
 
+        /// <summary>
+        /// Assigned block
+        /// </summary>
+        public MethodBlock Block { get; private set; }
+
 
         public MethodFrameState(Vertex vertex, MethodFrame frame)
         {
@@ -294,6 +299,20 @@ namespace SpirvNet.DotNet.SSA
 
                 StackPosition = incomingState.StackPosition;
             }
+
+            // block connectivity
+            if (Vertex.IsBranchTarget || IsEntryPoint) // new block
+            {
+                Block = new MethodBlock();
+                Frame.Blocks.Add(Block);
+            }
+            else
+            {
+                Block = incomingState.Block;
+                if (Block == null)
+                    throw new InvalidOperationException("Empty previous block");
+            }
+            Block.States.Add(this);
 
             // copy incoming stack, vars
             for (var i = 0; i < StackLocations.Length; ++i)
@@ -1073,9 +1092,6 @@ namespace SpirvNet.DotNet.SSA
 
 
                 yield return string.Format("v{0} [{1}];", Vertex.Index, attr.Aggregate((s1, s2) => s1 + "," + s2));
-
-                foreach (var v in Outgoing)
-                    yield return string.Format("v{0} -> v{1};", Vertex.Index, v.Vertex.Index);
             }
         }
     }

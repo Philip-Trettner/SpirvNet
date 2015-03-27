@@ -61,6 +61,7 @@
     <Compile Include="DotNet\CecilLoader.cs" />
     <Compile Include="DotNet\CFG\ControlFlowGraph.cs" />
     <Compile Include="DotNet\CFG\Vertex.cs" />
+    <Compile Include="DotNet\SSA\MethodBlock.cs" />
     <Compile Include="DotNet\SSA\MethodFrame.cs" />
     <Compile Include="DotNet\SSA\MethodFrameState.cs" />
     <Compile Include="DotNet\SSA\PhiFunction.cs" />

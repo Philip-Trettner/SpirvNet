@@ -92,6 +92,11 @@ namespace SpirvNet.DotNet.SSA
         private readonly List<TypedLocation> locations = new List<TypedLocation>();
 
         /// <summary>
+        /// List of function blocks
+        /// </summary>
+        public readonly List<MethodBlock> Blocks = new List<MethodBlock>();
+
+        /// <summary>
         /// Helper for vertex -> state
         /// </summary>
         public MethodFrameState FromVertex(Vertex v) => States[v.Index];
@@ -148,6 +153,15 @@ namespace SpirvNet.DotNet.SSA
             // finally, phis
             foreach (var state in States)
                 state.CreatePhis();
+
+            // update block connectivity
+            foreach (var s1 in States)
+                foreach (var s2 in s1.Outgoing)
+                    MethodBlock.AddConnection(s1, s2);
+            foreach (var block in Blocks)
+                block.AddMissingBranches();
+            foreach (var block in Blocks)
+                block.Validate();
         }
 
         /// <summary>
@@ -180,9 +194,19 @@ namespace SpirvNet.DotNet.SSA
             get
             {
                 yield return "digraph MethodFrame {";
-                foreach (var v in States)
-                    foreach (var line in v.DotLines)
-                        yield return "  " + line;
+                var i = 0;
+                foreach (var block in Blocks)
+                {
+                    yield return string.Format("  subgraph cluster_{0} {{", i++);
+                    yield return string.Format("    label=\"{0}\";", "Block " + i);
+                    foreach (var s in block.States)
+                        foreach (var line in s.DotLines)
+                            yield return "    " + line;
+                    yield return "  }";
+                }
+                foreach (var v1 in States)
+                    foreach (var v2 in v1.Outgoing)
+                        yield return string.Format("v{0} -> v{1};", v1.Vertex.Index, v2.Vertex.Index);
                 yield return "}";
             }
         }
