@@ -32,7 +32,7 @@ namespace SpirvNet.DotNet.CFG
         /// <summary>
         /// True iff vertex is branching
         /// </summary>
-        public bool IsBranching => IsUnconditionalBranch | IsConditionalBranch || IsSwitch;
+        public bool IsBranching => IsUnconditionalBranch || IsConditionalBranch || IsSwitch;
         public bool IsUnconditionalBranch { get; private set; }
         public bool IsConditionalBranch { get; private set; }
         public bool IsSwitch { get; private set; }
@@ -131,6 +131,8 @@ namespace SpirvNet.DotNet.CFG
                     var instructions = (Instruction[])Instruction.Operand;
                     foreach (var instruction in instructions)
                         ConnectTo(cfg.Vertices[cfg.OffsetToIndex[instruction.Offset]], true);
+
+                    IsSwitch = true;
                     break;
 
                 // not branching
