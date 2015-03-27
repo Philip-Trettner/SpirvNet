@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 using SpirvNet.DotNet.CFG;
+using SpirvNet.Helper;
 using SpirvNet.Spirv;
 using SpirvNet.Spirv.Ops.Arithmetic;
 using SpirvNet.Spirv.Ops.ConstantCreation;

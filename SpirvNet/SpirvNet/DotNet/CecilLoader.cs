@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Mono.Cecil;
 using Mono.Collections.Generic;
+using SpirvNet.Helper;
 
 namespace SpirvNet.DotNet
 {

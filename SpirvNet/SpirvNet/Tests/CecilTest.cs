@@ -8,6 +8,7 @@ using NUnit.Framework;
 using SpirvNet.DotNet;
 using SpirvNet.DotNet.CFG;
 using SpirvNet.DotNet.SSA;
+using SpirvNet.Helper;
 using SpirvNet.Spirv;
 using SpirvNet.Validation;
 
@@ -93,6 +94,7 @@ namespace SpirvNet.Tests
             var typeBuilder = new TypeBuilder(allocator);
             var frame = new MethodFrame(cfg, typeBuilder, allocator);
 
+            //DotHelper.Execute(@"C:\Temp\simplebranch.dot", cfg.DotFile);
             //File.WriteAllLines(@"C:\Temp\simplebranch.dot", cfg.DotFile);
             //File.WriteAllLines(@"C:\Temp\simplebranch.frame.dot", frame.DotFile);
             //File.WriteAllLines(@"C:\Temp\simplebranch.csv", CecilLoader.CsvDump(def));

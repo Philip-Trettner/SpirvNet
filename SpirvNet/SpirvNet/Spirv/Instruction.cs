@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using SpirvNet.Helper;
 using SpirvNet.Spirv.Enums;
 using SpirvNet.Spirv.Ops;
 

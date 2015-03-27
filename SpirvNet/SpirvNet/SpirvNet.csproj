@@ -64,13 +64,14 @@
     <Compile Include="DotNet\SSA\MethodFrame.cs" />
     <Compile Include="DotNet\SSA\MethodFrameState.cs" />
     <Compile Include="DotNet\SSA\PhiFunction.cs" />
+    <Compile Include="Helper\DotHelper.cs" />
     <Compile Include="Interpreter\ExecutionException.cs" />
     <Compile Include="Interpreter\Machine.cs" />
     <Compile Include="Spirv\IDAllocator.cs" />
     <Compile Include="Spirv\SpirvType.cs" />
     <Compile Include="Spirv\TypeBuilder.cs" />
     <Compile Include="DotNet\SSA\TypedLocation.cs" />
-    <Compile Include="Extensions.cs" />
+    <Compile Include="Helper\Extensions.cs" />
     <Compile Include="Spirv\BlockBuilder.cs" />
     <Compile Include="Spirv\DependsOnAttribute.cs" />
     <Compile Include="Spirv\Enums\AccessQualifier.cs" />
