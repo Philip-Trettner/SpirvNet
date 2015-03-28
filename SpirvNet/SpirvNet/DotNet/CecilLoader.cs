@@ -4,8 +4,10 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using DebugPage;
 using Mono.Cecil;
 using Mono.Collections.Generic;
+using SpirvNet.DotNet.CFG;
 using SpirvNet.Helper;
 
 namespace SpirvNet.DotNet
@@ -238,6 +240,70 @@ namespace SpirvNet.DotNet
                 yield return string.Format("{0};{1};{2};{3};{4};{5};{6};{7};{8};{9};{10};{11};{12};{13}",
                     i.Offset, i.GetSize(), o.Code, i.Operand, i.Operand?.GetType().Name, o.FlowControl, o.Op1, o.Op2, o.OpCodeType, o.OperandType,
                     o.Size, o.StackBehaviourPop, o.StackBehaviourPush, o.Value);
+            }
+        }
+
+        /// <summary>
+        /// Adds debug page from a method definition to an element
+        /// </summary>
+        public static void AddInstructionPageTo(MethodDefinition method, PageElement e)
+        {
+            var body = method.Body;
+            e.AddContent("Method " + method.Name, "h2");
+            e.AddContent("Type " + method.DeclaringType, "h3");
+
+            {
+                e.AddContent("Stats", "h3");
+                var t = e.AddChild(new DebugTable());
+                t.SetHeader("Name", "Value");
+                t.AddRow("Local Vars", body.Variables.Count.ToString());
+                t.AddRow("Instructions", body.Instructions.Count.ToString());
+                t.AddRow("Code Size", body.CodeSize.ToString());
+                t.AddRow("Max Stack Size", body.MaxStackSize.ToString());
+                t.AddRow("Init Locals", body.InitLocals.ToString());
+                t.AddRow("Exception Handlers", body.ExceptionHandlers.Count.ToString());
+                t.AddRow("Has This", method.HasThis.ToString());
+            }
+
+            if (method.Parameters.Count > 0)
+            {
+                e.AddContent("Parameters", "h3");
+                var t = e.AddChild(new DebugTable());
+                t.SetHeader("Index", "Name", "Type");
+                foreach (var p in method.Parameters)
+                    t.AddRow(p.Index.ToString(), PageHelper.Tagged("b", p.Name), p.ParameterType.ToString());
+            }
+
+            if (body.HasExceptionHandlers)
+            {
+                e.AddContent("Exception Handlers", "h3");
+                var t = e.AddChild(new DebugTable());
+                t.SetHeader("Catch Type", "Filter Start", "Handler Type", "Handler End", "Try Start", "Try End");
+                foreach (var h in body.ExceptionHandlers)
+                    t.AddRow(h.CatchType.ToString(), h.FilterStart.ToString(), h.HandlerType.ToString(), h.HandlerEnd.ToString(), h.TryStart.ToString(), h.TryEnd.ToString());
+            }
+
+            if (body.HasVariables)
+            {
+                e.AddContent("Variables", "h3");
+                var t = e.AddChild(new DebugTable());
+                t.SetHeader("Index", "Pinned", "Name", "Type");
+                foreach (var p in body.Variables)
+                    t.AddRow(p.Index.ToString(), p.IsPinned.ToString(), PageHelper.Tagged("b", p.Name), p.VariableType.ToString());
+            }
+
+            {
+                e.AddContent("Instructions", "h3");
+                var t = e.AddChild(new DebugTable());
+                t.SetHeader("Offset", "Size", "Code", "Operand", "Operand Type", "Flow Control", "Op1", "Op2", "Op Code Type", "Operand Type", "Size", "Stack Pop", "Stack Push", "Value");
+                foreach (var i in body.Instructions)
+                {
+                    var o = i.OpCode;
+                    t.AddRow(
+                        "0x" + i.Offset.ToString("X4"), i.GetSize().ToString(), PageHelper.Tagged("b", o.Code.ToString()), i.Operand?.ToString(), i.Operand?.GetType().Name,
+                        o.FlowControl.ToString(), o.Op1.ToString(), o.Op2.ToString(), o.OpCodeType.ToString(), o.OperandType.ToString(),
+                        o.Size.ToString(), o.StackBehaviourPop.ToString(), o.StackBehaviourPush.ToString(), o.Value.ToString());
+                }
             }
         }
 

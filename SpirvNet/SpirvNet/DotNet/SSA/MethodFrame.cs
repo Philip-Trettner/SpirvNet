@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DebugPage;
 using Mono.Cecil;
 using SpirvNet.DotNet.CFG;
 using SpirvNet.Spirv;
@@ -209,6 +210,14 @@ namespace SpirvNet.DotNet.SSA
                         yield return string.Format("v{0} -> v{1};", v1.Vertex.Index, v2.Vertex.Index);
                 yield return "}";
             }
+        }
+
+        /// <summary>
+        /// Adds a dot file 
+        /// </summary>
+        public void AddDebugPageTo(PageElement e)
+        {
+            e.AddDotGraph(DotFile);
         }
     }
 }

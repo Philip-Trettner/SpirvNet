@@ -30,6 +30,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="DebugPage, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\DebugPage.0.1.1\lib\Net45\DebugPage.dll</HintPath>
+    </Reference>
     <Reference Include="GlmSharp, Version=0.9.5.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\GlmSharp.0.9.7\lib\Net45\GlmSharp.dll</HintPath>
@@ -65,6 +69,7 @@
     <Compile Include="DotNet\SSA\MethodFrame.cs" />
     <Compile Include="DotNet\SSA\MethodFrameState.cs" />
     <Compile Include="DotNet\SSA\PhiFunction.cs" />
+    <Compile Include="Helper\DebugHelper.cs" />
     <Compile Include="Helper\DotHelper.cs" />
     <Compile Include="Interpreter\ExecutionException.cs" />
     <Compile Include="Interpreter\Machine.cs" />
@@ -419,9 +424,9 @@
     <Compile Include="Validation\ValidationException.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

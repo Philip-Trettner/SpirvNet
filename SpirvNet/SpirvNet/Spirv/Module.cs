@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DebugPage;
 using SpirvNet.Validation;
 
 namespace SpirvNet.Spirv
@@ -134,6 +135,35 @@ namespace SpirvNet.Spirv
             foreach (var op in Instructions)
                 yield return string.Format("{0};{1};{2};{3};{4}",
                     op.ResultID, op.ResultTypeID, op.OpCode, op.WordCount, op.ArgString);
+        }
+
+        /// <summary>
+        /// Addds debug output to a page
+        /// </summary>
+        public void AddDebugPageTo(PageElement e)
+        {
+            // get op word counts
+            GenerateBytecode();
+
+            {
+                e.AddContent("Header", "h3");
+                var t = e.AddChild(new DebugTable());
+                t.SetHeader("Name", "Value");
+                t.AddRow("Magic Number", MagicNumber.ToString("X8"));
+                t.AddRow("Version Number", VersionNumber.ToString());
+                t.AddRow("Generator", Generator.ToString());
+                t.AddRow("Bound", Bound.ToString());
+                t.AddRow("Instruction Schema", InstructionSchema.ToString());
+            }
+
+            {
+                e.AddContent(string.Format("Instructions ({0})", Instructions.Count), "h3");
+                var t = e.AddChild(new DebugTable());
+                t.SetHeader("Result ID", "Result Type ID", "OpCode", "Word Count", "Args");
+                foreach (var op in Instructions)
+                    t.AddRow(op.ResultID.ToString(), op.ResultTypeID.ToString(), op.OpCode.ToString(),
+                        op.WordCount.ToString(), op.ArgString);
+            }
         }
 
         /// <summary>

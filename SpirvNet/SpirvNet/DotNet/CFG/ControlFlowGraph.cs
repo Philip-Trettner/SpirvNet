@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DebugPage;
 using Mono.Cecil;
 
 namespace SpirvNet.DotNet.CFG
@@ -59,6 +60,14 @@ namespace SpirvNet.DotNet.CFG
                         yield return "  " + line;
                 yield return "}";
             }
-        } 
+        }
+        
+        /// <summary>
+        /// Adds a dot file 
+        /// </summary>
+        public void AddDebugPageTo(PageElement e)
+        {
+            e.AddDotGraph(DotFile);
+        }
     }
 }
