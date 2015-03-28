@@ -235,19 +235,21 @@ namespace SpirvNet.Spirv
         {
             // last-minute creations
             {
-                // register types
+                // register types and names
                 foreach (var type in TypeBuilder.CreateTypeOps())
                     AddType(type);
+                foreach (var kvp in TypeBuilder.CreateTypeNames())
+                    AddName(kvp.Key, kvp.Value);
 
-                // register constants
+                // register constants and names
                 foreach (var constant in TypeBuilder.Constants)
                     AddConstant(constant);
+                foreach (var kvp in TypeBuilder.CreateConstantNames())
+                    AddName(kvp.Key, kvp.Value);
 
-                // register function types
+                // register function types and names
                 foreach (var func in functions)
                     AddType(func.FunctionType);
-
-                // register function names
                 foreach (var func in functions)
                     opNames.AddRange(func.AdditionalNames);
             }

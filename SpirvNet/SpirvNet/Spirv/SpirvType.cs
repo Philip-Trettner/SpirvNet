@@ -7,12 +7,17 @@ namespace SpirvNet.Spirv
     /// <summary>
     /// A SPIR-V type
     /// </summary>
-    public class SpirvType
+    public sealed class SpirvType
     {
         /// <summary>
         /// ID of the type
         /// </summary>
         public ID TypeID { get; set; }
+
+        /// <summary>
+        /// Debug Name
+        /// </summary>
+        public string DebugName { get; set; }
 
         /// <summary>
         /// Represented type (can be null)
@@ -87,6 +92,8 @@ namespace SpirvNet.Spirv
             ElementType = elementType;
             ReturnType = returnType;
             ParameterTypes = parameterTypes;
+
+            DebugName = ToString();
         }
 
         /// <summary>
@@ -133,102 +140,110 @@ namespace SpirvNet.Spirv
             RepresentedType = representedType;
             TypeID = allocator.CreateID();
 
+            var found = true;
             switch (representedType.FullName)
             {
                 case "System.Void":
                     TypeEnum = SpirvTypeEnum.Void;
-                    return;
+                    break;
 
                 case "System.Boolean":
                     TypeEnum = SpirvTypeEnum.Boolean;
-                    return;
+                    break;
 
                 case "System.Int32":
                     TypeEnum = SpirvTypeEnum.Integer;
                     BitWidth = 32;
                     Signedness = 1;
-                    return;
+                    break;
                 case "System.UInt32":
                     TypeEnum = SpirvTypeEnum.Integer;
                     BitWidth = 32;
                     Signedness = 0;
-                    return;
+                    break;
                 case "System.Int64":
                     TypeEnum = SpirvTypeEnum.Integer;
                     BitWidth = 64;
                     Signedness = 1;
-                    return;
+                    break;
                 case "System.UInt64":
                     TypeEnum = SpirvTypeEnum.Integer;
                     BitWidth = 64;
                     Signedness = 0;
-                    return;
+                    break;
 
                 case "System.Single":
                     TypeEnum = SpirvTypeEnum.Floating;
                     BitWidth = 32;
-                    return;
+                    break;
                 case "System.Double":
                     TypeEnum = SpirvTypeEnum.Floating;
                     BitWidth = 64;
-                    return;
-            }
-
-            switch (representedType.MetadataType)
-            {
-                case MetadataType.Void:
-                    TypeEnum = SpirvTypeEnum.Void;
                     break;
-
-                case MetadataType.Boolean:
-                    TypeEnum = SpirvTypeEnum.Boolean;
-                    break;
-
-                case MetadataType.Int32:
-                    TypeEnum = SpirvTypeEnum.Integer;
-                    BitWidth = 32;
-                    Signedness = 1;
-                    break;
-                case MetadataType.UInt32:
-                    TypeEnum = SpirvTypeEnum.Integer;
-                    BitWidth = 32;
-                    Signedness = 0;
-                    break;
-                case MetadataType.Int64:
-                    TypeEnum = SpirvTypeEnum.Integer;
-                    BitWidth = 64;
-                    Signedness = 1;
-                    break;
-                case MetadataType.UInt64:
-                    TypeEnum = SpirvTypeEnum.Integer;
-                    BitWidth = 64;
-                    Signedness = 0;
-                    break;
-
-                case MetadataType.Single:
-                    TypeEnum = SpirvTypeEnum.Floating;
-                    BitWidth = 32;
-                    break;
-                case MetadataType.Double:
-                    TypeEnum = SpirvTypeEnum.Floating;
-                    BitWidth = 64;
-                    break;
-
-                case MetadataType.Array:
-                    TypeEnum = SpirvTypeEnum.Array;
-                    ElementType = builder.Create(representedType.GetElementType());
-                    // TODO: Fixed size vs. dynamic size
-                    break;
-
-                case MetadataType.ValueType:
-                    throw new NotImplementedException("Structs, vectors, matrices not implemented");
-
-                case MetadataType.Class:
-                    throw new NotSupportedException("Reference Type not supported: " + representedType);
 
                 default:
-                    throw new NotSupportedException("Type not supported: " + representedType);
+                    found = false;
+                    break;
             }
+
+            if (!found)
+                switch (representedType.MetadataType)
+                {
+                    case MetadataType.Void:
+                        TypeEnum = SpirvTypeEnum.Void;
+                        break;
+
+                    case MetadataType.Boolean:
+                        TypeEnum = SpirvTypeEnum.Boolean;
+                        break;
+
+                    case MetadataType.Int32:
+                        TypeEnum = SpirvTypeEnum.Integer;
+                        BitWidth = 32;
+                        Signedness = 1;
+                        break;
+                    case MetadataType.UInt32:
+                        TypeEnum = SpirvTypeEnum.Integer;
+                        BitWidth = 32;
+                        Signedness = 0;
+                        break;
+                    case MetadataType.Int64:
+                        TypeEnum = SpirvTypeEnum.Integer;
+                        BitWidth = 64;
+                        Signedness = 1;
+                        break;
+                    case MetadataType.UInt64:
+                        TypeEnum = SpirvTypeEnum.Integer;
+                        BitWidth = 64;
+                        Signedness = 0;
+                        break;
+
+                    case MetadataType.Single:
+                        TypeEnum = SpirvTypeEnum.Floating;
+                        BitWidth = 32;
+                        break;
+                    case MetadataType.Double:
+                        TypeEnum = SpirvTypeEnum.Floating;
+                        BitWidth = 64;
+                        break;
+
+                    case MetadataType.Array:
+                        TypeEnum = SpirvTypeEnum.Array;
+                        ElementType = builder.Create(representedType.GetElementType());
+                        // TODO: Fixed size vs. dynamic size
+                        break;
+
+                    case MetadataType.ValueType:
+                        throw new NotImplementedException("Structs, vectors, matrices not implemented");
+
+                    case MetadataType.Class:
+                        throw new NotSupportedException("Reference Type not supported: " + representedType);
+
+                    default:
+                        throw new NotSupportedException("Type not supported: " + representedType);
+                }
+
+            DebugName = ToString();
         }
 
         public override string ToString()

@@ -140,8 +140,8 @@ namespace SpirvNet.Spirv
 
         private ID Constant(Type type, string s, LiteralNumber[] nrs)
         {
-            var name = type + "," + s;
             var st = Create(type);
+            var name = st + ": " + s;
             if (!cachedConstants.ContainsKey(name))
                 cachedConstants.Add(name, new OpConstant { Result = allocator.CreateID(), ResultType = st.TypeID, Value = nrs });
             return cachedConstants[name].ResultID.Value;
@@ -178,6 +178,29 @@ namespace SpirvNet.Spirv
         {
             foreach (var type in cilToSpirv.Values)
                 yield return type.CreateOp();
+        }
+
+        /// <summary>
+        /// Creates a mapping from type to name
+        /// </summary>
+        public Dictionary<ID, string> CreateTypeNames()
+        {
+            var dic = new Dictionary<ID, string>();
+            foreach (var spirvType in cilToSpirv.Values)
+                if (!string.IsNullOrEmpty(spirvType.DebugName))
+                    dic.Add(spirvType.TypeID, spirvType.DebugName);
+            return dic;
+        }
+
+        /// <summary>
+        /// Creates a mapping from constant to name
+        /// </summary>
+        public Dictionary<ID, string> CreateConstantNames()
+        {
+            var dic = new Dictionary<ID, string>();
+            foreach (var cc in cachedConstants)
+                dic.Add(cc.Value.ResultID ?? ID.Invalid, "const " + cc.Key);
+            return dic;
         }
     }
 }

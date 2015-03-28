@@ -15,6 +15,11 @@ namespace SpirvNet.Spirv
     public struct ID : IEquatable<ID>
     {
         /// <summary>
+        /// Return the invalid ID zero
+        /// </summary>
+        public static ID Invalid => new ID(0);
+
+        /// <summary>
         /// Numerical value
         /// </summary>
         public readonly uint Value;

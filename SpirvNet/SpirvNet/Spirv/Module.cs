@@ -159,9 +159,9 @@ namespace SpirvNet.Spirv
             {
                 e.AddContent(string.Format("Instructions ({0})", Instructions.Count), "h3");
                 var t = e.AddChild(new DebugTable());
-                t.SetHeader("Result ID", "Result Type ID", "OpCode", "Word Count", "Args");
+                t.SetHeader("Result ID", "Result Type ID", "OpCode", "Words", "Args");
                 foreach (var op in Instructions)
-                    t.AddRow(op.ResultID.ToString(), op.ResultTypeID.ToString(), op.OpCode.ToString(),
+                    t.AddRow(op.ResultID.ToString(), op.ResultTypeID.ToString(), PageHelper.Tagged("b", op.OpCode.ToString()),
                         op.WordCount.ToString(), op.ArgString);
             }
         }
