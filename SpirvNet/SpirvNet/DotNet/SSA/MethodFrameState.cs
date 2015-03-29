@@ -12,6 +12,7 @@ using SpirvNet.Spirv.Ops.Arithmetic;
 using SpirvNet.Spirv.Ops.ConstantCreation;
 using SpirvNet.Spirv.Ops.Conversion;
 using SpirvNet.Spirv.Ops.FlowControl;
+using SpirvNet.Spirv.Ops.Function;
 using SpirvNet.Spirv.Ops.RelationalLogical;
 using Instruction = SpirvNet.Spirv.Instruction;
 
@@ -20,7 +21,7 @@ namespace SpirvNet.DotNet.SSA
     /// <summary>
     /// State of a method frame at a given CFG vertex
     /// </summary>
-    class MethodFrameState
+    public class MethodFrameState
     {
         /// <summary>
         /// Vertex for this CFG State
@@ -324,9 +325,10 @@ namespace SpirvNet.DotNet.SSA
             var ins = Vertex.Instruction;
 
             TypedLocation loc, t1, t2, t, res, tmp;
-            ID tl, fl;
+            ID tl, fl, id;
             VariableDefinition vardef;
             ParameterDefinition argdef;
+            SpirvType type;
 
             switch (opc.Code)
             {
@@ -874,6 +876,38 @@ namespace SpirvNet.DotNet.SSA
                     Push(res);
                     break;
 
+                // calls
+                case Code.Call:
+                    if (Frame.FunctionProvider == null)
+                        throw new InvalidOperationException("Cannot call functions if no function provider registered.");
+                    {
+                        var kvp = Frame.FunctionProvider.Resolve((MethodDefinition)ins.Operand);
+                        id = kvp.Key;
+                        type = kvp.Value;
+                        if (!type.IsFunction)
+                            throw new InvalidOperationException("non-function function type");
+
+                        var args = new List<TypedLocation>();
+                        foreach (var p in type.ParameterTypes)
+                            args.Add(Pop());
+                        res = CreateLocation(type.ReturnType);
+                        Push(res);
+                        Instructions.Add(new OpFunctionCall
+                        {
+                            Result = res.ID,
+                            ResultType = res.Type.TypeID,
+                            Function = id,
+                            Arguments = args.Select(a => a.ID).ToArray()
+                        });
+                    }
+                    break;
+
+                // indirect calls
+                case Code.Calli:
+                    throw new NotSupportedException("Indirect calls are not supported");
+                case Code.Callvirt:
+                    throw new NotSupportedException("Virtual calls are not supported");
+
                 case Code.Starg_S:
                 case Code.Ldarga_S:
                 case Code.Ldloca_S:
@@ -881,9 +915,6 @@ namespace SpirvNet.DotNet.SSA
                 case Code.Dup:
                 case Code.Pop:
                 case Code.Jmp:
-                case Code.Call:
-                case Code.Calli:
-                case Code.Callvirt:
                 case Code.Switch:
                 case Code.Ldind_I1:
                 case Code.Ldind_U1:

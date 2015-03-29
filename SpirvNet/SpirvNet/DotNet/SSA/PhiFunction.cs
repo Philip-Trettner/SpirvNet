@@ -9,7 +9,7 @@ namespace SpirvNet.DotNet.SSA
     /// <summary>
     /// Phi function merging a set of locations into another one
     /// </summary>
-    class PhiFunction
+    public class PhiFunction
     {
         /// <summary>
         /// Target location

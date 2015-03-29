@@ -15,7 +15,7 @@ namespace SpirvNet.DotNet.SSA
     /// <summary>
     /// Frame analysis for a method
     /// </summary>
-    class MethodFrame
+    public class MethodFrame
     {
         /// <summary>
         /// List of states
@@ -31,6 +31,23 @@ namespace SpirvNet.DotNet.SSA
         /// ID Allocator
         /// </summary>
         public readonly IDAllocator Allocator;
+        /// <summary>
+        /// Associated type builder
+        /// </summary>
+        public readonly TypeBuilder TypeBuilder;
+        /// <summary>
+        /// Provider for called methods
+        /// </summary>
+        public readonly IFunctionProvider FunctionProvider;
+
+        /// <summary>
+        /// Function parameter types
+        /// </summary>
+        public readonly SpirvType[] ParameterTypes;
+        /// <summary>
+        /// Function return type
+        /// </summary>
+        public readonly SpirvType ReturnType;
 
         /// <summary>
         /// Argument locations
@@ -44,11 +61,6 @@ namespace SpirvNet.DotNet.SSA
         /// local var types
         /// </summary>
         public readonly SpirvType[] LocalVarTypes;
-
-        /// <summary>
-        /// Associated type builder
-        /// </summary>
-        public readonly TypeBuilder TypeBuilder;
 
         /// <summary>
         /// Number of function args
@@ -78,6 +90,11 @@ namespace SpirvNet.DotNet.SSA
         public readonly MethodDefinition Method;
 
         /// <summary>
+        /// True iff method frame was analysed
+        /// </summary>
+        public bool Analysed { get; set; } = false;
+
+        /// <summary>
         /// Creates a new SSA location
         /// </summary>
         public TypedLocation CreateLocation(SpirvType type)
@@ -102,12 +119,13 @@ namespace SpirvNet.DotNet.SSA
         /// </summary>
         public MethodFrameState FromVertex(Vertex v) => States[v.Index];
 
-        public MethodFrame(ControlFlowGraph cfg, TypeBuilder typeBuilder, IDAllocator allocator)
+        public MethodFrame(ControlFlowGraph cfg, TypeBuilder typeBuilder, IDAllocator allocator, IFunctionProvider functionProvider = null)
         {
             // init options
             CFG = cfg;
             TypeBuilder = typeBuilder;
             Allocator = allocator;
+            FunctionProvider = functionProvider;
             Method = cfg.Method;
             ArgCount = Method.Parameters.Count;
             VarCount = Method.Body.Variables.Count;
@@ -116,6 +134,10 @@ namespace SpirvNet.DotNet.SSA
             HasThis = Method.HasThis;
 
             if (HasThis) ++ArgCount; // zero is this
+            
+            // types
+            ParameterTypes = Method.Parameters.Select(p => typeBuilder.Create(p.ParameterType)).ToArray();
+            ReturnType = typeBuilder.Create(Method.ReturnType);
 
             // init arg locations
             // TODO: Init code
@@ -142,9 +164,18 @@ namespace SpirvNet.DotNet.SSA
             if (InitLocalVars)
                 for (var i = 0; i < VarCount; ++i)
                     LocalVars[i] = CreateLocation(LocalVarTypes[i]);
+        }
 
+        /// <summary>
+        /// Analyses this method if not alreay done
+        /// </summary>
+        public void Analyse()
+        {
+            if (Analysed)
+                return;
+            
             // create stack frames
-            foreach (var vertex in cfg.Vertices)
+            foreach (var vertex in CFG.Vertices)
                 States.Add(new MethodFrameState(vertex, this));
             // connectivity
             foreach (var state in States)
@@ -163,12 +194,14 @@ namespace SpirvNet.DotNet.SSA
                 block.AddMissingBranches();
             foreach (var block in Blocks)
                 block.Validate();
+
+            Analysed = true;
         }
 
         /// <summary>
-        /// Builds this method into a function
+        /// Performs initial function setup (no instruction generation or analysing yet)
         /// </summary>
-        public void Build(FunctionBuilder builder)
+        public void Setup(FunctionBuilder builder)
         {
             // register parameters
             for (var i = 0; i < Method.Parameters.Count; ++i)
@@ -177,12 +210,20 @@ namespace SpirvNet.DotNet.SSA
                 var name = para.Name;
                 var argloc = ArgLocations[HasThis ? i + 1 : i];
 
-                builder.AddParameter(new OpFunctionParameter { Result = argloc.ID, ResultType = argloc.Type.TypeID }, name);
+                builder.AddParameter(new OpFunctionParameter { Result = argloc.ID, ResultType = argloc.Type.TypeID }, argloc.Type, name);
             }
 
             // setup function
             var returnType = TypeBuilder.Create(Method.ReturnType);
-            builder.SetupFunction(returnType.TypeID, Allocator);
+            builder.SetupFunction(returnType, TypeBuilder, Allocator);
+        }
+        /// <summary>
+        /// Builds the function instruction (must be called after Setup)
+        /// </summary>
+        public void Build(FunctionBuilder builder)
+        {
+            // analyse on demand
+            Analyse();
 
             // add code
             foreach (var state in States)
@@ -194,6 +235,9 @@ namespace SpirvNet.DotNet.SSA
         {
             get
             {
+                // analyse on demand
+                Analyse();
+
                 yield return "digraph MethodFrame {";
                 var i = 0;
                 foreach (var block in Blocks)
@@ -217,6 +261,9 @@ namespace SpirvNet.DotNet.SSA
         /// </summary>
         public void AddDebugPageTo(PageElement e)
         {
+            // analyse on demand
+            Analyse();
+
             e.AddDotGraph(DotFile);
         }
     }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using SpirvNet.DotNet.SSA;
 using SpirvNet.Spirv.Enums;
 using SpirvNet.Spirv.Ops.Debug;
 using SpirvNet.Spirv.Ops.Function;
@@ -21,14 +22,23 @@ namespace SpirvNet.Spirv
         public readonly string Name;
 
         /// <summary>
-        /// Function decl
+        /// Function decl (valid after setupFunction)
         /// </summary>
-        private OpFunction opFunction;
+        public OpFunction OpFunction { get; private set; }
+
+        /// <summary>
+        /// Associated .NET method frame (if built from .NET func)
+        /// </summary>
+        public readonly MethodFrame Frame;
 
         /// <summary>
         /// Function parameters
         /// </summary>
         private readonly List<OpFunctionParameter> opParameters = new List<OpFunctionParameter>();
+        /// <summary>
+        /// List of para types
+        /// </summary>
+        public readonly List<SpirvType> ParameterTypes = new List<SpirvType>();
 
         /// <summary>
         /// List of blocks
@@ -46,15 +56,20 @@ namespace SpirvNet.Spirv
         public readonly List<OpName> AdditionalNames = new List<OpName>();
 
         /// <summary>
+        /// Function type op
+        /// </summary>
+        public OpTypeFunction OpFunctionType { get; private set; }
+        /// <summary>
         /// Function type
         /// </summary>
-        public OpTypeFunction FunctionType { get; private set; }
+        public SpirvType FunctionType { get; private set; }
 
         /// <summary>
         /// If name non-null, it is used for debugging
         /// </summary>
-        public FunctionBuilder(string name = null)
+        public FunctionBuilder(string name = null, MethodFrame frame = null)
         {
+            Frame = frame;
             Name = name;
         }
 
@@ -68,27 +83,28 @@ namespace SpirvNet.Spirv
         /// Must be called at least once before module creation
         /// Must be called after all parameters are set up
         /// </summary>
-        public void SetupFunction(ID returnType, IDAllocator allocator, FunctionControlMask mask = FunctionControlMask.None)
+        public void SetupFunction(SpirvType returnType, TypeBuilder typeBuilder, IDAllocator allocator, FunctionControlMask mask = FunctionControlMask.None)
         {
-            FunctionType = new OpTypeFunction
+            FunctionType = new SpirvType(allocator.CreateID(), SpirvTypeEnum.Function, returnType: returnType, parameterTypes: ParameterTypes.ToArray());
+            OpFunctionType = new OpTypeFunction
             {
-                Result = allocator.CreateID(),
-                ReturnType = returnType,
+                Result = FunctionType.TypeID,
+                ReturnType = returnType.TypeID,
                 ParameterTypes = opParameters.Select(op => op.ResultType).ToArray()
             };
 
-            opFunction = new OpFunction
+            OpFunction = new OpFunction
             {
                 FunctionControlMask = mask,
-                FunctionType = FunctionType.Result,
+                FunctionType = OpFunctionType.Result,
                 Result = allocator.CreateID(),
-                ResultType = returnType
+                ResultType = returnType.TypeID
             };
 
             if (Name != null)
             {
-                AdditionalNames.Add(new OpName { Target = opFunction.Result, Name = { Value = Name } });
-                AdditionalNames.Add(new OpName { Target = FunctionType.Result, Name = { Value = Name } });
+                AdditionalNames.Add(new OpName { Target = OpFunction.Result, Name = { Value = Name } });
+                AdditionalNames.Add(new OpName { Target = OpFunctionType.Result, Name = { Value = Name } });
             }
         }
 
@@ -96,12 +112,13 @@ namespace SpirvNet.Spirv
         /// Adds a function parameter
         /// If paraName non-null, it is added as a name
         /// </summary>
-        public void AddParameter(OpFunctionParameter parameter, string paraName = null)
+        public void AddParameter(OpFunctionParameter parameter, SpirvType type, string paraName = null)
         {
-            if (opFunction != null)
+            if (OpFunction != null)
                 throw new InvalidOperationException("Parameters cannot be changed after function was set up");
 
             opParameters.Add(parameter);
+            ParameterTypes.Add(type);
 
             if (paraName != null)
                 AdditionalNames.Add(new OpName { Target = parameter.Result, Name = { Value = paraName } });
@@ -117,10 +134,10 @@ namespace SpirvNet.Spirv
         /// </summary>
         public IEnumerable<Instruction> GenerateInstructions()
         {
-            if (opFunction == null)
+            if (OpFunction == null)
                 throw new InvalidOperationException("setupFunction was not called");
 
-            yield return opFunction;
+            yield return OpFunction;
             foreach (var para in opParameters)
                 yield return para;
             foreach (var block in blocks)

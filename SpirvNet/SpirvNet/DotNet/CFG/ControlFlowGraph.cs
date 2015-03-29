@@ -11,7 +11,7 @@ namespace SpirvNet.DotNet.CFG
     /// <summary>
     /// CFG Graph of a .NET function
     /// </summary>
-    class ControlFlowGraph
+    public class ControlFlowGraph
     {
         /// <summary>
         /// Represented method

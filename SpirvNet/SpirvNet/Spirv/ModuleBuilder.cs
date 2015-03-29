@@ -45,7 +45,7 @@ namespace SpirvNet.Spirv
     ///       f. Function end, using OpFunctionEnd
     /// 
     /// </summary>
-    public class ModuleBuilder
+    public class ModuleBuilder : IFunctionProvider
     {
         // Optional header
         private OpSource opSource;
@@ -78,6 +78,11 @@ namespace SpirvNet.Spirv
 
         // functions
         private readonly List<FunctionBuilder> functions = new List<FunctionBuilder>();
+
+        /// <summary>
+        /// Mapping from full function name to method frame
+        /// </summary>
+        private readonly Dictionary<string, FunctionBuilder> fullnameToFunction = new Dictionary<string, FunctionBuilder>();
 
         /// <summary>
         /// ID Allocator
@@ -220,9 +225,20 @@ namespace SpirvNet.Spirv
         public FunctionBuilder CreateFunction(MethodDefinition method)
         {
             var cfg = new ControlFlowGraph(method);
-            var builder = new FunctionBuilder(method.FullName);
-            var frame = new MethodFrame(cfg, TypeBuilder, Allocator);
+            var frame = new MethodFrame(cfg, TypeBuilder, Allocator, this);
+            var builder = CreateFunction(method.FullName, frame);
             frame.Build(builder);
+            return builder;
+        }
+
+        /// <summary>
+        /// (Internal) Creates a function from a C# function
+        /// DOES NOT COMPILE IT YET
+        /// </summary>
+        private FunctionBuilder CreateFunction(string fullname, MethodFrame frame)
+        {
+            var builder = new FunctionBuilder(fullname, frame);
+            frame.Setup(builder);
             functions.Add(builder);
             return builder;
         }
@@ -249,7 +265,7 @@ namespace SpirvNet.Spirv
 
                 // register function types and names
                 foreach (var func in functions)
-                    AddType(func.FunctionType);
+                    AddType(func.OpFunctionType);
                 foreach (var func in functions)
                     opNames.AddRange(func.AdditionalNames);
             }
@@ -291,6 +307,25 @@ namespace SpirvNet.Spirv
                 mod.Instructions.AddRange(func.GenerateInstructions());
 
             return mod;
+        }
+
+        /// <summary>
+        /// Gets the (potentially un-analysed) method frame for a given definition
+        /// </summary>
+        public KeyValuePair<ID, SpirvType> Resolve(MethodDefinition method)
+        {
+            var fname = method.FullName;
+            FunctionBuilder builder;
+            if (!fullnameToFunction.ContainsKey(fname))
+            {
+                var cfg = new ControlFlowGraph(method);
+                var frame = new MethodFrame(cfg, TypeBuilder, Allocator, this);
+                builder = CreateFunction(method.FullName, frame);
+                fullnameToFunction.Add(fname, builder);
+            }
+            else builder = fullnameToFunction[fname];
+
+            return new KeyValuePair<ID, SpirvType>(builder.OpFunction.Result, builder.FunctionType);
         }
     }
 }

@@ -11,7 +11,7 @@ namespace SpirvNet.DotNet.SSA
     /// A block inside a method
     /// Starts with a branch-target instruction and ends with a branching instruction
     /// </summary>
-    class MethodBlock
+    public class MethodBlock
     {
         /// <summary>
         /// Labeled block start

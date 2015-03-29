@@ -46,6 +46,12 @@ namespace SpirvNet.Tests
             return f;
         }
 
+        public float SimpleCall(float a)
+        {
+            var f = SimpleAdd(a, a * a);
+            return SimpleBranch(f, a);
+        }
+
         [Test]
         public void SimpleAddTest()
         {
@@ -83,7 +89,7 @@ namespace SpirvNet.Tests
         {
             var def = CecilLoader.DefinitionFor(this, "SimpleBranch");
             Assert.AreEqual("SimpleBranch", def.Name);
-            
+
             var cfg = new ControlFlowGraph(def);
 
             var modbuilder = new ModuleBuilder();
@@ -95,6 +101,31 @@ namespace SpirvNet.Tests
             var frame = new MethodFrame(cfg, typeBuilder, allocator);
 
             //DebugHelper.CreatePage(def, cfg, frame, mod).WriteToTempAndOpen();
+            //DotHelper.Execute(@"C:\Temp\simplebranch.dot", cfg.DotFile);
+            //File.WriteAllLines(@"C:\Temp\simplebranch.dot", cfg.DotFile);
+            //File.WriteAllLines(@"C:\Temp\simplebranch.frame.dot", frame.DotFile);
+            //File.WriteAllLines(@"C:\Temp\simplebranch.csv", CecilLoader.CsvDump(def));
+            //File.WriteAllLines(@"C:\Temp\simplebranch.spirv.csv", mod.CSVDump());
+        }
+
+        [Test]
+        public void SimpleCallTest()
+        {
+            var def = CecilLoader.DefinitionFor(this, "SimpleCall");
+            Assert.AreEqual("SimpleCall", def.Name);
+
+            var cfg = new ControlFlowGraph(def);
+            DebugHelper.CreatePage(def, cfg).WriteToTempAndOpen();
+
+            var modbuilder = new ModuleBuilder();
+            modbuilder.CreateFunction(def);
+            var mod = modbuilder.CreateModule();
+
+            var allocator = new IDAllocator();
+            var typeBuilder = new TypeBuilder(allocator);
+            var frame = new MethodFrame(cfg, typeBuilder, allocator);
+
+            DebugHelper.CreatePage(def, cfg, frame, mod).WriteToTempAndOpen();
             //DotHelper.Execute(@"C:\Temp\simplebranch.dot", cfg.DotFile);
             //File.WriteAllLines(@"C:\Temp\simplebranch.dot", cfg.DotFile);
             //File.WriteAllLines(@"C:\Temp\simplebranch.frame.dot", frame.DotFile);

@@ -73,7 +73,9 @@
     <Compile Include="Helper\DotHelper.cs" />
     <Compile Include="Interpreter\ExecutionException.cs" />
     <Compile Include="Interpreter\Machine.cs" />
+    <Compile Include="GLSL\ShaderGenerator.cs" />
     <Compile Include="Spirv\IDAllocator.cs" />
+    <Compile Include="Spirv\IFunctionProvider.cs" />
     <Compile Include="Spirv\SpirvType.cs" />
     <Compile Include="Spirv\TypeBuilder.cs" />
     <Compile Include="DotNet\SSA\TypedLocation.cs" />

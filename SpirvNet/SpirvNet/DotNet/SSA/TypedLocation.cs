@@ -10,7 +10,7 @@ namespace SpirvNet.DotNet.SSA
     /// <summary>
     /// A SSA location with a type
     /// </summary>
-    class TypedLocation
+    public class TypedLocation
     {
         /// <summary>
         /// Hosted type

@@ -13,7 +13,7 @@ namespace SpirvNet.DotNet.CFG
     /// <summary>
     /// A vertex of a CFG Graph
     /// </summary>
-    sealed class Vertex
+    public sealed class Vertex
     {
         /// <summary>
         /// Represented instruction
