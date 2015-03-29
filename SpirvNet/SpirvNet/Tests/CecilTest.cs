@@ -9,6 +9,7 @@ using SpirvNet.DotNet;
 using SpirvNet.DotNet.CFG;
 using SpirvNet.DotNet.SSA;
 using SpirvNet.Helper;
+using SpirvNet.Interpreter;
 using SpirvNet.Spirv;
 using SpirvNet.Validation;
 
@@ -83,7 +84,7 @@ namespace SpirvNet.Tests
         {
             var def = CecilLoader.DefinitionFor(this, "SimpleBranch");
             Assert.AreEqual("SimpleBranch", def.Name);
-            
+
             var cfg = new ControlFlowGraph(def);
 
             var modbuilder = new ModuleBuilder();
@@ -97,7 +98,18 @@ namespace SpirvNet.Tests
             mod.SetBoundAutomatically();
             var vmod = mod.Validate();
 
-            DebugHelper.CreatePage(def, cfg, frame, mod, vmod).WriteToTempAndOpen();
+            var machine = new Machine(vmod);
+            var random = new Random(321);
+            for (var _ = 0; _ < 10000; ++_)
+            {
+                var a = (float)random.NextDouble() * 100f - 50f;
+                var b = (float)random.NextDouble() * 100f - 50f;
+                var r0 = SimpleBranch(a, b);
+                var r1 = (float)machine.Execute(vmod.Functions.First(), a, b);
+                Assert.AreEqual(r0, r1);
+            }
+
+            //DebugHelper.CreatePage(def, cfg, frame, mod, vmod).WriteToTempAndOpen();
             //DotHelper.Execute(@"C:\Temp\simplebranch.dot", cfg.DotFile);
             //File.WriteAllLines(@"C:\Temp\simplebranch.dot", cfg.DotFile);
             //File.WriteAllLines(@"C:\Temp\simplebranch.frame.dot", frame.DotFile);
