@@ -1128,6 +1128,8 @@ namespace SpirvNet.DotNet.SSA
             if (!decoded)
                 throw new InvalidOperationException("Unreachable state");
 
+            // TODO: Copy object and add parent blocks
+
             for (var i = 0; i < StackLocationsIncoming.Length; ++i)
                 if (StackLocationsIncoming[i] != null &&
                     Incoming.Any(s => s.StackLocations[i].ID.Value != StackLocationsIncoming[i].ID.Value))
