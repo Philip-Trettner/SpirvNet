@@ -187,17 +187,13 @@ namespace SpirvNet.Tests
             var cfg = new ControlFlowGraph(def);
 
             var modbuilder = new ModuleBuilder();
-            modbuilder.CreateFunction(def);
+            var fbuilder = modbuilder.CreateFunction(def);
             var mod = modbuilder.CreateModule();
 
-            var allocator = new IDAllocator();
-            var typeBuilder = new TypeBuilder(allocator);
-            var frame = new MethodFrame(cfg, typeBuilder, allocator);
+            mod.SetBoundAutomatically();
+            var vmod = mod.Validate();
 
-            //File.WriteAllLines(@"C:\Temp\SimpleLoop.dot", cfg.DotFile);
-            //File.WriteAllLines(@"C:\Temp\SimpleLoop.csv", CecilLoader.CsvDump(def));
-            //File.WriteAllLines(@"C:\Temp\SimpleLoop.frame.dot", frame.DotFile);
-            //File.WriteAllLines(@"C:\Temp\SimpleLoop.spirv.csv", mod.CSVDump());
+            //DebugHelper.CreatePage(def, cfg, fbuilder.Frame, mod, vmod).WriteToTempAndOpen();
         }
 
         [Test]

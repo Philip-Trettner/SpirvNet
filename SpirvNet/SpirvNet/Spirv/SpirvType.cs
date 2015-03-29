@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using Mono.Cecil;
 using SpirvNet.Helper;
 using SpirvNet.Spirv.Ops.TypeDeclaration;
@@ -283,6 +284,52 @@ namespace SpirvNet.Spirv
                 case SpirvTypeEnum.SpecialThis: return "this";
                 default:
                     throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        /// <summary>
+        /// Prefix for glsl vec/mat types
+        /// </summary>
+        public string GlslPrefix
+        {
+            get
+            {
+                switch (TypeEnum)
+                {
+                    case SpirvTypeEnum.Boolean: return "b";
+                    case SpirvTypeEnum.Integer: return "i";
+                    case SpirvTypeEnum.Floating: return BitWidth == 32 ? "" : "d";
+                    case SpirvTypeEnum.Vector:
+                        return ElementType.GlslPrefix;
+                    default:
+                        throw new NotSupportedException("Unsupported base type " + this);
+                }
+            }
+        }
+
+        /// <summary>
+        /// GLSL type name
+        /// </summary>
+        public string GlslType
+        {
+            get
+            {
+                if (IsInteger && BitWidth == 64)
+                    throw new NotSupportedException("GLSL does not support 64bit integer.");
+
+                switch (TypeEnum)
+                {
+                    case SpirvTypeEnum.Void: return "void";
+                    case SpirvTypeEnum.Boolean: return "bool";
+                    case SpirvTypeEnum.Integer: return (Signedness == 0 ? "u" : "") + "int";
+                    case SpirvTypeEnum.Floating: return BitWidth == 32 ? "float" : "double";
+                    case SpirvTypeEnum.Vector: return ElementType.GlslPrefix + "vec" + ElementCount;
+                    case SpirvTypeEnum.Matrix: return ElementType.GlslPrefix + "mat" + ElementCount + (ElementCount == ElementType.ElementCount ? "" : "x" + ElementType.ElementCount);
+                    case SpirvTypeEnum.Array: return ElementType.GlslType + "[" + ElementCount + "]";
+                    case SpirvTypeEnum.Structure: return "struct" + TypeID.Value;
+                    default:
+                        throw new NotSupportedException("Type not supported");
+                }
             }
         }
 

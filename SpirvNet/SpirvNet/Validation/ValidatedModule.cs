@@ -86,6 +86,11 @@ namespace SpirvNet.Validation
         /// </summary>
         public readonly Location[] Locations;
 
+        /// <summary>
+        /// All contained types
+        /// </summary>
+        public readonly List<SpirvType> Types = new List<SpirvType>();
+
         private ValidatedModule(Module originalModule)
         {
             OriginalModule = originalModule;
@@ -380,6 +385,7 @@ namespace SpirvNet.Validation
                             var res = inst.ResultID.Value;
                             AssertEmptyLocation(inst);
                             Locations[res.Value].FillFromType(inst as TypeDeclarationInstruction, this);
+                            Types.Add(Locations[res.Value].SpirvType);
                             ++i;
                         }
                         else if (inst.IsConstantCreation)
