@@ -21,6 +21,8 @@
         DeviceEvent,
         ReserveId,
         Queue,
-        Pipe
+        Pipe,
+
+        SpecialThis
     }
 }

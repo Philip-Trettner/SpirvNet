@@ -231,6 +231,7 @@ namespace SpirvNet.Validation
             if (!op.ResultTypeID.HasValue)
                 throw new ValidationException(op, "ConstantCreationInstruction without ResultType.");
             var type = typeProvider.TypeFor(op.ResultTypeID.Value, op);
+            SpirvType = type;
 
             if (opConstTrue != null)
             {

@@ -224,10 +224,12 @@ namespace SpirvNet.Spirv
         /// </summary>
         public FunctionBuilder CreateFunction(MethodDefinition method)
         {
-            var cfg = new ControlFlowGraph(method);
-            var frame = new MethodFrame(cfg, TypeBuilder, Allocator, this);
-            var builder = CreateFunction(method.FullName, frame);
-            frame.Build(builder);
+            // resolve first
+            Resolve(method);
+
+            // then build
+            var builder = fullnameToFunction[method.FullName];
+            builder.Frame.Build(builder);
             return builder;
         }
 
@@ -251,6 +253,11 @@ namespace SpirvNet.Spirv
         {
             // last-minute creations
             {
+                // build functions
+                foreach (var function in functions)
+                    if (function.Frame != null && !function.Frame.Analysed)
+                        function.Frame.Build(function);
+
                 // register types and names
                 foreach (var type in TypeBuilder.CreateTypeOps())
                     AddType(type);

@@ -53,6 +53,13 @@ namespace SpirvNet.Tests
             return SimpleBranch(f, a);
         }
 
+        public int SimpleFib(int i)
+        {
+            if (i <= 2)
+                return 1;
+            return SimpleFib(i - 1) + SimpleFib(i - 2);
+        }
+
         [Test]
         public void SimpleAddTest()
         {
@@ -130,22 +137,33 @@ namespace SpirvNet.Tests
             Assert.AreEqual("SimpleCall", def.Name);
 
             var cfg = new ControlFlowGraph(def);
-            DebugHelper.CreatePage(def, cfg).WriteToTempAndOpen();
 
             var modbuilder = new ModuleBuilder();
-            modbuilder.CreateFunction(def);
+            var fbuilder = modbuilder.CreateFunction(def);
             var mod = modbuilder.CreateModule();
 
-            var allocator = new IDAllocator();
-            var typeBuilder = new TypeBuilder(allocator);
-            var frame = new MethodFrame(cfg, typeBuilder, allocator);
+            mod.SetBoundAutomatically();
+            var vmod = mod.Validate();
 
-            DebugHelper.CreatePage(def, cfg, frame, mod).WriteToTempAndOpen();
-            //DotHelper.Execute(@"C:\Temp\simplebranch.dot", cfg.DotFile);
-            //File.WriteAllLines(@"C:\Temp\simplebranch.dot", cfg.DotFile);
-            //File.WriteAllLines(@"C:\Temp\simplebranch.frame.dot", frame.DotFile);
-            //File.WriteAllLines(@"C:\Temp\simplebranch.csv", CecilLoader.CsvDump(def));
-            //File.WriteAllLines(@"C:\Temp\simplebranch.spirv.csv", mod.CSVDump());
+            //DebugHelper.CreatePage(def, cfg, fbuilder.Frame, mod, vmod).WriteToTempAndOpen();
+        }
+
+        [Test]
+        public void SimpleFibTest()
+        {
+            var def = CecilLoader.DefinitionFor(this, "SimpleFib");
+            Assert.AreEqual("SimpleFib", def.Name);
+
+            var cfg = new ControlFlowGraph(def);
+
+            var modbuilder = new ModuleBuilder();
+            var fbuilder = modbuilder.CreateFunction(def);
+            var mod = modbuilder.CreateModule();
+
+            mod.SetBoundAutomatically();
+            var vmod = mod.Validate();
+
+            //DebugHelper.CreatePage(def, cfg, fbuilder.Frame, mod, vmod).WriteToTempAndOpen();
         }
 
         [Test]

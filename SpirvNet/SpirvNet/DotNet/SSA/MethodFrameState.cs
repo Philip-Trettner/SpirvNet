@@ -174,7 +174,7 @@ namespace SpirvNet.DotNet.SSA
         private void Push(TypedLocation location)
         {
             if (location == null)
-                throw new InvalidOperationException();
+                throw new InvalidOperationException("Cannot push empty location");
 
             StackLocations[StackPosition] = location;
             ++StackPosition;
@@ -890,6 +890,9 @@ namespace SpirvNet.DotNet.SSA
                         var args = new List<TypedLocation>();
                         foreach (var p in type.ParameterTypes)
                             args.Add(Pop());
+                        args.Reverse();
+                        if (StackPosition > 0 && StackTop.Type.IsThis)
+                            Pop(); // this workaround
                         res = CreateLocation(type.ReturnType);
                         Push(res);
                         Instructions.Add(new OpFunctionCall
@@ -908,11 +911,15 @@ namespace SpirvNet.DotNet.SSA
                 case Code.Callvirt:
                     throw new NotSupportedException("Virtual calls are not supported");
 
+                // duplicate
+                case Code.Dup:
+                    Push(StackTop);
+                    break;
+
                 case Code.Starg_S:
                 case Code.Ldarga_S:
                 case Code.Ldloca_S:
                 case Code.Ldnull:
-                case Code.Dup:
                 case Code.Pop:
                 case Code.Jmp:
                 case Code.Switch:

@@ -148,6 +148,7 @@ namespace SpirvNet.DotNet.SSA
                 if (i == 0 && HasThis)
                 {
                     // no-op (this not really supported)
+                    ArgLocations[0] = TypedLocation.SpecialThis;
                 }
                 else
                 {

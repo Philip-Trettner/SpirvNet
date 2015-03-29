@@ -64,6 +64,7 @@ namespace SpirvNet.Spirv
         public bool IsSigned => Signedness != 0;
 
         public bool IsBoolean => TypeEnum == SpirvTypeEnum.Boolean;
+        public bool IsThis => TypeEnum == SpirvTypeEnum.SpecialThis;
         public bool IsInteger => TypeEnum == SpirvTypeEnum.Integer;
         public bool IsFloating => TypeEnum == SpirvTypeEnum.Floating;
         public bool IsNumerical => IsInteger || IsFloating;
@@ -259,6 +260,7 @@ namespace SpirvNet.Spirv
                 case SpirvTypeEnum.Array: return "array" + ElementCount + "(" + ElementType + ")";
                 case SpirvTypeEnum.Structure: return "struct{TODO}";
                 case SpirvTypeEnum.Function: return "function{TODO}";
+                case SpirvTypeEnum.SpecialThis: return "this";
                 default:
                     throw new ArgumentOutOfRangeException();
             }

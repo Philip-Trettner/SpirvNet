@@ -33,5 +33,18 @@ namespace SpirvNet.DotNet.SSA
             ID = id;
             Type = builder.Create(type);
         }
+
+        private TypedLocation(ID id, SpirvType type)
+        {
+            ID = id;
+            Type = type;
+        }
+
+        /// <summary>
+        /// Returns a special invalid location for "this" parameter
+        /// </summary>
+        public static TypedLocation SpecialThis => new TypedLocation(Spirv.ID.Invalid, new SpirvType(Spirv.ID.Invalid, SpirvTypeEnum.SpecialThis));
+
+        public override string ToString() => string.Format("({0}, {1})", ID, Type);
     }
 }
