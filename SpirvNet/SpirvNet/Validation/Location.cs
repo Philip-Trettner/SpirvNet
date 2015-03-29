@@ -198,6 +198,7 @@ namespace SpirvNet.Validation
             var opVector = op as OpTypeVector;
             var opMatrix = op as OpTypeMatrix;
             var opFunction = op as OpTypeFunction;
+            var opStruct = op as OpTypeStruct;
 
             if (op is OpTypeVoid)
                 SpirvType = new SpirvType(LocationID, SpirvTypeEnum.Void);
@@ -215,6 +216,8 @@ namespace SpirvNet.Validation
                 SpirvType = new SpirvType(LocationID, SpirvTypeEnum.Function,
                     returnType: typeProvider.TypeFor(opFunction.ReturnType, op),
                     parameterTypes: opFunction.ParameterTypes.Select(p => typeProvider.TypeFor(p, op)).ToArray());
+            else if (opStruct != null)
+                SpirvType = new SpirvType(LocationID, SpirvTypeEnum.Structure, structMembers: opStruct.MemberTypes.Select((t, i) => new StructMember(i, null, typeProvider.TypeFor(t, op))).ToArray());
             else throw new NotImplementedException("Unknown type decl: " + op);
             // TODO: More types!
         }
@@ -228,6 +231,7 @@ namespace SpirvNet.Validation
             var opConstTrue = op as OpConstantTrue;
             var opConstFalse = op as OpConstantFalse;
             var opConst = op as OpConstant;
+            var opComp = op as OpConstantComposite;
             if (!op.ResultTypeID.HasValue)
                 throw new ValidationException(op, "ConstantCreationInstruction without ResultType.");
             var type = typeProvider.TypeFor(op.ResultTypeID.Value, op);
@@ -272,6 +276,18 @@ namespace SpirvNet.Validation
 
                     default:
                         throw new ValidationException(op, "OpConstant only valid for scalar integer and floating types, found " + type);
+                }
+            }
+            else if (opComp != null)
+            {
+                switch (type.TypeEnum)
+                {
+                    case SpirvTypeEnum.Structure:
+                        Constant = new SpirvStruct(SpirvType, opComp.Constituents.Select(c => typeProvider.ConstantFor(c, op)).ToArray());
+                        break;
+
+                    default:
+                        throw new NotImplementedException("constant for non-struct composite not implemented yet");
                 }
             }
             else throw new NotImplementedException("Unknown constant creation: " + op);

@@ -9,6 +9,7 @@ using SpirvNet.DotNet.CFG;
 using SpirvNet.Helper;
 using SpirvNet.Spirv;
 using SpirvNet.Spirv.Ops.Arithmetic;
+using SpirvNet.Spirv.Ops.Composite;
 using SpirvNet.Spirv.Ops.ConstantCreation;
 using SpirvNet.Spirv.Ops.Conversion;
 using SpirvNet.Spirv.Ops.FlowControl;
@@ -181,6 +182,19 @@ namespace SpirvNet.DotNet.SSA
         }
 
         /// <summary>
+        /// Replaces all occurences of the first ID with the second loc
+        /// </summary>
+        private void Replace(ID before, TypedLocation after)
+        {
+            for (var i = 0; i < LocalVars.Length; ++i)
+                if (LocalVars[i]?.ID == before)
+                    LocalVars[i] = after;
+            for (var i = 0; i < StackLocations.Length; ++i)
+                if (StackLocations[i]?.ID == before)
+                    StackLocations[i] = after;
+        }
+
+        /// <summary>
         /// Pops a value from the stack (returns the type)
         /// </summary>
         private TypedLocation Pop()
@@ -324,9 +338,10 @@ namespace SpirvNet.DotNet.SSA
             var opc = Vertex.OpCode;
             var ins = Vertex.Instruction;
 
-            TypedLocation loc, t1, t2, t, res, tmp;
+            TypedLocation loc, t1, t2, t, res, tmp, lval, lobj;
             ID tl, fl, id;
             VariableDefinition vardef;
+            FieldDefinition fielddef;
             ParameterDefinition argdef;
             SpirvType type;
 
@@ -819,7 +834,7 @@ namespace SpirvNet.DotNet.SSA
                 case Code.Conv_I4:
                 case Code.Conv_I8:
                     tmp = Pop();
-                    res = CreateLocation(opc.Code == Code.Conv_R4 ? typeof(int) : typeof(long));
+                    res = CreateLocation(opc.Code == Code.Conv_I4 ? typeof(int) : typeof(long));
                     switch (tmp.Type.TypeEnum)
                     {
                         case SpirvTypeEnum.Integer:
@@ -914,11 +929,68 @@ namespace SpirvNet.DotNet.SSA
                 // duplicate
                 case Code.Dup:
                     Push(StackTop);
+                    // TODO: does this require OpCopyObject?
                     break;
 
+                // object init
+                case Code.Initobj:
+                    loc = Pop();
+                    if (!loc.IsAddress)
+                        throw new InvalidOperationException("Initobj only works with addresses");
+                    // update all refs
+                    Replace(loc.ID, new TypedLocation(Frame.TypeBuilder.ConstantZero(loc.Type), loc.Type));
+                    break;
+
+                // addressing
+                case Code.Ldloca_S:
+                    vardef = (VariableDefinition)ins.Operand;
+                    Push(LocalVars[vardef.Index].AddressVersion);
+                    break;
                 case Code.Starg_S:
                 case Code.Ldarga_S:
-                case Code.Ldloca_S:
+                    throw new NotImplementedException();
+
+                // load field
+                case Code.Ldfld:
+                    fielddef = (FieldDefinition)ins.Operand;
+                    loc = Pop();
+                    //if (!loc.IsAddress)
+                    //    throw new InvalidOperationException("Ldfld only works with addresses");
+                    type = Frame.TypeBuilder.Create(fielddef.FieldType);
+                    res = CreateLocation(type);
+                    Push(res);
+                    Instructions.Add(new OpCompositeExtract
+                    {
+                        Result = res.ID,
+                        ResultType = res.Type.TypeID,
+                        Composite = loc.ID,
+                        Indexes = LiteralNumber.Array(loc.Type.MemberIndex(fielddef.Name))
+                    });
+                    break;
+                // store field
+                case Code.Stfld:
+                    fielddef = (FieldDefinition)ins.Operand;
+                    lval = Pop();
+                    lobj = Pop();
+                    res = CreateLocation(lobj.Type);
+                    Instructions.Add(new OpCompositeInsert
+                    {
+                        Result = res.ID,
+                        ResultType = res.Type.TypeID,
+                        Object = lval.ID,
+                        Composite = lobj.ID,
+                        Indexes = LiteralNumber.Array(lobj.Type.MemberIndex(fielddef.Name))
+                    });
+                    Replace(lobj.ID, res);
+                    break;
+
+                case Code.Ldflda:
+                case Code.Ldsfld:
+                case Code.Ldsflda:
+                case Code.Stsfld:
+                case Code.Stobj:
+                    throw new NotImplementedException();
+
                 case Code.Ldnull:
                 case Code.Pop:
                 case Code.Jmp:
@@ -950,13 +1022,6 @@ namespace SpirvNet.DotNet.SSA
                 case Code.Conv_R_Un:
                 case Code.Unbox:
                 case Code.Throw:
-                case Code.Ldfld:
-                case Code.Ldflda:
-                case Code.Stfld:
-                case Code.Ldsfld:
-                case Code.Ldsflda:
-                case Code.Stsfld:
-                case Code.Stobj:
                 case Code.Conv_Ovf_I1_Un:
                 case Code.Conv_Ovf_I2_Un:
                 case Code.Conv_Ovf_I4_Un:
@@ -1035,7 +1100,6 @@ namespace SpirvNet.DotNet.SSA
                 case Code.Unaligned:
                 case Code.Volatile:
                 case Code.Tail:
-                case Code.Initobj:
                 case Code.Constrained:
                 case Code.Cpblk:
                 case Code.Initblk:

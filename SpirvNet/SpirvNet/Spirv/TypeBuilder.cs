@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using Mono.Cecil;
 using SpirvNet.DotNet;
 using SpirvNet.Spirv.Ops.ConstantCreation;
@@ -133,17 +134,21 @@ namespace SpirvNet.Spirv
 
                     throw new NotSupportedException();
 
+                case SpirvTypeEnum.Structure:
+                    return Constant(type, "NULL", t => new OpConstantComposite { Result = allocator.CreateID(), ResultType = t.TypeID, Constituents = type.Members.Select(m => ConstantZero(m.Type)).ToArray() });
+
                 default:
                     throw new NotSupportedException();
             }
         }
 
-        private ID Constant(Type type, string s, LiteralNumber[] nrs)
+        private ID Constant(Type type, string s, LiteralNumber[] nrs) => Constant(Create(type), s, t => new OpConstant { Result = allocator.CreateID(), ResultType = t.TypeID, Value = nrs });
+
+        private ID Constant(SpirvType type, string s, Func<SpirvType, ConstantCreationInstruction> op)
         {
-            var st = Create(type);
-            var name = st + ": " + s;
+            var name = type + ": " + s;
             if (!cachedConstants.ContainsKey(name))
-                cachedConstants.Add(name, new OpConstant { Result = allocator.CreateID(), ResultType = st.TypeID, Value = nrs });
+                cachedConstants.Add(name, op(type));
             return cachedConstants[name].ResultID.Value;
         }
 
@@ -183,13 +188,15 @@ namespace SpirvNet.Spirv
         /// <summary>
         /// Creates a mapping from type to name
         /// </summary>
-        public Dictionary<ID, string> CreateTypeNames()
+        public IEnumerable<KeyValuePair<ID, string>> CreateTypeNames()
         {
-            var dic = new Dictionary<ID, string>();
             foreach (var spirvType in cilToSpirv.Values)
+            {
                 if (!string.IsNullOrEmpty(spirvType.DebugName))
-                    dic.Add(spirvType.TypeID, spirvType.DebugName);
-            return dic;
+                    yield return new KeyValuePair<ID, string>(spirvType.TypeID, spirvType.DebugName);
+                if (!string.IsNullOrEmpty(spirvType.OriginalName))
+                    yield return new KeyValuePair<ID, string>(spirvType.TypeID, spirvType.OriginalName);
+            }
         }
 
         /// <summary>

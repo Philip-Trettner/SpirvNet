@@ -32,7 +32,7 @@
   <ItemGroup>
     <Reference Include="DebugPage, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\DebugPage.0.1.1\lib\Net45\DebugPage.dll</HintPath>
+      <HintPath>..\packages\DebugPage.0.1.4\lib\Net45\DebugPage.dll</HintPath>
     </Reference>
     <Reference Include="GlmSharp, Version=0.9.5.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -76,7 +76,9 @@
     <Compile Include="GLSL\ShaderGenerator.cs" />
     <Compile Include="Spirv\IDAllocator.cs" />
     <Compile Include="Spirv\IFunctionProvider.cs" />
+    <Compile Include="Spirv\SpirvStruct.cs" />
     <Compile Include="Spirv\SpirvType.cs" />
+    <Compile Include="Spirv\StructMember.cs" />
     <Compile Include="Spirv\TypeBuilder.cs" />
     <Compile Include="DotNet\SSA\TypedLocation.cs" />
     <Compile Include="Helper\Extensions.cs" />
@@ -409,6 +411,7 @@
     <Compile Include="Spirv\UniversalLimits.cs" />
     <Compile Include="Spirv\Ops\OpUnknown.cs" />
     <Compile Include="Tests\CecilTest.cs" />
+    <Compile Include="Tests\CodeConvert\StructTest.cs" />
     <Compile Include="Tests\InstructionTest.cs" />
     <Compile Include="Tests\IntegrationTest.cs" />
     <Compile Include="Tests\ModuleTest.cs" />

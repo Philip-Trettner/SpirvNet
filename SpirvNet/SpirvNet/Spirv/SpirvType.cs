@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Mono.Cecil;
+using SpirvNet.Helper;
 using SpirvNet.Spirv.Ops.TypeDeclaration;
 
 namespace SpirvNet.Spirv
@@ -18,6 +21,10 @@ namespace SpirvNet.Spirv
         /// Debug Name
         /// </summary>
         public string DebugName { get; set; }
+        /// <summary>
+        /// Original type name
+        /// </summary>
+        public string OriginalName { get; set; }
 
         /// <summary>
         /// Represented type (can be null)
@@ -58,6 +65,15 @@ namespace SpirvNet.Spirv
         /// </summary>
         public readonly SpirvType[] ParameterTypes;
 
+        /// <summary>
+        /// Struct members
+        /// </summary>
+        public readonly StructMember[] Members;
+        /// <summary>
+        /// Member index
+        /// </summary>
+        public uint MemberIndex(string name) => (uint)Members.First(m => m.Name == name).Index;
+
 
         public bool IsVoid => TypeEnum == SpirvTypeEnum.Void;
 
@@ -83,7 +99,7 @@ namespace SpirvNet.Spirv
         /// Explicit ctor
         /// </summary>
         public SpirvType(ID typeID, SpirvTypeEnum typeEnum, uint bitWidth = 0, uint signedness = 0,
-            uint elementCount = 0, SpirvType elementType = null, SpirvType returnType = null, SpirvType[] parameterTypes = null)
+            uint elementCount = 0, SpirvType elementType = null, SpirvType returnType = null, SpirvType[] parameterTypes = null, StructMember[] structMembers = null)
         {
             TypeID = typeID;
             TypeEnum = typeEnum;
@@ -93,6 +109,7 @@ namespace SpirvNet.Spirv
             ElementType = elementType;
             ReturnType = returnType;
             ParameterTypes = parameterTypes;
+            Members = structMembers;
 
             DebugName = ToString();
         }
@@ -235,7 +252,9 @@ namespace SpirvNet.Spirv
                         break;
 
                     case MetadataType.ValueType:
-                        throw new NotImplementedException("Structs, vectors, matrices not implemented");
+                        TypeEnum = SpirvTypeEnum.Structure;
+                        Members = ((TypeDefinition)representedType).Fields.Select((f, i) => new StructMember(i, f.Name, builder.Create(f.FieldType))).ToArray();
+                        break;
 
                     case MetadataType.Class:
                         throw new NotSupportedException("Reference Type not supported: " + representedType);
@@ -245,6 +264,7 @@ namespace SpirvNet.Spirv
                 }
 
             DebugName = ToString();
+            OriginalName = RepresentedType.FullName;
         }
 
         public override string ToString()
@@ -258,8 +278,8 @@ namespace SpirvNet.Spirv
                 case SpirvTypeEnum.Vector: return "vec" + ElementCount + "(" + ElementType + ")";
                 case SpirvTypeEnum.Matrix: return "mat" + ElementCount + "(" + ElementType + ")";
                 case SpirvTypeEnum.Array: return "array" + ElementCount + "(" + ElementType + ")";
-                case SpirvTypeEnum.Structure: return "struct{TODO}";
-                case SpirvTypeEnum.Function: return "function{TODO}";
+                case SpirvTypeEnum.Structure: return string.Format("struct({0})", Members.Aggregated(", "));
+                case SpirvTypeEnum.Function: return string.Format("function({0})->{1}", ParameterTypes.Aggregated(", "), ReturnType);
                 case SpirvTypeEnum.SpecialThis: return "this";
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -277,7 +297,7 @@ namespace SpirvNet.Spirv
                 case SpirvTypeEnum.Vector: return new OpTypeVector { Result = TypeID, ComponentType = ElementType.TypeID, ComponentCount = { Value = ElementCount } };
                 case SpirvTypeEnum.Matrix: return new OpTypeMatrix { Result = TypeID, ColumnType = ElementType.TypeID, ColumnCount = { Value = ElementCount } };
                 case SpirvTypeEnum.Array: throw new NotImplementedException("Array length is by-ID");
-                case SpirvTypeEnum.Structure: throw new NotImplementedException();
+                case SpirvTypeEnum.Structure: return new OpTypeStruct { Result = TypeID, MemberTypes = Members.Select(m => m.Type.TypeID).ToArray() };
                 default:
                     throw new ArgumentOutOfRangeException();
             }

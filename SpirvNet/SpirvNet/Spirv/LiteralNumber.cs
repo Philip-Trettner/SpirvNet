@@ -39,6 +39,8 @@ namespace SpirvNet.Spirv
         public static LiteralNumber[] ArrayFor(ulong val) => ArrayFor(BitConverter.GetBytes(val));
         public static LiteralNumber[] ArrayFor(double val) => ArrayFor(BitConverter.GetBytes(val));
 
+        public static LiteralNumber[] Array(params uint[] vals) => vals.Select(v => new LiteralNumber(v)).ToArray();
+
         public override string ToString() => Value.ToString();
     }
 

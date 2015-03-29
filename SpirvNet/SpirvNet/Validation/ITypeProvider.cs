@@ -10,5 +10,11 @@ namespace SpirvNet.Validation
         /// (The instruction is for error msg)
         /// </summary>
         SpirvType TypeFor(ID typeId, Instruction instruction);
+
+        /// <summary>
+        /// Returns the constant behind a given location
+        /// (The instruction is for error msg)
+        /// </summary>
+        object ConstantFor(ID location, Instruction instruction);
     }
 }

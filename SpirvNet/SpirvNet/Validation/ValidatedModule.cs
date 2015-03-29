@@ -656,6 +656,18 @@ namespace SpirvNet.Validation
         }
 
         /// <summary>
+        /// Returns the constant behind a given location
+        /// (The instruction is for error msg)
+        /// </summary>
+        public object ConstantFor(ID location, Instruction instruction)
+        {
+            LocationTypeCheck(location, LocationType.Intermediate, instruction);
+            if (!Locations[location.Value].IsConstant)
+                throw new ValidationException(instruction, "Location " + location + " is not a constant at this point.");
+            return Locations[location.Value].Constant;
+        }
+
+        /// <summary>
         /// ID to str
         /// </summary>
         public string IDStr(ID id)
