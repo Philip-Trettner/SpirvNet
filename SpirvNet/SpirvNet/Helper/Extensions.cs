@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using SpirvNet.Spirv.Enums;
 
 namespace SpirvNet.Helper
@@ -13,6 +14,15 @@ namespace SpirvNet.Helper
         public static string CecilFullType(this string s)
         {
             return string.IsNullOrEmpty(s) ? "" : s.Replace("+", "/");
+        }
+
+        /// <summary>
+        /// Returns an aggregated version of this collection
+        /// </summary>
+        public static string Aggregated<T>(this IEnumerable<T> coll, string seperator)
+        {
+            var cc = coll.Select(c => c.ToString()).ToArray();
+            return cc.Length == 0 ? "" : cc.Aggregate((s1, s2) => s1 + seperator + s2);
         }
 
         /// <summary>

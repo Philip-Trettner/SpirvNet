@@ -4,7 +4,9 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DebugPage;
 using NUnit.Framework;
+using SpirvNet.Helper;
 using SpirvNet.Spirv;
 using SpirvNet.Spirv.Enums;
 using SpirvNet.Spirv.Ops;
@@ -642,10 +644,96 @@ namespace SpirvNet.Validation
             return vmod;
         }
 
+        /// <summary>
+        /// gets the type for a given type ID
+        /// can throw if ID not a type
+        /// (The instruction is for error msg)
+        /// </summary>
         public SpirvType TypeFor(ID typeId, Instruction instruction)
         {
             LocationTypeCheck(typeId, LocationType.Type, instruction);
             return Locations[typeId.Value].SpirvType;
+        }
+
+        /// <summary>
+        /// ID to str
+        /// </summary>
+        public string IDStr(ID id)
+        {
+            if (id.Value < Locations.Length && !string.IsNullOrEmpty(Locations[id.Value].DebugName))
+                return id + "(" + Locations[id.Value].DebugName + ")";
+            return id.ToString();
+        }
+        /// <summary>
+        /// ID to str or ""
+        /// </summary>
+        public string IDStr(ID? id) => id.HasValue ? IDStr(id.Value) : "";
+
+        /// <summary>
+        /// Adds debug output to a page
+        /// </summary>
+        public void AddDebugPageTo(PageElement e)
+        {
+            {
+                e.AddContent("Stats", "h3");
+                var t = e.AddChild(new DebugTable());
+                t.SetHeader("Name", "Value");
+                t.AddRow("Bound", Bound.ToString());
+                t.AddRow("Capabilities", Capabilities.ToString());
+                t.AddRow("Source Language", SourceLanguage.ToString());
+                t.AddRow("Source Language Version", SourceLanguageVersion.ToString());
+                t.AddRow("Addressing Model", AddressingModel.ToString());
+                t.AddRow("Memory Model", MemoryModel.ToString());
+                t.AddRow("Source Extensions", SourceExtensions.Count == 0 ? "" : SourceExtensions.Aggregate((s1, s2) => s1 + "<br />" + s2));
+                t.AddRow("Compile Flags", CompileFlags.Count == 0 ? "" : CompileFlags.Aggregate((s1, s2) => s1 + "<br />" + s2));
+                t.AddRow("Extensions", Extensions.Count == 0 ? "" : Extensions.Aggregate((s1, s2) => s1 + "<br />" + s2));
+            }
+
+            {
+                e.AddContent("Entry Points", "h3");
+                var t = e.AddChild(new DebugTable());
+                t.SetHeader("ID", "Execution Model", "Execution Modes");
+                foreach (var ep in EntryPoints)
+                    t.AddRow(IDStr(ep.EnryPointID), ep.ExecutionModel.ToString(),
+                        ep.ExecutionModes.Select(m => m.ExecutionMode).Aggregated(", "));
+            }
+
+            {
+                e.AddContent("Functions", "h3");
+                var t = e.AddChild(new DebugTable());
+                t.SetHeader("ID", "Type ID", "Result ID", "Parameter IDs");
+                foreach (var f in Functions)
+                    t.AddRow(IDStr(f.DeclarationLocation.LocationID), IDStr(f.FunctionType.TypeID),
+                        IDStr(f.ReturnType.TypeID), f.ParameterTypes.Select(p => IDStr(p.TypeID)).Aggregated(", "));
+            }
+        }
+
+        /// <summary>
+        /// Adds debug output to a page
+        /// </summary>
+        public void AddDebugPageFuncsTo(PageElement e)
+        {
+            {
+                e.AddContent("Constants", "h3");
+                var t = e.AddChild(new DebugTable());
+                t.SetHeader("ID", "Value");
+                foreach (var loc in Locations.Where(l => l.IsConstant))
+                    t.AddRow(IDStr(loc.LocationID), loc.Constant?.ToString());
+            }
+
+            foreach (var f in Functions)
+            {
+                e.AddContent("Function " + IDStr(f.DeclarationLocation.LocationID), "h3");
+
+                var t = e.AddChild(new DebugTable());
+                t.SetHeader("Type", "Name", "ID");
+                t.AddRow(IDStr(f.FunctionType.TypeID), "Function", IDStr(f.DeclarationLocation.LocationID));
+                t.AddRow(IDStr(f.ReturnType.TypeID), "Result", "");
+                for (var i = 0; i < f.ParameterTypes.Count; ++i)
+                    t.AddRow(IDStr(f.ParameterTypes[i].TypeID), "Parameter " + (i + 1), IDStr(f.ParameterLocations[i].LocationID));
+
+                e.AddDotGraph(f.DotFile);
+            }
         }
     }
 }

@@ -258,6 +258,7 @@ namespace SpirvNet.Spirv
                 case SpirvTypeEnum.Matrix: return "mat" + ElementCount + "(" + ElementType + ")";
                 case SpirvTypeEnum.Array: return "array" + ElementCount + "(" + ElementType + ")";
                 case SpirvTypeEnum.Structure: return "struct{TODO}";
+                case SpirvTypeEnum.Function: return "function{TODO}";
                 default:
                     throw new ArgumentOutOfRangeException();
             }

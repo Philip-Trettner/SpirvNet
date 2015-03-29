@@ -48,7 +48,7 @@ namespace SpirvNet.Validation
         /// <summary>
         /// List of parameter locations
         /// </summary>
-        public readonly List<Location> ParameterLocations = new List<Location>(); 
+        public readonly List<Location> ParameterLocations = new List<Location>();
 
         /// <summary>
         /// Mapping from label to block
@@ -74,6 +74,23 @@ namespace SpirvNet.Validation
 
             Blocks.Add(block);
             LabelToBlock.Add(block.BlockLabel.Result.Value, block);
+        }
+
+        /// <summary>
+        /// Gets a DOT file for this function
+        /// </summary>
+        public IEnumerable<string> DotFile
+        {
+            get
+            {
+                yield return "digraph Function {";
+                foreach (var block in Blocks)
+                    yield return block.DotNode;
+                foreach (var b1 in Blocks)
+                    foreach (var b2 in b1.OutgoingBlocks)
+                        yield return string.Format("  b{0}->b{1};", b1.BlockID.Value, b2.BlockID.Value);
+                yield return "}";
+            }
         }
     }
 }

@@ -94,7 +94,10 @@ namespace SpirvNet.Tests
             var typeBuilder = new TypeBuilder(allocator);
             var frame = new MethodFrame(cfg, typeBuilder, allocator);
 
-            //DebugHelper.CreatePage(def, cfg, frame, mod).WriteToTempAndOpen();
+            mod.SetBoundAutomatically();
+            var vmod = mod.Validate();
+
+            DebugHelper.CreatePage(def, cfg, frame, mod, vmod).WriteToTempAndOpen();
             //DotHelper.Execute(@"C:\Temp\simplebranch.dot", cfg.DotFile);
             //File.WriteAllLines(@"C:\Temp\simplebranch.dot", cfg.DotFile);
             //File.WriteAllLines(@"C:\Temp\simplebranch.frame.dot", frame.DotFile);
