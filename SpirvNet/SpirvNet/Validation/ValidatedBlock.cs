@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using SpirvNet.Helper;
 using SpirvNet.Spirv;
 using SpirvNet.Spirv.Ops.FlowControl;
 
@@ -57,6 +58,38 @@ namespace SpirvNet.Validation
         {
             BlockLabel = blockLabel;
             Function = function;
+        }
+
+        /// <summary>
+        /// Dot node
+        /// </summary>
+        public string DotNode
+        {
+            get
+            {
+                var name = "";
+                var vmod = Function.Module;
+                var instrs = new[] { BlockLabel }.Concat(Instructions).ToArray();
+                {
+                    name += "{";
+                    name += instrs.Select(i => vmod.IDStr(i.ResultID)).Aggregated("|");
+                    name += "}|{";
+                    name += instrs.Select(i => vmod.IDStr(i.ResultTypeID)).Aggregated("|");
+                    name += "}|{";
+                    name += instrs.Select(i => i.OpCode.ToString()).Aggregated("|");
+                    name += "}|{";
+                    name += instrs.Select(i => i.ArgString).Aggregated("|");
+                    name += "}";
+                }
+
+                var attr = new List<string>
+                {
+                    string.Format("label=\"{0}\"", name),
+                    "shape=record"
+                };
+
+                return string.Format("  b{0} [{1}]", BlockID.Value, attr.Aggregated(","));
+            }
         }
 
         /// <summary>

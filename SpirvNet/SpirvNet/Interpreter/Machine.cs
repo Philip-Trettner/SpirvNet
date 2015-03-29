@@ -8,6 +8,7 @@ using SpirvNet.Spirv;
 using SpirvNet.Spirv.Enums;
 using SpirvNet.Spirv.Ops.Arithmetic;
 using SpirvNet.Spirv.Ops.FlowControl;
+using SpirvNet.Spirv.Ops.RelationalLogical;
 using SpirvNet.Validation;
 
 namespace SpirvNet.Interpreter
@@ -239,6 +240,14 @@ namespace SpirvNet.Interpreter
                             nextBlock = Get<bool>(((OpBranchConditional)instruction).Condition) ?
                                 currBlock.LiteralTargets[1] :
                                 currBlock.LiteralTargets[0];
+                            break;
+
+                        case OpCode.FOrdLessThan:
+                            {
+                                var op = (OpFOrdEqual)instruction;
+                                //var ftype =  op.Operand1
+                                //Get<>
+                            }
                             break;
 
                         case OpCode.ReturnValue:
