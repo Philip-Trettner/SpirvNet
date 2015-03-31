@@ -411,6 +411,7 @@
     <Compile Include="Spirv\UniversalLimits.cs" />
     <Compile Include="Spirv\Ops\OpUnknown.cs" />
     <Compile Include="Tests\CecilTest.cs" />
+    <Compile Include="Tests\CodeConvert\LoopTest.cs" />
     <Compile Include="Tests\CodeConvert\StructTest.cs" />
     <Compile Include="Tests\InstructionTest.cs" />
     <Compile Include="Tests\IntegrationTest.cs" />
@@ -418,12 +419,14 @@
     <Compile Include="Tests\OperationTest.cs" />
     <Compile Include="Tests\ShaderTest.cs" />
     <Compile Include="Tests\ValidationTests.cs" />
+    <Compile Include="Validation\BlockSubnode.cs" />
     <Compile Include="Validation\EntryPoint.cs" />
     <Compile Include="Validation\ITypeProvider.cs" />
     <Compile Include="Validation\Location.cs" />
     <Compile Include="Validation\ModuleValidationState.cs" />
     <Compile Include="Validation\SourceLocation.cs" />
     <Compile Include="Validation\ValidatedBlock.cs" />
+    <Compile Include="Validation\ValidatedComponent.cs" />
     <Compile Include="Validation\ValidatedFunction.cs" />
     <Compile Include="Validation\ValidatedModule.cs" />
     <Compile Include="Validation\ValidationException.cs" />

@@ -8,6 +8,7 @@ using Mono.Cecil;
 using SpirvNet.DotNet.CFG;
 using SpirvNet.Spirv;
 using SpirvNet.Spirv.Enums;
+using SpirvNet.Spirv.Ops.FlowControl;
 using SpirvNet.Spirv.Ops.Function;
 
 namespace SpirvNet.DotNet.SSA
@@ -134,7 +135,7 @@ namespace SpirvNet.DotNet.SSA
             HasThis = Method.HasThis;
 
             if (HasThis) ++ArgCount; // zero is this
-            
+
             // types
             ParameterTypes = Method.Parameters.Select(p => typeBuilder.Create(p.ParameterType)).ToArray();
             ReturnType = typeBuilder.Create(Method.ReturnType);
@@ -162,9 +163,11 @@ namespace SpirvNet.DotNet.SSA
             LocalVarTypes = new SpirvType[VarCount];
             for (var i = 0; i < VarCount; ++i)
                 LocalVarTypes[i] = TypeBuilder.Create(cfg.Method.Body.Variables[i].VariableType);
+
+            // zero-init vars
             if (InitLocalVars)
                 for (var i = 0; i < VarCount; ++i)
-                    LocalVars[i] = CreateLocation(LocalVarTypes[i]);
+                    LocalVars[i] = new TypedLocation(TypeBuilder.ConstantZero(LocalVarTypes[i]), LocalVarTypes[i]);
         }
 
         /// <summary>
@@ -174,7 +177,7 @@ namespace SpirvNet.DotNet.SSA
         {
             if (Analysed)
                 return;
-            
+
             // create stack frames
             foreach (var vertex in CFG.Vertices)
                 States.Add(new MethodFrameState(vertex, this));
@@ -183,9 +186,6 @@ namespace SpirvNet.DotNet.SSA
                 state.BuildConnections();
             // decode
             States[0].DecodeOp(null);
-            // finally, phis
-            foreach (var state in States)
-                state.CreatePhis();
 
             // update block connectivity
             foreach (var s1 in States)
@@ -195,6 +195,10 @@ namespace SpirvNet.DotNet.SSA
                 block.AddMissingBranches();
             foreach (var block in Blocks)
                 block.Validate();
+
+            // finally, phis
+            foreach (var state in States)
+                state.CreatePhis();
 
             Analysed = true;
         }

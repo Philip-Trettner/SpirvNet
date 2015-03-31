@@ -55,6 +55,11 @@ namespace SpirvNet.Validation
         /// </summary>
         public readonly Dictionary<uint, ValidatedBlock> LabelToBlock = new Dictionary<uint, ValidatedBlock>();
 
+        /// <summary>
+        /// List of all strongly connected components
+        /// </summary>
+        public readonly List<ValidatedComponent> Components = new List<ValidatedComponent>();
+
         public ValidatedFunction(Location declarationLocation, SpirvType functionType, ValidatedModule module)
         {
             DeclarationLocation = declarationLocation;
@@ -112,6 +117,42 @@ namespace SpirvNet.Validation
         }
 
         /// <summary>
+        /// Performs analysis of all SCCs
+        /// </summary>
+        public void ComponentAnalysis()
+        {
+            if (Components.Count > 0)
+                throw new InvalidOperationException("Cannot perform component analysis multiple times");
+
+            // top-level components
+            Components.AddRange(ValidatedComponent.FromBlockGraph(CreateGraph(), this, null));
+
+            // recursive analysis
+            foreach (var component in Components)
+                component.ComponentAnalysis();
+        }
+
+        /// <summary>
+        /// Creates a graph of all blocks
+        /// </summary>
+        internal List<BlockSubnode> CreateGraph()
+        {
+            var blocks = new List<BlockSubnode>();
+
+            foreach (var block in Blocks)
+                blocks.Add(new BlockSubnode(block));
+
+            foreach (var block in Blocks)
+                foreach (var b2 in block.OutgoingBlocks)
+                {
+                    blocks[block.Index].Outgoing.Add(blocks[b2.Index]);
+                    blocks[b2.Index].Incoming.Add(blocks[block.Index]);
+                }
+
+            return blocks;
+        }
+
+        /// <summary>
         /// Gets a DOT file for this function
         /// </summary>
         public IEnumerable<string> DotFile
@@ -136,14 +177,43 @@ namespace SpirvNet.Validation
             get
             {
                 yield return "digraph DominatorTree {";
+
                 foreach (var block in Blocks)
-                    yield return string.Format("  b{0} [shape=box,label=\"Block {1}\"];", block.ID, block.BlockID);
+                    yield return string.Format("  b{0} [shape=box,label=\"Block {1}\"];", block.Index, block.BlockID);
+
                 foreach (var block in Blocks)
                     if (block.ImmediateDominator != null)
-                        yield return string.Format("  b{0}->b{1};", block.ImmediateDominator.ID, block.ID);
+                        yield return string.Format("  b{0}->b{1};", block.ImmediateDominator.Index, block.Index);
+
                 foreach (var b1 in Blocks)
                     foreach (var b2 in b1.OutgoingBlocks)
-                        yield return string.Format("  b{0}->b{1} [style=dotted,constraint=false];", b1.ID, b2.ID);
+                        yield return string.Format("  b{0}->b{1} [style=dotted,constraint=false];", b1.Index, b2.Index);
+
+                yield return "}";
+            }
+        }
+
+        /// <summary>
+        /// Gets a DOT file for the SCC relationship
+        /// </summary>
+        public IEnumerable<string> ComponentDotFile
+        {
+            get
+            {
+                yield return "digraph Components {";
+
+                foreach (var comp in Components)
+                    foreach (var line in comp.DotGraph)
+                        yield return "  " + line;
+
+                foreach (var block in Blocks)
+                    if (block.Components.Count == 0)
+                        yield return string.Format("  b{0} [label=\"Block {1}\"];", block.Index, block.BlockID);
+
+                foreach (var b1 in Blocks)
+                    foreach (var b2 in b1.OutgoingBlocks)
+                        yield return string.Format("  b{0}->b{1};", b1.Index, b2.Index);
+
                 yield return "}";
             }
         }

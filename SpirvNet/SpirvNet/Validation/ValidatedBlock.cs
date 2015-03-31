@@ -19,9 +19,9 @@ namespace SpirvNet.Validation
         /// </summary>
         public readonly OpLabel BlockLabel;
         /// <summary>
-        /// Numerical ID
+        /// Block index (zero-based, no holes)
         /// </summary>
-        public readonly uint ID;
+        public readonly int Index;
 
         /// <summary>
         /// Parent function
@@ -75,10 +75,23 @@ namespace SpirvNet.Validation
         /// </summary>
         public ValidatedBlock ImmediateDominator { get; internal set; }
 
-        public ValidatedBlock(OpLabel blockLabel, ValidatedFunction function)
+        /// <summary>
+        /// Ordered list of components that this block is part of (from outer to inner)
+        /// </summary>
+        public readonly List<ValidatedComponent> Components = new List<ValidatedComponent>();
+        /// <summary>
+        /// Innermost component
+        /// </summary>
+        public ValidatedComponent InnerComponent => Components.LastOrDefault();
+        /// <summary>
+        /// Outermost component
+        /// </summary>
+        public ValidatedComponent OuterComponent => Components.FirstOrDefault();
+
+        public ValidatedBlock(OpLabel blockLabel, ValidatedFunction function, int index)
         {
             BlockLabel = blockLabel;
-            ID = BlockLabel.Result.Value;
+            Index = index;
             Function = function;
         }
 
@@ -153,7 +166,7 @@ namespace SpirvNet.Validation
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return ID == other.ID;
+            return Index == other.Index;
         }
 
         public static bool operator ==(ValidatedBlock left, ValidatedBlock right)
@@ -176,7 +189,7 @@ namespace SpirvNet.Validation
 
         public override int GetHashCode()
         {
-            return (int)ID;
+            return (int)Index;
         }
     }
 }

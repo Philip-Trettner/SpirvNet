@@ -458,7 +458,7 @@ namespace SpirvNet.Validation
 
                             var op = inst as OpLabel;
                             AssertEmptyLocation(op);
-                            currBlock = new ValidatedBlock(op, currFunc);
+                            currBlock = new ValidatedBlock(op, currFunc, currFunc.Blocks.Count);
                             currFunc.AddBlock(currBlock);
                             Locations[op.Result.Value].FillFromLabel(op, currBlock);
                             ++i;
@@ -642,6 +642,10 @@ namespace SpirvNet.Validation
             // Dominator analysis
             foreach (var function in Functions)
                 function.DominatorAnalysis();
+
+            // Component analysis
+            foreach (var function in Functions)
+                function.ComponentAnalysis();
         }
 
         /// <summary>
@@ -760,6 +764,7 @@ namespace SpirvNet.Validation
 
                 p.Body.AddPanel("Control Flow Graph").Body.AddDotGraph(f.DotFile);
                 p.Body.AddPanel("Dominator Tree").Body.AddDotGraph(f.DominatorDotFile);
+                p.Body.AddPanel("Strongly-connected Components").Body.AddDotGraph(f.ComponentDotFile);
             }
         }
     }

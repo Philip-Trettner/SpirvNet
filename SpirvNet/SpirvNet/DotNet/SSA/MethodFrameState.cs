@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -590,6 +591,12 @@ namespace SpirvNet.DotNet.SSA
                     loc = Pop();
                     if (loc.Type.IsBoolean)
                         Instructions.Add(new OpBranchConditional { Condition = loc.ID, FalseLabel = fl, TrueLabel = tl });
+                    else if (loc.Type.IsInteger)
+                    {
+                        tmp = CreateLocation(typeof(bool));
+                        Instructions.Add(new OpINotEqual { Result = tmp.ID, ResultType = tmp.Type.TypeID, Operand1 = loc.ID, Operand2 = Frame.TypeBuilder.ConstantZero(loc.Type) });
+                        Instructions.Add(new OpBranchConditional { Condition = tmp.ID, FalseLabel = fl, TrueLabel = tl });
+                    }
                     else
                         throw new NotSupportedException("Condition of type " + loc.Type + " not supported");
                     break;
@@ -822,7 +829,7 @@ namespace SpirvNet.DotNet.SSA
                     Push(new TypedLocation(Frame.TypeBuilder.ConstantInt32(8), typeof(int), Frame.TypeBuilder));
                     break;
                 case Code.Ldc_I4_S:
-                    Push(new TypedLocation(Frame.TypeBuilder.ConstantInt32((int)ins.Operand), typeof(int), Frame.TypeBuilder));
+                    Push(new TypedLocation(Frame.TypeBuilder.ConstantInt32(Convert.ToInt32(ins.Operand)), typeof(int), Frame.TypeBuilder));
                     break;
 
                 // unsupported integer conversion
@@ -1128,27 +1135,37 @@ namespace SpirvNet.DotNet.SSA
             if (!decoded)
                 throw new InvalidOperationException("Unreachable state");
 
-            // TODO: Copy object and add parent blocks
+            // TODO: Is object copy really required?
+            var phis = new List<OpPhi>();
 
             for (var i = 0; i < StackLocationsIncoming.Length; ++i)
                 if (StackLocationsIncoming[i] != null &&
                     Incoming.Any(s => s.StackLocations[i].ID.Value != StackLocationsIncoming[i].ID.Value))
-                    Instructions.Add(new OpPhi
+                    phis.Add(new OpPhi
                     {
                         Result = StackLocationsIncoming[i].ID,
                         ResultType = StackLocationsIncoming[i].Type.TypeID,
-                        IDs = Incoming.Select(s => s.StackLocations[i].ID).ToArray()
+                        IDs = Incoming.SelectMany(s => new[] { s.StackLocations[i].ID, s.Block.BlockStart.BlockID }).ToArray()
                     });
 
             for (var i = 0; i < Frame.VarCount; ++i)
                 if (LocalVarsIncoming[i] != null &&
                     Incoming.Any(s => s.LocalVars[i].ID.Value != LocalVarsIncoming[i].ID.Value))
-                    Instructions.Add(new OpPhi
+                    phis.Add(new OpPhi
                     {
                         Result = LocalVarsIncoming[i].ID,
                         ResultType = LocalVarsIncoming[i].Type.TypeID,
-                        IDs = Incoming.Select(s => s.LocalVars[i].ID).ToArray()
+                        IDs = Incoming.SelectMany(s => new[] { s.LocalVars[i].ID, s.Block.BlockStart.BlockID }).ToArray()
                     });
+
+            if (Vertex.IsBranchTarget || IsEntryPoint)
+            {
+                Debug.Assert(Instructions[0] is OpLabel);
+                foreach (var phi in phis)
+                    Instructions.Insert(1, phi);
+            }
+            else if (phis.Count > 0)
+                throw new InvalidOperationException("Cannot generate phis for non-target states");
         }
 
         /// <summary>
