@@ -77,6 +77,41 @@ namespace SpirvNet.Validation
         }
 
         /// <summary>
+        /// Analyses dominator relationship
+        /// </summary>
+        public void DominatorAnalysis()
+        {
+            // initial block dominates itself
+            foreach (var block in Blocks)
+                block.Dominators = block == StartBlock ?
+                    new HashSet<ValidatedBlock> { block } :
+                    new HashSet<ValidatedBlock>(Blocks);
+
+            // fixpoint iteration, see http://en.wikipedia.org/wiki/Dominator_%28graph_theory%29
+            bool changes;
+            do
+            {
+                changes = false;
+
+                foreach (var block in Blocks)
+                    if (block.Dominators.RemoveWhere(dom => dom != block &&
+                        block.IncomingBlocks.Any(b => !b.Dominators.Contains(dom))) > 0)
+                        changes = true;
+
+            } while (changes);
+
+            // The immediate dominator or idom of a node n is the unique node that strictly dominates n but does not strictly dominate any other node that strictly dominates n. 
+            // Every node, except the entry node, has an immediate dominator
+            foreach (var block in Blocks)
+                block.ImmediateDominator = block.Dominators.FirstOrDefault(dom => dom != block && block.Dominators.All(b => b == dom || b == block || !b.StrictlyDominatedBy(dom)));
+
+            if (StartBlock.ImmediateDominator != null) throw new ValidationException(StartBlock.BlockLabel, "Entry nodes cannot have immediate dominators");
+            foreach (var block in Blocks)
+                if (block != StartBlock && block.ImmediateDominator == null)
+                    throw new ValidationException(block.BlockLabel, "Non-start nodes require immediate dominators");
+        }
+
+        /// <summary>
         /// Gets a DOT file for this function
         /// </summary>
         public IEnumerable<string> DotFile
@@ -89,6 +124,26 @@ namespace SpirvNet.Validation
                 foreach (var b1 in Blocks)
                     foreach (var b2 in b1.OutgoingBlocks)
                         yield return string.Format("  b{0}->b{1};", b1.BlockID.Value, b2.BlockID.Value);
+                yield return "}";
+            }
+        }
+
+        /// <summary>
+        /// Gets a DOT file for the dominator relationship
+        /// </summary>
+        public IEnumerable<string> DominatorDotFile
+        {
+            get
+            {
+                yield return "digraph DominatorTree {";
+                foreach (var block in Blocks)
+                    yield return string.Format("  b{0} [shape=box,label=\"Block {1}\"];", block.ID, block.BlockID);
+                foreach (var block in Blocks)
+                    if (block.ImmediateDominator != null)
+                        yield return string.Format("  b{0}->b{1};", block.ImmediateDominator.ID, block.ID);
+                foreach (var b1 in Blocks)
+                    foreach (var b2 in b1.OutgoingBlocks)
+                        yield return string.Format("  b{0}->b{1} [style=dotted,constraint=false];", b1.ID, b2.ID);
                 yield return "}";
             }
         }

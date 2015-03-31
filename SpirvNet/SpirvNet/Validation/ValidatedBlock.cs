@@ -12,12 +12,16 @@ namespace SpirvNet.Validation
     /// <summary>
     /// A validated and analysed block
     /// </summary>
-    public class ValidatedBlock
+    public class ValidatedBlock : IEquatable<ValidatedBlock>
     {
         /// <summary>
         /// Each block starts exactly with one label
         /// </summary>
         public readonly OpLabel BlockLabel;
+        /// <summary>
+        /// Numerical ID
+        /// </summary>
+        public readonly uint ID;
 
         /// <summary>
         /// Parent function
@@ -54,9 +58,27 @@ namespace SpirvNet.Validation
         /// </summary>
         public ValidatedBlock DefaultTarget { get; private set; }
 
+        /// <summary>
+        /// Set of dominator nodes (blocks that are definitely executed before this one)
+        /// </summary>
+        public HashSet<ValidatedBlock> Dominators { get; internal set; }
+        /// <summary>
+        /// True iff b dominates this
+        /// </summary>
+        public bool DominatedBy(ValidatedBlock b) => Dominators.Contains(b);
+        /// <summary>
+        /// True iff b != this and b dominates this
+        /// </summary>
+        public bool StrictlyDominatedBy(ValidatedBlock b) => b != this && Dominators.Contains(b);
+        /// <summary>
+        /// Block that strictly dominates this block but not any other block that strictly dominates this
+        /// </summary>
+        public ValidatedBlock ImmediateDominator { get; internal set; }
+
         public ValidatedBlock(OpLabel blockLabel, ValidatedFunction function)
         {
             BlockLabel = blockLabel;
+            ID = BlockLabel.Result.Value;
             Function = function;
         }
 
@@ -125,6 +147,36 @@ namespace SpirvNet.Validation
                     throw new ValidationException(op, "Unconditional/default target specified multiple times.");
                 DefaultTarget = block;
             }
+        }
+
+        public bool Equals(ValidatedBlock other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return ID == other.ID;
+        }
+
+        public static bool operator ==(ValidatedBlock left, ValidatedBlock right)
+        {
+            return Equals(left, right);
+        }
+
+        public static bool operator !=(ValidatedBlock left, ValidatedBlock right)
+        {
+            return !Equals(left, right);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((ValidatedBlock)obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return (int)ID;
         }
     }
 }

@@ -638,6 +638,10 @@ namespace SpirvNet.Validation
 
             // TODO: member names
             // TODO: member decorations
+
+            // Dominator analysis
+            foreach (var function in Functions)
+                function.DominatorAnalysis();
         }
 
         /// <summary>
@@ -732,8 +736,8 @@ namespace SpirvNet.Validation
         public void AddDebugPageFuncsTo(PageElement e)
         {
             {
-                e.AddContent("Constants", "h3");
-                var t = e.AddChild(new DebugTable());
+                var p = e.AddPanel(PageHelper.Tagged("h3", "Constants"));
+                var t = p.Body.AddChild(new DebugTable());
                 t.SetHeader("ID", "Value");
                 foreach (var loc in Locations.Where(l => l.IsConstant))
                     t.AddRow(IDStr(loc.LocationID), loc.Constant?.ToString());
@@ -741,16 +745,21 @@ namespace SpirvNet.Validation
 
             foreach (var f in Functions)
             {
-                e.AddContent("Function " + IDStr(f.DeclarationLocation.LocationID), "h3");
+                var p = e.AddPanel(PageHelper.Tagged("h3", "Function " + IDStr(f.DeclarationLocation.LocationID)));
 
-                var t = e.AddChild(new DebugTable());
-                t.SetHeader("Type", "Name", "ID");
-                t.AddRow(IDStr(f.FunctionType.TypeID), "Function", IDStr(f.DeclarationLocation.LocationID));
-                t.AddRow(IDStr(f.ReturnType.TypeID), "Result", "");
-                for (var i = 0; i < f.ParameterTypes.Count; ++i)
-                    t.AddRow(IDStr(f.ParameterTypes[i].TypeID), "Parameter " + (i + 1), IDStr(f.ParameterLocations[i].LocationID));
+                {
+                    var p2 = p.Body.AddPanel("Stats");
+                    var t = p2.Body.AddChild(new DebugTable());
+                    t.SetHeader("Type", "Name", "ID");
+                    t.AddRow(IDStr(f.FunctionType.TypeID), "Function", IDStr(f.DeclarationLocation.LocationID));
+                    t.AddRow(IDStr(f.ReturnType.TypeID), "Result", "");
+                    for (var i = 0; i < f.ParameterTypes.Count; ++i)
+                        t.AddRow(IDStr(f.ParameterTypes[i].TypeID), "Parameter " + (i + 1),
+                            IDStr(f.ParameterLocations[i].LocationID));
+                }
 
-                e.AddDotGraph(f.DotFile);
+                p.Body.AddPanel("Control Flow Graph").Body.AddDotGraph(f.DotFile);
+                p.Body.AddPanel("Dominator Tree").Body.AddDotGraph(f.DominatorDotFile);
             }
         }
     }
