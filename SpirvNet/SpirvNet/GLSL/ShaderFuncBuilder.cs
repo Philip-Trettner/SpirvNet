@@ -17,9 +17,19 @@ namespace SpirvNet.GLSL
         /// </summary>
         public readonly ValidatedFunction Function;
 
+        /// <summary>
+        /// List of statements
+        /// </summary>
+        private readonly List<Statement> statements = new List<Statement>();
+
         public ShaderFuncBuilder(ValidatedFunction function)
         {
             Function = function;
         }
+
+        /// <summary>
+        /// GLSL shader code lines
+        /// </summary>
+        public IEnumerable<string> CodeLines => statements.SelectMany(s => s.CodeLines);
     }
 }

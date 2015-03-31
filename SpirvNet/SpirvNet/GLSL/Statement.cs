@@ -13,6 +13,14 @@ namespace SpirvNet.GLSL
     /// </summary>
     class Statement
     {
-
+        /// <summary>
+        /// GLSL shader code lines
+        /// </summary>
+        public virtual IEnumerable<string> CodeLines { get { yield break; } }
+        
+        /// <summary>
+        /// Variable name for a given ID
+        /// </summary>
+        public string VarName(ID id) => "v" + id.Value;
     }
 }
