@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json.Linq;
 
 namespace OpCodeGen
 {
@@ -13,6 +14,15 @@ namespace OpCodeGen
 
         static IEnumerable<OpCode> GenOps()
         {
+            // Load from Json
+            {
+                var json = JObject.Parse(File.ReadAllText("spirv.json"));
+                Console.WriteLine(json);
+            }
+
+
+
+
             opCategory = "Misc";
             yield return Op("Nop");
             yield return Op("Undef", Id("ResultType"), Id("Result"));
