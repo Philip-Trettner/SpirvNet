@@ -34,11 +34,11 @@ namespace SpirvNet.Spirv.Ops.FlowControl
             var length = (WordCount - (i - start)) / 2;
             Target = new Pair<LiteralNumber, ID>[length];
             for (var k = 0; k < length; ++k)
-                {
-                    var f = new LiteralNumber(codes[i++]);
-                    var s = new ID(codes[i++]);
+            {
+                var f = new LiteralNumber(codes[i++]);
+                var s = new ID(codes[i++]);
                 Target[k] = new Pair<LiteralNumber, ID>(f, s);
-                }
+            }
         }
 
         protected override void WriteCode(List<uint> code)

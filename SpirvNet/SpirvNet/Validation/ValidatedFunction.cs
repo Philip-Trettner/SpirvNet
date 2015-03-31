@@ -41,6 +41,11 @@ namespace SpirvNet.Validation
         public readonly Location DeclarationLocation;
 
         /// <summary>
+        /// True iff this function is an entry point
+        /// </summary>
+        public bool IsEntryPoint => Module.EntryPoints.Any(ep => ep.EnryPointID == DeclarationLocation.LocationID);
+
+        /// <summary>
         /// List of function blocks
         /// </summary>
         public readonly List<ValidatedBlock> Blocks = new List<ValidatedBlock>();

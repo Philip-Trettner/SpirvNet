@@ -69,6 +69,13 @@
     <Compile Include="DotNet\SSA\MethodFrame.cs" />
     <Compile Include="DotNet\SSA\MethodFrameState.cs" />
     <Compile Include="DotNet\SSA\PhiFunction.cs" />
+    <Compile Include="GLSL\BreakStatement.cs" />
+    <Compile Include="GLSL\CompoundStatement.cs" />
+    <Compile Include="GLSL\ContinueStatement.cs" />
+    <Compile Include="GLSL\IfStatement.cs" />
+    <Compile Include="GLSL\Statement.cs" />
+    <Compile Include="GLSL\ShaderFuncBuilder.cs" />
+    <Compile Include="GLSL\WhileStatement.cs" />
     <Compile Include="Helper\DebugHelper.cs" />
     <Compile Include="Helper\DotHelper.cs" />
     <Compile Include="Interpreter\ExecutionException.cs" />

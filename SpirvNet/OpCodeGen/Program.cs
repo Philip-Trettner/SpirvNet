@@ -569,11 +569,11 @@ namespace OpCodeGen
                     "var length = (WordCount - (i - start)) / 2;",
                     string.Format("{0} = new Pair<{1}, {2}>[length];", n, op1.Type, op2.Type),
                     "for (var k = 0; k < length; ++k)",
-                    "    {",
-                    string.Format("        var f = new {0}(codes[i++]);", op1.Type),
-                    string.Format("        var s = new {0}(codes[i++]);", op2.Type),
+                    "{",
+                    string.Format("    var f = new {0}(codes[i++]);", op1.Type),
+                    string.Format("    var s = new {0}(codes[i++]);", op2.Type),
                     string.Format("    {0}[k] = new Pair<{1}, {2}>(f, s);", n, op1.Type, op2.Type),
-                    "    }",
+                    "}",
                 },
                 WriteCode = n => new[]
                 {
