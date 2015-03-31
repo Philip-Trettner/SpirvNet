@@ -56,7 +56,9 @@ namespace SpirvNet.GLSL
                 name, 
                 f.ParameterTypes.Select((p, i) => p.GlslType + " _" + i).Aggregated(", "));
             yield return "{";
-            // TODO: instructions
+            var sfb = new ShaderFuncBuilder(f);
+            foreach (var line in sfb.CodeLines)
+                yield return "  " + line;
             yield return "}";
             yield return "";
         }

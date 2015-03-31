@@ -15,5 +15,7 @@ namespace SpirvNet.GLSL
         /// Sub-statements
         /// </summary>
         public readonly List<Statement> Statements = new List<Statement>();
+
+        public override IEnumerable<string> CodeLines => Statements.SelectMany(s => s.CodeLines);
     }
 }
