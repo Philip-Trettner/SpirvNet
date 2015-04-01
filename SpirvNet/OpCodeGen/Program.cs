@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
@@ -18,14 +20,72 @@ namespace OpCodeGen
             {
                 var json = JObject.Parse(File.ReadAllText("spirv.json"));
                 Console.WriteLine(json);
+
+                foreach (var t in json.SelectToken("OpCodes"))
+                {
+                    // Category 
+                    {
+                        var category = t.SelectToken("Category").ToString();
+                        category = category.Replace(" ", "");
+                        category = category.Replace("-", "");
+                        opCategory = category;
+                    }
+                    
+                    // Name and Description
+                    var name = t.SelectToken("Name").ToString().Replace("Op", "").Trim();
+                    var description = t.SelectToken("DescriptionPlain").ToString();
+                    
+                    var op = Op(name);
+
+                    op.Cmt(description);
+
+                    // Operands
+                    {
+                        var operands = t.SelectToken("Operands");
+
+                        foreach (var operand in operands)
+                        {
+                            var type = operand.SelectToken("Type").ToString();
+                            var operandName = operand.SelectToken("Name").ToString();
+                            if (type == "ID")
+                                op.Fields.Add(Id(operandName));
+                            if (type == "Enum")
+                                op.Fields.Add(Typed(operandName));
+                            if (type == "LiteralNumber")
+                                op.Fields.Add(Nr(operandName));
+                            if (type == "LiteralString")
+                                op.Fields.Add(Str(operandName));
+                            if (type == "LiteralNumber[]")
+                                op.Fields.Add(NrArray(operandName));
+                            if (type == "ID[]")
+                                op.Fields.Add(IdArray(operandName));
+                            if (type == "ID?")
+                                op.Fields.Add(IdOpt(operandName));
+                            if (type == "Pair<LiteralNumber,ID>[]")
+                                op.Fields.Add(PairArray(Nr("Literal"), Id("Label"), operandName));
+                        }
+                    }
+
+                    // Capabilites
+                    {
+                        var caps = t.SelectToken("Capabilities");
+
+                        foreach (var cap in caps)
+                            op.Compat(cap.ToString());
+                    }
+
+                    yield return op;
+
+                }
+
+
             }
 
 
-
-
-            opCategory = "Misc";
+            
+            /*opCategory = "Misc";
             yield return Op("Nop");
-            yield return Op("Undef", Id("ResultType"), Id("Result"));
+            yield return Op("Undef", Id("ResultType"), Id("Result")); 
 
             opCategory = "Debug";
             yield return Op("Source", Typed("SourceLanguage"), Nr("Version"));
@@ -328,7 +388,7 @@ namespace OpCodeGen
             yield return Op("GroupReserveReadPipePackets", Id("ResultType"), Id("Result"), Typed("ExecutionScope", "Scope"), Id("P"), Id("NumPackets")).Compat("Kernel");
             yield return Op("GroupReserveWritePipePackets", Id("ResultType"), Id("Result"), Typed("ExecutionScope", "Scope"), Id("P"), Id("NumPackets")).Compat("Kernel");
             yield return Op("GroupCommitReadPipe", Typed("ExecutionScope", "Scope"), Id("P"), Id("ReserveId")).Compat("Kernel");
-            yield return Op("GroupCommitWritePipe", Typed("ExecutionScope", "Scope"), Id("P"), Id("ReserveId")).Compat("Kernel");
+            yield return Op("GroupCommitWritePipe", Typed("ExecutionScope", "Scope"), Id("P"), Id("ReserveId")).Compat("Kernel");*/
         }
 
         class OpField
@@ -346,7 +406,7 @@ namespace OpCodeGen
             public readonly string Cat = opCategory;
             private string comment;
 
-            public OpField[] Fields;
+            public List<OpField> Fields;
 
             private readonly List<string> compatibilities = new List<string>();
 
@@ -358,6 +418,7 @@ namespace OpCodeGen
 
             public OpCode Cmt(string cmt)
             {
+                // TODO multiline => generate it with /// correctly
                 comment = cmt;
                 return this;
             }
@@ -392,7 +453,7 @@ namespace OpCodeGen
                     yield return string.Format("        public override ID? ResultID => Result;");
                 if (Fields.Any(f => f.Name == "ResultType"))
                     yield return string.Format("        public override ID? ResultTypeID => ResultType;");
-                if (Fields.Length > 0)
+                if (Fields.Count > 0)
                 {
                     yield return "";
                     foreach (var field in Fields)
@@ -400,7 +461,7 @@ namespace OpCodeGen
                 }
                 yield return "";
                 yield return "        #region Code";
-                yield return string.Format("        public override string ToString() => \"(\" + OpCode + \"(\" + (int)OpCode + \")\"{0} + \")\";", Fields.Length == 0 ? "" : Fields.Select(f => f.Name).Aggregate("", (s1, s2) => string.Format("{0} + \", \" + StrOf({1})", s1, s2)));
+                yield return string.Format("        public override string ToString() => \"(\" + OpCode + \"(\" + (int)OpCode + \")\"{0} + \")\";", Fields.Count == 0 ? "" : Fields.Select(f => f.Name).Aggregate("", (s1, s2) => string.Format("{0} + \", \" + StrOf({1})", s1, s2)));
                 yield return string.Format("        public override string ArgString => {0};", !Fields.Any(f => f.Name != "Result" && f.Name != "ResultType") ? "\"\"" : Fields.Where(f => f.Name != "Result" && f.Name != "ResultType").Select(f => "\"" + f.Name + ": \" + StrOf(" + f.Name + ")").Aggregate((s1, s2) => string.Format("{0} + \", \" + {1}", s1, s2)));
 
                 //public abstract string ArgString { get; }
@@ -409,7 +470,7 @@ namespace OpCodeGen
                 yield return "        protected override void FromCode(uint[] codes, int start)";
                 yield return "        {";
                 yield return string.Format("            System.Diagnostics.Debug.Assert((codes[start] & 0x0000FFFF) == (uint)OpCode.{0});", Name);
-                if (Fields.Length > 0)
+                if (Fields.Count> 0)
                 {
                     yield return "            var i = start + 1;";
                     foreach (var field in Fields)
@@ -420,7 +481,7 @@ namespace OpCodeGen
                 yield return "";
                 yield return "        protected override void WriteCode(List<uint> code)";
                 yield return "        {";
-                if (Fields.Length > 0)
+                if (Fields.Count > 0)
                 {
                     foreach (var field in Fields)
                         foreach (var c in field.WriteCode(field.Name))
@@ -637,7 +698,7 @@ namespace OpCodeGen
             return new OpCode
             {
                 Name = name,
-                Fields = fields
+                Fields = new List<OpField>(fields)
             };
         }
 
