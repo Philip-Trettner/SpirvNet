@@ -765,6 +765,7 @@ namespace SpirvNet.Validation
                 p.Body.AddPanel("Control Flow Graph").Body.AddDotGraph(f.DotFile);
                 p.Body.AddPanel("Dominator Tree").Body.AddDotGraph(f.DominatorDotFile);
                 p.Body.AddPanel("Strongly-connected Components").Body.AddDotGraph(f.ComponentDotFile);
+                p.Body.AddPanel("Dominator Tree with SCCs").Body.AddDotGraph(f.ComponentDominatorDotFile);
             }
         }
     }

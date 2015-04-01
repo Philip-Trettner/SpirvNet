@@ -145,7 +145,13 @@ namespace SpirvNet.Validation
             var blocks = new List<BlockSubnode>();
 
             foreach (var block in Blocks)
+            {
                 blocks.Add(new BlockSubnode(block));
+                if (block.OutgoingBlocks.Count == 0)
+                    blocks.Last().IsExit = true;
+            }
+
+            blocks[StartBlock.Index].IsEntry = true;
 
             foreach (var block in Blocks)
                 foreach (var b2 in block.OutgoingBlocks)
@@ -218,6 +224,35 @@ namespace SpirvNet.Validation
                 foreach (var b1 in Blocks)
                     foreach (var b2 in b1.OutgoingBlocks)
                         yield return string.Format("  b{0}->b{1};", b1.Index, b2.Index);
+
+                yield return "}";
+            }
+        }
+
+        /// <summary>
+        /// Gets a DOT file for the dominator tree with SCC relationship
+        /// </summary>
+        public IEnumerable<string> ComponentDominatorDotFile
+        {
+            get
+            {
+                yield return "digraph Components {";
+
+                foreach (var comp in Components)
+                    foreach (var line in comp.DotGraph)
+                        yield return "  " + line;
+
+                foreach (var block in Blocks)
+                    if (block.Components.Count == 0)
+                        yield return string.Format("  b{0} [label=\"Block {1}\"];", block.Index, block.BlockID);
+
+                foreach (var block in Blocks)
+                    if (block.ImmediateDominator != null)
+                        yield return string.Format("  b{0}->b{1};", block.ImmediateDominator.Index, block.Index);
+
+                foreach (var b1 in Blocks)
+                    foreach (var b2 in b1.OutgoingBlocks)
+                        yield return string.Format("  b{0}->b{1} [style=dotted,constraint=false];", b1.Index, b2.Index);
 
                 yield return "}";
             }
