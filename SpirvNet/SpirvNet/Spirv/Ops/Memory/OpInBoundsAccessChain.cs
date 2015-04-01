@@ -10,7 +10,9 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.Memory
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpInBoundsAccessChain
+    /// 
+    /// Has the same semantics as OpAccessChain, with the addition that the resulting pointer is known to point within the base object.
     /// </summary>
     public sealed class OpInBoundsAccessChain : MemoryInstruction
     {

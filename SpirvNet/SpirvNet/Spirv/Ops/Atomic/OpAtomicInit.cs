@@ -10,7 +10,11 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.Atomic
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpAtomicInit
+    /// 
+    /// Initialize atomic memory to Value.  This is not done atomically with respect to anything.
+    /// 
+    /// The type of Value and the type pointed to by Pointer must be the same type.
     /// </summary>
     public sealed class OpAtomicInit : AtomicInstruction
     {

@@ -10,7 +10,15 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.TypeDeclaration
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpTypeRuntimeArray
+    /// 
+    /// Declare a new run-time array type.  Its length is not known at compile time.
+    /// 
+    /// Element type is the type of each element in the array. See OpArrayLength for getting the Length of an array of this type.
+    /// 
+    /// Objects of this type can only be created with OpVariable using the Uniform Storage Class.
+    /// 
+    /// Result &lt;id&gt; is the &lt;id&gt; of the new run-time array type.
     /// </summary>
     [DependsOn(LanguageCapability.Shader)]
     public sealed class OpTypeRuntimeArray : TypeDeclarationInstruction

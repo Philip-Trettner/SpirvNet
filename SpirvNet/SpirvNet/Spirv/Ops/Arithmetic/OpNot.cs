@@ -10,7 +10,9 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.Arithmetic
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpNot
+    /// 
+    /// Complement the bits of Operand. The operand type and Result Type must be scalars or vectors of integer types with the same number of components and same component widths.
     /// </summary>
     public sealed class OpNot : ArithmeticInstruction
     {

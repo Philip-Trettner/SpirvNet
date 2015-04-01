@@ -10,7 +10,11 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.Arithmetic
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpShiftLeftLogical
+    /// 
+    /// Shift the bits in Operand 1 left by the number of bits specified in Operand 2. The least-significant bits will be zero filled. Operand 2 is treated as unsigned.  The result is undefined if Operand 2 is greater than the bit width of the components of Operand 1. 
+    /// 
+    /// The number of components and bit width of Result Type must match those Operand 1 type. All types must be integer types. Works with any mixture of signedness.
     /// </summary>
     public sealed class OpShiftLeftLogical : ArithmeticInstruction
     {

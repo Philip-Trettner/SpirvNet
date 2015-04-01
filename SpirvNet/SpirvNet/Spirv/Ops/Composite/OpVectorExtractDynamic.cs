@@ -10,7 +10,17 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.Composite
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpVectorExtractDynamic
+    /// 
+    /// Read a single, dynamically selected, component of a vector.
+    /// 
+    /// Vector must be a vector type and is the vector from which to read the component.
+    /// 
+    /// Index must be a scalar-integer 0-based index of which component to read.
+    /// 
+    /// The value read is undefined if Index&#8217;s value is less than zero or greater than or equal to the number of components in Vector.
+    /// 
+    /// The Result Type must be the same type as the type of Vector.
     /// </summary>
     public sealed class OpVectorExtractDynamic : CompositeInstruction
     {

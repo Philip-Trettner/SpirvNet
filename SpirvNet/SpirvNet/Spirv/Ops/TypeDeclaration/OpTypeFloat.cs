@@ -10,7 +10,13 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.TypeDeclaration
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpTypeFloat
+    /// 
+    /// Declare a new floating-point type.
+    /// 
+    /// Width specifies how many bits wide the type is. The bit pattern of a floating-point value is as described by the IEEE 754 standard.
+    /// 
+    /// Result &lt;id&gt; is the &lt;id&gt; of the new floating-point type.
     /// </summary>
     public sealed class OpTypeFloat : TypeDeclarationInstruction
     {

@@ -10,7 +10,15 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.Extension
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpExtInst
+    /// 
+    /// Execute an instruction in an imported set of extended instructions.
+    /// 
+    /// Set is the result of an OpExtInstImport instruction.
+    /// 
+    /// Instruction is the enumerant of the instruction to execute within the extended instruction Set.
+    /// 
+    /// Operand 1, &#8230; are the operands to the extended instruction.
     /// </summary>
     public sealed class OpExtInst : ExtensionInstruction
     {

@@ -10,7 +10,13 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.Pipe
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpGetMaxPipePackets
+    /// 
+    /// Returns the maximum number of packets specified when the pipe object specified by p was created.
+    /// 
+    /// p must be a OpTypePipe with ReadOnly or WriteOnly Access Qualifier.
+    /// 
+    /// Result Type must be a 32-bits OpTypeInt which should be treated as unsigned value.
     /// </summary>
     [DependsOn(LanguageCapability.Kernel)]
     public sealed class OpGetMaxPipePackets : PipeInstruction

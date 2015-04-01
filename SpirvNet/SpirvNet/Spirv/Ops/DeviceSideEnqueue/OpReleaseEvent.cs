@@ -10,7 +10,11 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.DeviceSideEnqueue
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpReleaseEvent
+    /// 
+    /// Decrements the reference count of the event object specified by event. The event object is deleted once the event reference count is zero, the specific command identified by this event has completed (or terminated) and there are no commands in any device command queue that require a wait for this event to complete.
+    /// 
+    /// event must be an event that was produced by OpEnqueueKernel, OpEnqueueMarker or OpCreateUserEvent.
     /// </summary>
     [DependsOn(LanguageCapability.Kernel)]
     public sealed class OpReleaseEvent : DeviceSideEnqueueInstruction

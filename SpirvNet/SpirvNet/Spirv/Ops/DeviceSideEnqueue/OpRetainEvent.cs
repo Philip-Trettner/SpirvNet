@@ -10,7 +10,11 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.DeviceSideEnqueue
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpRetainEvent
+    /// 
+    /// Increments the reference count of the event object specified by event.
+    /// 
+    /// event must be an event that was produced by OpEnqueueKernel, OpEnqueueMarker or OpCreateUserEvent.
     /// </summary>
     [DependsOn(LanguageCapability.Kernel)]
     public sealed class OpRetainEvent : DeviceSideEnqueueInstruction

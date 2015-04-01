@@ -10,7 +10,13 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.Pipe
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpGetNumPipePackets
+    /// 
+    /// Returns the number of available entries in the pipe object specified by p. The number of available entries in a pipe is a dynamic value.  The value returned should be considered immediately stale.
+    /// 
+    /// p must be a OpTypePipe with ReadOnly or WriteOnly Access Qualifier.
+    /// 
+    /// Result Type must be a 32-bits OpTypeInt which should be treated as unsigned value.
     /// </summary>
     [DependsOn(LanguageCapability.Kernel)]
     public sealed class OpGetNumPipePackets : PipeInstruction

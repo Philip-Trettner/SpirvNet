@@ -10,7 +10,15 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.Texture
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpTextureQueryLevels
+    /// 
+    /// Query the number of mipmap levels accessible through Sampler.
+    /// 
+    /// Result Type must be a scalar integer type. The result is the number of mipmap levels, as defined by the API specification.
+    /// 
+    /// Sampler must be an object of a type made by OpTypeSampler. Sampler must have a type with Dimensionality of 1D, 2D, 3D, or Cube.
+    /// 
+    /// TBD: The value zero will be returned if no texture or an incomplete texture is associated with Sampler.
     /// </summary>
     [DependsOn(LanguageCapability.Shader)]
     public sealed class OpTextureQueryLevels : TextureInstruction

@@ -10,7 +10,13 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.DeviceSideEnqueue
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpSetUserEventStatus
+    /// 
+    /// Sets the execution status of a user event specified by event.status can be either 0 (CL_COMPLETE) to indicate that this kernel and all its child kernels finished execution successfully, or a negative integer value indicating an error.
+    /// 
+    /// event must be a OpTypeDeviceEvent that was produced by OpCreateUserEvent.
+    /// 
+    /// status must be a 32-bit OpTypeInt treated as a signed integer.
     /// </summary>
     [DependsOn(LanguageCapability.Kernel)]
     public sealed class OpSetUserEventStatus : DeviceSideEnqueueInstruction

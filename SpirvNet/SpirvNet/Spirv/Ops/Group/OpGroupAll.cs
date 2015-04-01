@@ -10,7 +10,13 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.Group
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpGroupAll
+    /// 
+    /// Evaluates a predicate for all work-items in the group,and returns true if predicate evaluates to true for all work-items in the group, otherwise returns false.
+    /// 
+    /// Both the Predicate and the Result Type must be of OpTypeBool.
+    /// 
+    /// Scope must be the Workgroup or Subgroup Execution Scope.
     /// </summary>
     [DependsOn(LanguageCapability.Kernel)]
     public sealed class OpGroupAll : GroupInstruction

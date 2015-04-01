@@ -10,7 +10,15 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.Arithmetic
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpVectorTimesScalar
+    /// 
+    /// Scale a floating-point vector.
+    /// 
+    /// Vector must have a floating-point vector type.
+    /// 
+    /// Scalar must be a floating-point scalar.
+    /// 
+    /// Result Type must be the same as the type of Vector.
     /// </summary>
     public sealed class OpVectorTimesScalar : ArithmeticInstruction
     {

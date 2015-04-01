@@ -10,7 +10,17 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.Function
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpFunctionCall
+    /// 
+    /// Call a function.
+    /// 
+    /// Function is the &lt;id&gt; of an OpFunction instruction.  This could be a forward reference.
+    /// 
+    /// Argument N is the &lt;id&gt; of the object to copy to parameter N of Function.
+    /// 
+    /// Result Type is the type of the return value of the function. 
+    /// 
+    /// Note: A forward call is possible because there is no missing type information: Result Type must match the Return Type of the function, and the calling argument types must match the formal parameter types.
     /// </summary>
     public sealed class OpFunctionCall : FunctionInstruction
     {

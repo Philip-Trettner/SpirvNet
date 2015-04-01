@@ -10,7 +10,13 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.Annotation
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpGroupDecorate
+    /// 
+    /// Add a group of decorations to another &lt;id&gt;.
+    /// 
+    /// Decoration group is the &lt;id&gt; of an OpDecorationGroup instruction.
+    /// 
+    /// Target, &#8230; are the target &lt;id&gt;s to decorate with the groups of decorations.
     /// </summary>
     public sealed class OpGroupDecorate : AnnotationInstruction
     {

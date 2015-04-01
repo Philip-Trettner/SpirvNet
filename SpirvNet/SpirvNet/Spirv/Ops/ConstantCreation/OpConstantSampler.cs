@@ -10,7 +10,17 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.ConstantCreation
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpConstantSampler
+    /// 
+    /// Declare a new null sampler constant.
+    /// 
+    /// Mode is the addressing Mode. See Sampler Addressing Mode.
+    /// 
+    /// Param is one of:
+    /// 0: Nonparametric
+    /// 1: Parametric
+    /// 
+    /// Filter is the filter mode. See Sampler Filter Mode.
     /// </summary>
     [DependsOn(LanguageCapability.Kernel)]
     public sealed class OpConstantSampler : ConstantCreationInstruction

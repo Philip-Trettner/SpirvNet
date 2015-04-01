@@ -10,7 +10,11 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.Arithmetic
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpBitwiseAnd
+    /// 
+    /// Result is 1 if both Operand 1 and Operand 2 are 1. Result is 0 if either Operand 1 or Operand 2 are 0.
+    /// 
+    ///  Results are computed per component, and within each component, per bit. The operands' types and Result Type must  all be scalars or vectors of integer        types with the same number of components and the same component widths. Works with any mixture of signedness.
     /// </summary>
     public sealed class OpBitwiseAnd : ArithmeticInstruction
     {

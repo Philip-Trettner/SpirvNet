@@ -10,7 +10,11 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.Conversion
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpConvertPtrToU
+    /// 
+    /// Convert Pointer to an unsigned integer type. A Result Type width larger than the width of Pointer will zero extend. A Result Type smaller than the width of Pointer will truncate. For same-width source and target, this is the same as OpBitCast. 
+    /// 
+    ///  Result Type cannot be a signed integer type.
     /// </summary>
     [DependsOn(LanguageCapability.Addr)]
     public sealed class OpConvertPtrToU : ConversionInstruction

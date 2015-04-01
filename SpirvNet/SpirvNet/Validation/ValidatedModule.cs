@@ -721,7 +721,7 @@ namespace SpirvNet.Validation
                 t.SetHeader("ID", "Execution Model", "Execution Modes");
                 foreach (var ep in EntryPoints)
                     t.AddRow(IDStr(ep.EnryPointID), ep.ExecutionModel.ToString(),
-                        ep.ExecutionModes.Select(m => m.ExecutionMode).Aggregated(", "));
+                        ep.ExecutionModes.Select(m => m.Mode).Aggregated(", "));
             }
 
             {

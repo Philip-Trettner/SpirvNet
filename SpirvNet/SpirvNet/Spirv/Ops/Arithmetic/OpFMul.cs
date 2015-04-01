@@ -10,7 +10,9 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.Arithmetic
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpFMul
+    /// 
+    /// Floating-point multiplication of Operand 1 and Operand 2. The operands' types and Result Type must  all be scalars or vectors of floating-point types with the same number of components and the same component widths.
     /// </summary>
     public sealed class OpFMul : ArithmeticInstruction
     {

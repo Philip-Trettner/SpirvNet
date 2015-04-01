@@ -10,7 +10,11 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.Primitive
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpEndPrimitive
+    /// 
+    /// Finish the current primitive and start a new one.  No vertex is emitted.
+    /// 
+    /// This instruction can only be used when only one stream is present.
     /// </summary>
     [DependsOn(LanguageCapability.Geom)]
     public sealed class OpEndPrimitive : PrimitiveInstruction

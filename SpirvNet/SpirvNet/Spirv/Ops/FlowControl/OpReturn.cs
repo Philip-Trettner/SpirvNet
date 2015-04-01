@@ -10,7 +10,11 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.FlowControl
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpReturn
+    /// 
+    /// Return with no value from a function with void return type.
+    /// 
+    /// This instruction must be the last instruction in a block.
     /// </summary>
     public sealed class OpReturn : FlowControlInstruction
     {

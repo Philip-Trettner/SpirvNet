@@ -8,7 +8,7 @@ using SpirvNet.Spirv;
 using SpirvNet.Spirv.Enums;
 using SpirvNet.Spirv.Ops.Arithmetic;
 using SpirvNet.Spirv.Ops.FlowControl;
-using SpirvNet.Spirv.Ops.RelationalLogical;
+using SpirvNet.Spirv.Ops.RelationalAndLogical;
 using SpirvNet.Validation;
 
 namespace SpirvNet.Interpreter

@@ -10,7 +10,17 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.Composite
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpVectorInsertDynamic
+    /// 
+    /// Write a single, variably selected, component into a vector. 
+    /// 
+    /// Vector must be a vector type and is the vector that the non-written components will be taken from.
+    /// 
+    /// Index must be a scalar-integer 0-based index of which component to read.
+    /// 
+    /// What memory is written is undefined if Index&#8217;s value is less than zero or greater than or equal to the number of components in Vector.
+    /// 
+    /// The Result Type must be the same type as the type of Vector.
     /// </summary>
     public sealed class OpVectorInsertDynamic : CompositeInstruction
     {
@@ -21,12 +31,13 @@ namespace SpirvNet.Spirv.Ops.Composite
 
         public ID ResultType;
         public ID Result;
+        public ID Vector;
         public ID Component;
         public ID Index;
 
         #region Code
-        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(ResultType) + ", " + StrOf(Result) + ", " + StrOf(Component) + ", " + StrOf(Index) + ")";
-        public override string ArgString => "Component: " + StrOf(Component) + ", " + "Index: " + StrOf(Index);
+        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(ResultType) + ", " + StrOf(Result) + ", " + StrOf(Vector) + ", " + StrOf(Component) + ", " + StrOf(Index) + ")";
+        public override string ArgString => "Vector: " + StrOf(Vector) + ", " + "Component: " + StrOf(Component) + ", " + "Index: " + StrOf(Index);
 
         protected override void FromCode(uint[] codes, int start)
         {
@@ -34,6 +45,7 @@ namespace SpirvNet.Spirv.Ops.Composite
             var i = start + 1;
             ResultType = new ID(codes[i++]);
             Result = new ID(codes[i++]);
+            Vector = new ID(codes[i++]);
             Component = new ID(codes[i++]);
             Index = new ID(codes[i++]);
         }
@@ -42,6 +54,7 @@ namespace SpirvNet.Spirv.Ops.Composite
         {
             code.Add(ResultType.Value);
             code.Add(Result.Value);
+            code.Add(Vector.Value);
             code.Add(Component.Value);
             code.Add(Index.Value);
         }
@@ -52,6 +65,7 @@ namespace SpirvNet.Spirv.Ops.Composite
             {
                 yield return ResultType;
                 yield return Result;
+                yield return Vector;
                 yield return Component;
                 yield return Index;
             }

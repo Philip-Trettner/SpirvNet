@@ -10,7 +10,11 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.Conversion
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpUConvert
+    /// 
+    /// Convert (value preserving) the width of Unsigned value.  This is either a truncate or a zero extend.
+    /// 
+    ///  Results are computed per component. The operand&#8217;s type and Result Type must     have the same number of components. The widths of the components of the operand and the Result Type must be different. Result Type cannot be a signed integer type.
     /// </summary>
     public sealed class OpUConvert : ConversionInstruction
     {

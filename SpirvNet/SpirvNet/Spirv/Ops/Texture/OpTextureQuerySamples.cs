@@ -10,7 +10,13 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.Texture
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpTextureQuerySamples
+    /// 
+    /// Query the number of samples available per texel fetch in a multisample texture.
+    /// 
+    /// Result Type must be a scalar integer type. The result is the number of samples.
+    /// 
+    /// Sampler must be an object of a type made by OpTypeSampler. Sampler must have a type with Dimensionality of 2D and be a multisample texture.
     /// </summary>
     [DependsOn(LanguageCapability.Shader)]
     public sealed class OpTextureQuerySamples : TextureInstruction

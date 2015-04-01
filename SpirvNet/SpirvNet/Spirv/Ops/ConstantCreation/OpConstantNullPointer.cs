@@ -10,7 +10,9 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.ConstantCreation
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpConstantNullPointer
+    /// 
+    /// Declare a new null pointer constant.
     /// </summary>
     [DependsOn(LanguageCapability.Addr)]
     public sealed class OpConstantNullPointer : ConstantCreationInstruction

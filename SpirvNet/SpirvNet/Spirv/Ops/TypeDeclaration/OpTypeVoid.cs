@@ -10,7 +10,11 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.TypeDeclaration
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpTypeVoid
+    /// 
+    /// Declare the void type.
+    /// 
+    /// Result &lt;id&gt; is the &lt;id&gt; of the new void type.
     /// </summary>
     public sealed class OpTypeVoid : TypeDeclarationInstruction
     {

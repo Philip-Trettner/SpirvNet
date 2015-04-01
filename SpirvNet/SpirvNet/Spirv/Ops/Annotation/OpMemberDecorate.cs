@@ -10,7 +10,13 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.Annotation
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpMemberDecorate
+    /// 
+    /// Add a decoration to a member of a structure type.
+    /// 
+    /// Structure type is the &lt;id&gt; of a type from OpTypeStruct.
+    /// 
+    /// Member is the number of the member to decorate in the structure. The first member is member 0, the next is member 1, &#8230;
     /// </summary>
     public sealed class OpMemberDecorate : AnnotationInstruction
     {
@@ -20,11 +26,11 @@ namespace SpirvNet.Spirv.Ops.Annotation
         public ID StructureType;
         public LiteralNumber Member;
         public Decoration Decoration;
-        public LiteralNumber[] Args = { };
+        public LiteralNumber[] ExtraOperands = { };
 
         #region Code
-        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(StructureType) + ", " + StrOf(Member) + ", " + StrOf(Decoration) + ", " + StrOf(Args) + ")";
-        public override string ArgString => "StructureType: " + StrOf(StructureType) + ", " + "Member: " + StrOf(Member) + ", " + "Decoration: " + StrOf(Decoration) + ", " + "Args: " + StrOf(Args);
+        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(StructureType) + ", " + StrOf(Member) + ", " + StrOf(Decoration) + ", " + StrOf(ExtraOperands) + ")";
+        public override string ArgString => "StructureType: " + StrOf(StructureType) + ", " + "Member: " + StrOf(Member) + ", " + "Decoration: " + StrOf(Decoration) + ", " + "ExtraOperands: " + StrOf(ExtraOperands);
 
         protected override void FromCode(uint[] codes, int start)
         {
@@ -34,9 +40,9 @@ namespace SpirvNet.Spirv.Ops.Annotation
             Member = new LiteralNumber(codes[i++]);
             Decoration = (Decoration)codes[i++];
             var length = WordCount - (i - start);
-            Args = new LiteralNumber[length];
+            ExtraOperands = new LiteralNumber[length];
             for (var k = 0; k < length; ++k)
-                Args[k] = new LiteralNumber(codes[i++]);
+                ExtraOperands[k] = new LiteralNumber(codes[i++]);
         }
 
         protected override void WriteCode(List<uint> code)
@@ -44,8 +50,8 @@ namespace SpirvNet.Spirv.Ops.Annotation
             code.Add(StructureType.Value);
             code.Add(Member.Value);
             code.Add((uint)Decoration);
-            if (Args != null)
-                foreach (var val in Args)
+            if (ExtraOperands != null)
+                foreach (var val in ExtraOperands)
                     code.Add(val.Value);
         }
 

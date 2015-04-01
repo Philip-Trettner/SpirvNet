@@ -10,7 +10,13 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.ModeSetting
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpEntryPoint
+    /// 
+    /// Declare an entry point and its execution model.
+    /// 
+    /// Execution Model is the execution model for the entry point and its static call tree.  See Execution Model.
+    /// 
+    /// Entry Point must the Result &lt;id&gt; of an OpFunction instruction.
     /// </summary>
     public sealed class OpEntryPoint : ModeSettingInstruction
     {

@@ -10,7 +10,11 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.Memory
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpGenericPtrMemSemantics
+    /// 
+    /// Returns a valid Memory Semantics value for ptr. ptr must point to Generic. 
+    /// 
+    /// Result Type must be a 32-bits wide OpTypeInt value.
     /// </summary>
     [DependsOn(LanguageCapability.Kernel)]
     public sealed class OpGenericPtrMemSemantics : MemoryInstruction

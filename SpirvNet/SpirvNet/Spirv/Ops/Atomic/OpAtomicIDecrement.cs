@@ -10,7 +10,16 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.Atomic
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpAtomicIDecrement
+    /// 
+    /// Perform the following steps atomically with respect to any other atomic accesses within Scope to the same location: 
+    /// 1) load through Pointer to get an Original Value,
+    /// 2) get a New Value through integer subtraction of 1 from Original Value, and
+    /// 3) store the New Value back through Pointer.
+    /// 
+    /// The instruction&#8217;s result is the Original Value.
+    /// 
+    /// Result Type must be the same type as the type pointed to by Pointer.
     /// </summary>
     public sealed class OpAtomicIDecrement : AtomicInstruction
     {

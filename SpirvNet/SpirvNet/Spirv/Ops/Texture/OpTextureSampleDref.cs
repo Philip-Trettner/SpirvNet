@@ -10,7 +10,19 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.Texture
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpTextureSampleDref
+    /// 
+    /// Sample a cube-map-array texture with depth comparison using an implicit level of detail.
+    /// 
+    /// Result Type must be scalar of the same type as Sampled Type of Sampler&#8217;s type.
+    /// 
+    /// Sampler must be an object of a type made by OpTypeSampler. It must be for a Cube-arrayed depth-comparison type.
+    /// 
+    /// Coordinate is a vector of size 4 containing (u, v, w, array layer).
+    /// 
+    /// Dref is the depth-comparison reference value.
+    /// 
+    /// This instruction is only allowed under the Fragment Execution Model. In addition, it consumes an implicit derivative that can be affected by code motion.
     /// </summary>
     [DependsOn(LanguageCapability.Shader)]
     public sealed class OpTextureSampleDref : TextureInstruction

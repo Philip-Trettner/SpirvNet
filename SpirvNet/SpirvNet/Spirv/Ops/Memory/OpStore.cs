@@ -10,7 +10,15 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.Memory
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpStore
+    /// 
+    /// Store through a pointer.
+    /// 
+    /// Pointer is the pointer to store through.  It must have a type of OpTypePointer whose operand is the same as the type of Object.
+    /// 
+    /// Object is the object to store.
+    /// 
+    /// Memory Access must be a Memory Access literal.  See Memory Access for more detail.
     /// </summary>
     public sealed class OpStore : MemoryInstruction
     {
@@ -19,7 +27,7 @@ namespace SpirvNet.Spirv.Ops.Memory
 
         public ID Pointer;
         public ID Object;
-        public MemoryAccess[] MemoryAccess = { };
+        public LiteralNumber[] MemoryAccess = { };
 
         #region Code
         public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(Pointer) + ", " + StrOf(Object) + ", " + StrOf(MemoryAccess) + ")";
@@ -32,9 +40,9 @@ namespace SpirvNet.Spirv.Ops.Memory
             Pointer = new ID(codes[i++]);
             Object = new ID(codes[i++]);
             var length = WordCount - (i - start);
-            MemoryAccess = new MemoryAccess[length];
+            MemoryAccess = new LiteralNumber[length];
             for (var k = 0; k < length; ++k)
-                MemoryAccess[k] = (MemoryAccess)codes[i++];
+                MemoryAccess[k] = new LiteralNumber(codes[i++]);
         }
 
         protected override void WriteCode(List<uint> code)
@@ -43,7 +51,7 @@ namespace SpirvNet.Spirv.Ops.Memory
             code.Add(Object.Value);
             if (MemoryAccess != null)
                 foreach (var val in MemoryAccess)
-                    code.Add((uint)val);
+                    code.Add(val.Value);
         }
 
         public override IEnumerable<ID> AllIDs

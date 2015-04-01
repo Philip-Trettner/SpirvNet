@@ -10,8 +10,13 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.FlowControl
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpKill
+    /// 
+    /// Fragment shader discard.
+    /// 
+    /// This instruction must be the last instruction in a block.
     /// </summary>
+    [DependsOn(LanguageCapability.Shader)]
     public sealed class OpKill : FlowControlInstruction
     {
         public override bool IsFlowControl => true;

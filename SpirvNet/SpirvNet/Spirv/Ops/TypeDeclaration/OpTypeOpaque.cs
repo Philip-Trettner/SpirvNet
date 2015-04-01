@@ -10,7 +10,11 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.TypeDeclaration
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpTypeOpaque
+    /// 
+    /// Declare a named structure type with no body specified.
+    /// 
+    /// Result &lt;id&gt; is the &lt;id&gt; of the new opaque type.
     /// </summary>
     [DependsOn(LanguageCapability.Kernel)]
     public sealed class OpTypeOpaque : TypeDeclarationInstruction
@@ -20,24 +24,24 @@ namespace SpirvNet.Spirv.Ops.TypeDeclaration
         public override ID? ResultID => Result;
 
         public ID Result;
-        public LiteralString OpaqueType;
+        public LiteralString TheNameOfTheOpaqueType;
 
         #region Code
-        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(Result) + ", " + StrOf(OpaqueType) + ")";
-        public override string ArgString => "OpaqueType: " + StrOf(OpaqueType);
+        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(Result) + ", " + StrOf(TheNameOfTheOpaqueType) + ")";
+        public override string ArgString => "TheNameOfTheOpaqueType: " + StrOf(TheNameOfTheOpaqueType);
 
         protected override void FromCode(uint[] codes, int start)
         {
             System.Diagnostics.Debug.Assert((codes[start] & 0x0000FFFF) == (uint)OpCode.TypeOpaque);
             var i = start + 1;
             Result = new ID(codes[i++]);
-            OpaqueType = LiteralString.FromCode(codes, ref i);
+            TheNameOfTheOpaqueType = LiteralString.FromCode(codes, ref i);
         }
 
         protected override void WriteCode(List<uint> code)
         {
             code.Add(Result.Value);
-            OpaqueType.WriteCode(code);
+            TheNameOfTheOpaqueType.WriteCode(code);
         }
 
         public override IEnumerable<ID> AllIDs

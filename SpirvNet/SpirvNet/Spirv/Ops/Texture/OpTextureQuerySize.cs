@@ -10,7 +10,16 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.Texture
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpTextureQuerySize
+    /// 
+    /// Query the dimensions of the texture for Sampler, with no level of detail.
+    /// 
+    /// Result Type must be an integer type scalar or vector.  The number of components must be
+    /// 1 for Buffer Dimensionality,
+    /// 2 for 2D and Rect Dimensionalities,
+    /// plus 1 more if the sampler type is arrayed. This vector is filled in with (width [, height] [, elements]) where elements is the number of layers in a texture array.
+    /// 
+    /// Sampler must be an object of a type made by OpTypeSampler. Sampler must have a type with Dimensionality of Rect or Buffer, or be multisampled 2D. Sampler cannot have a texture with levels of detail; there is no implicit level-of-detail consumed by this instruction. See OpTextureQuerySizeLod for querying textures having level of detail.
     /// </summary>
     [DependsOn(LanguageCapability.Shader)]
     public sealed class OpTextureQuerySize : TextureInstruction

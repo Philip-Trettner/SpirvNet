@@ -10,7 +10,9 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.FlowControl
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpPhi
+    /// 
+    /// The SSA phi function.  Operands are pairs (&lt;id&gt; of variable, &lt;id&gt; of parent block).  All variables must have a type matching Result Type.
     /// </summary>
     public sealed class OpPhi : FlowControlInstruction
     {
@@ -21,11 +23,11 @@ namespace SpirvNet.Spirv.Ops.FlowControl
 
         public ID ResultType;
         public ID Result;
-        public ID[] IDs = { };
+        public ID[] Operands = { };
 
         #region Code
-        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(ResultType) + ", " + StrOf(Result) + ", " + StrOf(IDs) + ")";
-        public override string ArgString => "IDs: " + StrOf(IDs);
+        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(ResultType) + ", " + StrOf(Result) + ", " + StrOf(Operands) + ")";
+        public override string ArgString => "Operands: " + StrOf(Operands);
 
         protected override void FromCode(uint[] codes, int start)
         {
@@ -34,17 +36,17 @@ namespace SpirvNet.Spirv.Ops.FlowControl
             ResultType = new ID(codes[i++]);
             Result = new ID(codes[i++]);
             var length = WordCount - (i - start);
-            IDs = new ID[length];
+            Operands = new ID[length];
             for (var k = 0; k < length; ++k)
-                IDs[k] = new ID(codes[i++]);
+                Operands[k] = new ID(codes[i++]);
         }
 
         protected override void WriteCode(List<uint> code)
         {
             code.Add(ResultType.Value);
             code.Add(Result.Value);
-            if (IDs != null)
-                foreach (var val in IDs)
+            if (Operands != null)
+                foreach (var val in Operands)
                     code.Add(val.Value);
         }
 
@@ -54,8 +56,8 @@ namespace SpirvNet.Spirv.Ops.FlowControl
             {
                 yield return ResultType;
                 yield return Result;
-                if (IDs != null)
-                    foreach (var id in IDs)
+                if (Operands != null)
+                    foreach (var id in Operands)
                         yield return id;
             }
         }

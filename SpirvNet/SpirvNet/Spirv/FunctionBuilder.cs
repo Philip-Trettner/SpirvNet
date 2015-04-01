@@ -90,7 +90,7 @@ namespace SpirvNet.Spirv
             {
                 Result = FunctionType.TypeID,
                 ReturnType = returnType.TypeID,
-                ParameterTypes = opParameters.Select(op => op.ResultType).ToArray()
+                Parameters = opParameters.Select(op => op.ResultType).ToArray()
             };
 
             OpFunction = new OpFunction

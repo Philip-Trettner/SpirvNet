@@ -10,7 +10,9 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.Annotation
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpDecorationGroup
+    /// 
+    /// A collector of decorations from OpDecorate instructions. All such instructions must precede this instruction. Subsequent OpGroupDecorate and OpGroupMemberDecorate instructions can consume the Result &lt;id&gt; to apply multiple decorations to multiple target &lt;id&gt;s. Those are the only instructions allowed to consume the Result &lt;id&gt;.
     /// </summary>
     public sealed class OpDecorationGroup : AnnotationInstruction
     {

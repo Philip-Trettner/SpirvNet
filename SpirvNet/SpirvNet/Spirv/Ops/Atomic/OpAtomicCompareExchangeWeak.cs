@@ -10,7 +10,20 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.Atomic
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpAtomicCompareExchangeWeak
+    /// 
+    /// Attempts to do the following:
+    /// 
+    /// Perform the following steps atomically with respect to any other atomic accesses within Scope to the same location: 
+    /// 1) load through Pointer to get an Original Value,
+    /// 2) get a New Value by selecting Value if Original Value equals Comparator or selecting Original Value otherwise, and
+    /// 3) store the New Value back through Pointer.
+    /// 
+    /// The instruction&#8217;s result is the Original Value.
+    /// 
+    /// Result Type, the type of Value, and the type pointed to by Pointer must all be same type. This type must also match the type of Comparator.
+    /// 
+    /// TBD. What is the result if the operation fails?
     /// </summary>
     public sealed class OpAtomicCompareExchangeWeak : AtomicInstruction
     {

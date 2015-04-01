@@ -10,7 +10,9 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.Function
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpFunctionEnd
+    /// 
+    /// Last instruction of a function definition.
     /// </summary>
     public sealed class OpFunctionEnd : FunctionInstruction
     {

@@ -10,7 +10,13 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.FlowControl
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpLoopMerge
+    /// 
+    /// Declare and control a structured control-flow loop construct.
+    /// 
+    /// Label is the label of the merge block for this structured loop construct.
+    /// 
+    /// See Structured Control Flow for more detail.
     /// </summary>
     public sealed class OpLoopMerge : FlowControlInstruction
     {

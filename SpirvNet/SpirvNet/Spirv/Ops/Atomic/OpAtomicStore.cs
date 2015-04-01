@@ -10,7 +10,11 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.Atomic
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpAtomicStore
+    /// 
+    /// Atomically store through Pointer using the given Semantics. All subparts of Value will be written atomically with respect to all other atomic accesses to it within Scope.
+    /// 
+    /// The type pointed to by Pointer must be the same type as the type of Value.
     /// </summary>
     public sealed class OpAtomicStore : AtomicInstruction
     {

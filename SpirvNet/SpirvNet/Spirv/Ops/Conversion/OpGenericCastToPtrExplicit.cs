@@ -10,7 +10,13 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.Conversion
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpGenericCastToPtrExplicit
+    /// 
+    /// Attempts to explicitly convert Source pointer to storage storage-class pointer value. Source pointer must point to Generic. If the cast cast fails, the instruction returns an OpConstantNullPointer in storage Storage Class. 
+    /// 
+    /// Result Type must be a pointer type pointing to storage Storage Class. storage can be one of the following literal values: WorkgroupLocal, WorkgroupGlobal or Private.
+    /// 
+    /// Result Type and Source pointer must point to the same type.
     /// </summary>
     [DependsOn(LanguageCapability.Kernel)]
     public sealed class OpGenericCastToPtrExplicit : ConversionInstruction
@@ -23,11 +29,11 @@ namespace SpirvNet.Spirv.Ops.Conversion
         public ID ResultType;
         public ID Result;
         public ID SourcePointer;
-        public StorageClass StorageClass;
+        public StorageClass Storage;
 
         #region Code
-        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(ResultType) + ", " + StrOf(Result) + ", " + StrOf(SourcePointer) + ", " + StrOf(StorageClass) + ")";
-        public override string ArgString => "SourcePointer: " + StrOf(SourcePointer) + ", " + "StorageClass: " + StrOf(StorageClass);
+        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(ResultType) + ", " + StrOf(Result) + ", " + StrOf(SourcePointer) + ", " + StrOf(Storage) + ")";
+        public override string ArgString => "SourcePointer: " + StrOf(SourcePointer) + ", " + "Storage: " + StrOf(Storage);
 
         protected override void FromCode(uint[] codes, int start)
         {
@@ -36,7 +42,7 @@ namespace SpirvNet.Spirv.Ops.Conversion
             ResultType = new ID(codes[i++]);
             Result = new ID(codes[i++]);
             SourcePointer = new ID(codes[i++]);
-            StorageClass = (StorageClass)codes[i++];
+            Storage = (StorageClass)codes[i++];
         }
 
         protected override void WriteCode(List<uint> code)
@@ -44,7 +50,7 @@ namespace SpirvNet.Spirv.Ops.Conversion
             code.Add(ResultType.Value);
             code.Add(Result.Value);
             code.Add(SourcePointer.Value);
-            code.Add((uint)StorageClass);
+            code.Add((uint)Storage);
         }
 
         public override IEnumerable<ID> AllIDs

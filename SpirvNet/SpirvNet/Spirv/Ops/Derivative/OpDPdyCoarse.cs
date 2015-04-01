@@ -10,7 +10,13 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.Derivative
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpDPdyCoarse
+    /// 
+    /// Result is the partial derivative of P with respect to the window y coordinate. Will use local differencing based on the value of P for the current fragment&#8217;s neighbors, and will possibly, but not necessarily, include the value of P for the current fragment. That is, over a given area, the implementation can compute y derivatives in fewer unique locations than would be allowed for OpDPdyFine.
+    /// 
+    /// P is the value to take the derivative of.
+    /// 
+    /// Result Type must be the same as the type of P. This type must be a floating-point scalar or floating-point vector.
     /// </summary>
     [DependsOn(LanguageCapability.Shader)]
     public sealed class OpDPdyCoarse : DerivativeInstruction

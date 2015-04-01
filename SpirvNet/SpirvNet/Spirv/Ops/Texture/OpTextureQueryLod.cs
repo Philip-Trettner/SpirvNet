@@ -10,7 +10,23 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.Texture
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpTextureQueryLod
+    /// 
+    /// Query the mipmap level and the level of detail for a hypothetical sampling of Sampler at Coordinate using an implicit level of detail.
+    /// 
+    /// Result Type must be a two-component floating-point type vector.
+    /// The first component of the result will contain the mipmap array layer.
+    /// The second component of the result will contain the implicit level of detail relative to the base level.
+    /// 
+    /// TBD: Does this need the GLSL pseudo code for computing array layer and LoD?
+    /// 
+    /// Sampler must be an object of a type made by OpTypeSampler. Sampler must have a type with Dimensionality of 1D, 2D, 3D, or Cube.
+    /// 
+    /// Coordinate is a floating-point scalar or vector containing (u[, v] &#8230; [, array layer]) as needed by the definiton of Sampler.
+    /// 
+    /// If called on an incomplete texture, the results are undefined.
+    /// 
+    /// This instruction is only allowed under the Fragment Execution Model. In addition, it consumes an implicit derivative that can be affected by code motion.
     /// </summary>
     [DependsOn(LanguageCapability.Shader)]
     public sealed class OpTextureQueryLod : TextureInstruction

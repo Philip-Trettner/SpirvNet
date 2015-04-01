@@ -10,7 +10,13 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.Derivative
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpFwidthCoarse
+    /// 
+    /// Result is the same as computing the sum of the absolute values of OpDPdxCoarse and OpDPdyCoarse on P.
+    /// 
+    /// P is the value to take the derivative of.
+    /// 
+    /// Result Type must be the same as the type of P. This type must be a floating-point scalar or floating-point vector.
     /// </summary>
     [DependsOn(LanguageCapability.Shader)]
     public sealed class OpFwidthCoarse : DerivativeInstruction

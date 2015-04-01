@@ -10,7 +10,19 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.Pipe
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpGroupReserveWritePipePackets
+    /// 
+    /// Reserve num_packets entries for writing to the pipe object specified by p at group level. Returns a valid reservation ID if the reservation is successful.
+    /// 
+    /// The reserved pipe entries are referred to by indices that go from 0 &#8230; num_packets - 1.
+    /// 
+    /// Scope must be the Workgroup or Subgroup Execution Scope.
+    /// 
+    /// p must be a OpTypePipe with WriteOnly Access Qualifier.
+    /// 
+    /// num_packets must be a 32-bits OpTypeInt which is treated as unsigned value.
+    /// 
+    /// Result Type must be a OpTypeReserveId.
     /// </summary>
     [DependsOn(LanguageCapability.Kernel)]
     public sealed class OpGroupReserveWritePipePackets : PipeInstruction
@@ -24,11 +36,11 @@ namespace SpirvNet.Spirv.Ops.Pipe
         public ID Result;
         public ExecutionScope Scope;
         public ID P;
-        public ID NumPackets;
+        public ID Num_packets;
 
         #region Code
-        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(ResultType) + ", " + StrOf(Result) + ", " + StrOf(Scope) + ", " + StrOf(P) + ", " + StrOf(NumPackets) + ")";
-        public override string ArgString => "Scope: " + StrOf(Scope) + ", " + "P: " + StrOf(P) + ", " + "NumPackets: " + StrOf(NumPackets);
+        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(ResultType) + ", " + StrOf(Result) + ", " + StrOf(Scope) + ", " + StrOf(P) + ", " + StrOf(Num_packets) + ")";
+        public override string ArgString => "Scope: " + StrOf(Scope) + ", " + "P: " + StrOf(P) + ", " + "Num_packets: " + StrOf(Num_packets);
 
         protected override void FromCode(uint[] codes, int start)
         {
@@ -38,7 +50,7 @@ namespace SpirvNet.Spirv.Ops.Pipe
             Result = new ID(codes[i++]);
             Scope = (ExecutionScope)codes[i++];
             P = new ID(codes[i++]);
-            NumPackets = new ID(codes[i++]);
+            Num_packets = new ID(codes[i++]);
         }
 
         protected override void WriteCode(List<uint> code)
@@ -47,7 +59,7 @@ namespace SpirvNet.Spirv.Ops.Pipe
             code.Add(Result.Value);
             code.Add((uint)Scope);
             code.Add(P.Value);
-            code.Add(NumPackets.Value);
+            code.Add(Num_packets.Value);
         }
 
         public override IEnumerable<ID> AllIDs
@@ -57,7 +69,7 @@ namespace SpirvNet.Spirv.Ops.Pipe
                 yield return ResultType;
                 yield return Result;
                 yield return P;
-                yield return NumPackets;
+                yield return Num_packets;
             }
         }
         #endregion

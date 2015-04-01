@@ -10,7 +10,15 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.ConstantCreation
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpSpecConstantFalse
+    /// 
+    /// Declare a Boolean-type scalar specialization constant with a default value of false.
+    /// 
+    /// This instruction can be specialized to become either an OpConstantTrue or OpConstantFalse instruction.
+    /// 
+    /// Result Type must be the scalar Boolean type.
+    /// 
+    /// See Specialization.
     /// </summary>
     [DependsOn(LanguageCapability.Shader)]
     public sealed class OpSpecConstantFalse : ConstantCreationInstruction

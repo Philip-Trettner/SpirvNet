@@ -10,7 +10,13 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.Debug
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpName
+    /// 
+    /// Name a Result &lt;id&gt;. This has no semantic impact and can safely be removed from a module.
+    /// 
+    /// Target is the Result &lt;id&gt; to name. It can be the Result &lt;id&gt; of any other instruction; a variable, function, type, intermediate result, etc.
+    /// 
+    /// Name is the string to name &lt;id&gt; with.
     /// </summary>
     public sealed class OpName : DebugInstruction
     {

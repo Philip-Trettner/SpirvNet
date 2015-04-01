@@ -10,7 +10,15 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.TypeDeclaration
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpTypeFunction
+    /// 
+    /// Declare a new function type.  OpFunction will use this to declare the return type and parameter types of a function.
+    /// 
+    /// Return Type is the type of the return value of functions of this type. If the function has no return value, Return Type should be from OpTypeVoid.
+    /// 
+    /// Parameter N Type is the type &lt;id&gt; of the type of parameter N.
+    /// 
+    /// Result &lt;id&gt; is the &lt;id&gt; of the new function type.
     /// </summary>
     public sealed class OpTypeFunction : TypeDeclarationInstruction
     {
@@ -20,11 +28,11 @@ namespace SpirvNet.Spirv.Ops.TypeDeclaration
 
         public ID Result;
         public ID ReturnType;
-        public ID[] ParameterTypes = { };
+        public ID[] Parameters = { };
 
         #region Code
-        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(Result) + ", " + StrOf(ReturnType) + ", " + StrOf(ParameterTypes) + ")";
-        public override string ArgString => "ReturnType: " + StrOf(ReturnType) + ", " + "ParameterTypes: " + StrOf(ParameterTypes);
+        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(Result) + ", " + StrOf(ReturnType) + ", " + StrOf(Parameters) + ")";
+        public override string ArgString => "ReturnType: " + StrOf(ReturnType) + ", " + "Parameters: " + StrOf(Parameters);
 
         protected override void FromCode(uint[] codes, int start)
         {
@@ -33,17 +41,17 @@ namespace SpirvNet.Spirv.Ops.TypeDeclaration
             Result = new ID(codes[i++]);
             ReturnType = new ID(codes[i++]);
             var length = WordCount - (i - start);
-            ParameterTypes = new ID[length];
+            Parameters = new ID[length];
             for (var k = 0; k < length; ++k)
-                ParameterTypes[k] = new ID(codes[i++]);
+                Parameters[k] = new ID(codes[i++]);
         }
 
         protected override void WriteCode(List<uint> code)
         {
             code.Add(Result.Value);
             code.Add(ReturnType.Value);
-            if (ParameterTypes != null)
-                foreach (var val in ParameterTypes)
+            if (Parameters != null)
+                foreach (var val in Parameters)
                     code.Add(val.Value);
         }
 
@@ -53,8 +61,8 @@ namespace SpirvNet.Spirv.Ops.TypeDeclaration
             {
                 yield return Result;
                 yield return ReturnType;
-                if (ParameterTypes != null)
-                    foreach (var id in ParameterTypes)
+                if (Parameters != null)
+                    foreach (var id in Parameters)
                         yield return id;
             }
         }

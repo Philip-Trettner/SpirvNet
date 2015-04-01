@@ -10,7 +10,13 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.FlowControl
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpReturnValue
+    /// 
+    /// Return a value from a function.
+    /// 
+    /// Value is the value returned, by copy, and must match the Return Type operand of the OpTypeFunction type of the OpFunction body this return instruction is in.
+    /// 
+    /// This instruction must be the last instruction in a block.
     /// </summary>
     public sealed class OpReturnValue : FlowControlInstruction
     {

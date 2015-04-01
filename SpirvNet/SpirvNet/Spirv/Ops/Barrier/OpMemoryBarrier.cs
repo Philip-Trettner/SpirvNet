@@ -10,7 +10,13 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.Barrier
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpMemoryBarrier
+    /// 
+    /// Control the order that memory accesses are observed.
+    /// 
+    /// Ensures that memory accesses issued before this instruction will be observed before memory accesses issued after this instruction. This control is ensured only for memory accesses issued by this invocation and observed by another invocation executing within Scope.
+    /// 
+    /// Semantics declares what kind of memory is being controlled and what kind of control to apply.
     /// </summary>
     public sealed class OpMemoryBarrier : BarrierInstruction
     {

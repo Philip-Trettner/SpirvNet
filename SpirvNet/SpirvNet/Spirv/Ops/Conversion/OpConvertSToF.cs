@@ -10,7 +10,11 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.Conversion
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpConvertSToF
+    /// 
+    /// Convert (value preserving) Signed Value from signed integer to floating point.
+    /// 
+    ///  Results are computed per component. The operand&#8217;s type and Result Type must     have the same number of components.
     /// </summary>
     public sealed class OpConvertSToF : ConversionInstruction
     {

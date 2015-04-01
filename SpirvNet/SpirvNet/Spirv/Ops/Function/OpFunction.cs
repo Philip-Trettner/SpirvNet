@@ -10,7 +10,13 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.Function
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpFunction
+    /// 
+    /// Define a function body.  This instruction must be immediately followed by one OpFunctionParameter instruction per each formal parameter of this function. This function&#8217;s body will terminate with the next OpFunctionEnd instruction.
+    /// 
+    /// Function Type is the result of an OpTypeFunction, which declares the types of the return value and parameters of the function.
+    /// 
+    /// Result Type must be the same as the Return Type declared in Function Type.
     /// </summary>
     public sealed class OpFunction : FunctionInstruction
     {

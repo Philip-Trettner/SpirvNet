@@ -9,7 +9,7 @@ using SpirvNet.Spirv;
 using SpirvNet.Spirv.Enums;
 using SpirvNet.Spirv.Ops;
 using SpirvNet.Spirv.Ops.Debug;
-using SpirvNet.Spirv.Ops.Misc;
+using SpirvNet.Spirv.Ops.Miscellaneous;
 using SpirvNet.Spirv.Ops.ModeSetting;
 using SpirvNet.Spirv.Ops.Pipe;
 

@@ -10,7 +10,9 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.Arithmetic
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpSNegate
+    /// 
+    /// Signed-integer subtract of Operand from zero. The operand&#8217;s type and Result Type must both be scalars or vectors of integer        types with the same number of components and the same component widths. Works with any mixture of signedness.
     /// </summary>
     public sealed class OpSNegate : ArithmeticInstruction
     {

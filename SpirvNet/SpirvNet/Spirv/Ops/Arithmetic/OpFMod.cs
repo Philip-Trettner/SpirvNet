@@ -10,7 +10,9 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.Arithmetic
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpFMod
+    /// 
+    /// Floating-point modulo operation of Operand 1 modulo Operand 2.  The sign of a non-0 result comes from Operand 2. The operands' types and Result Type must  all be scalars or vectors of floating-point types with the same number of components and the same component widths. The resulting value is undefined if Operand 2 is 0.
     /// </summary>
     public sealed class OpFMod : ArithmeticInstruction
     {

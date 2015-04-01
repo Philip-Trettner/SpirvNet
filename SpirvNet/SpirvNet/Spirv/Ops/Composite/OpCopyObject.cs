@@ -10,7 +10,11 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.Composite
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpCopyObject
+    /// 
+    /// Make a copy of Operand. There are no dereferences involved.
+    /// 
+    /// Result Type must match Operand type.  There are no other restrictions on the types.
     /// </summary>
     public sealed class OpCopyObject : CompositeInstruction
     {

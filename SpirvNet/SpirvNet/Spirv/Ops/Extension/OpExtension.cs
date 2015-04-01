@@ -10,7 +10,11 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.Extension
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpExtension
+    /// 
+    /// Declare use of an extension to SPIR-V. This allows validation of additional instructions, tokens, semantics, etc.
+    /// 
+    /// Name is the extension&#8217;s name string.
     /// </summary>
     public sealed class OpExtension : ExtensionInstruction
     {

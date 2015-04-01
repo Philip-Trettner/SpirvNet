@@ -10,7 +10,18 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.TypeDeclaration
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpTypeInt
+    /// 
+    /// Declare a new integer type.
+    /// 
+    /// Width specifies how many bits wide the type is. The bit pattern of a signed integer value is two&#8217;s complement.
+    /// 
+    /// Signedness specifies whether there are signed semantics to preserve or validate.
+    /// 0 indicates unsigned, or no signedness semantics
+    /// 1 indicates signed semantics.
+    /// In all cases, the type of operation of an instruction comes from the instruction&#8217;s opcode, not the signedness of the operands.
+    /// 
+    /// Result &lt;id&gt; is the &lt;id&gt; of the new integer type.
     /// </summary>
     public sealed class OpTypeInt : TypeDeclarationInstruction
     {

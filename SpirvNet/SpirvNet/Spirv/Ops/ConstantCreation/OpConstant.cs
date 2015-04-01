@@ -10,7 +10,13 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.ConstantCreation
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpConstant
+    /// 
+    /// Declare a new Integer-type or Floating-point-type scalar constant.
+    /// 
+    /// Value is the bit pattern for the constant. Types 32 bits wide or smaller take one word. Larger types take multiple words, with low-order words appearing first.
+    /// 
+    /// Result Type must be a scalar Integer type or Floating-point type.
     /// </summary>
     public sealed class OpConstant : ConstantCreationInstruction
     {

@@ -10,7 +10,15 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.Arithmetic
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpMatrixTimesScalar
+    /// 
+    /// Scale a floating-point matrix.
+    /// 
+    /// Matrix must have a floating-point matrix type.
+    /// 
+    /// Scalar must have a floating-point scalar type.
+    /// 
+    /// Result Type must be the same as the type of Matrix.
     /// </summary>
     [DependsOn(LanguageCapability.Matrix)]
     public sealed class OpMatrixTimesScalar : ArithmeticInstruction

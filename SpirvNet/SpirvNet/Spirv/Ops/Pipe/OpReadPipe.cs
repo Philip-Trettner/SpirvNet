@@ -10,7 +10,13 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.Pipe
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpReadPipe
+    /// 
+    /// Read a packet from the pipe object specified by p into ptr. Returns 0 if the operation is successfull and a negative value if the pipe is empty.
+    /// 
+    /// p must be a OpTypePipe with ReadOnly Access Qualifier.
+    /// 
+    /// ptr must be a OpTypePointer with the same data type as p and a Generic storage class.
     /// </summary>
     [DependsOn(LanguageCapability.Kernel)]
     public sealed class OpReadPipe : PipeInstruction

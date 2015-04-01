@@ -10,7 +10,11 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.TypeDeclaration
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpTypeReserveId
+    /// 
+    /// Declare an OpenCL reservation id object.
+    /// 
+    /// Result &lt;id&gt; is the &lt;id&gt; of the new reservation type.
     /// </summary>
     [DependsOn(LanguageCapability.Kernel)]
     public sealed class OpTypeReserveId : TypeDeclarationInstruction

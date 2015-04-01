@@ -10,7 +10,11 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.TypeDeclaration
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpTypeBool
+    /// 
+    /// Declare the Boolean type.  Values of this type can only be either true or false. There is no physical size or bit pattern defined for these values.  If they are stored (in conjuction with OpVariable), they can only be used with logical addressing operations, not physical, and only with non-externally visible shader storage classes: WorkgroupLocal, WorkgroupGlobal, PrivateGlobal, and Function.
+    /// 
+    /// Result &lt;id&gt; is the &lt;id&gt; of the new Boolean type.
     /// </summary>
     public sealed class OpTypeBool : TypeDeclarationInstruction
     {

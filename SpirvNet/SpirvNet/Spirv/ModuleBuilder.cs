@@ -152,7 +152,7 @@ namespace SpirvNet.Spirv
             => opStrings.Add(new OpString
             {
                 Result = resultID,
-                Name = { Value = name }
+                String = { Value = name }
             });
 
         /// <summary>

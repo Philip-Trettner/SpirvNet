@@ -15,7 +15,7 @@ using SpirvNet.Spirv.Ops.ConstantCreation;
 using SpirvNet.Spirv.Ops.Conversion;
 using SpirvNet.Spirv.Ops.FlowControl;
 using SpirvNet.Spirv.Ops.Function;
-using SpirvNet.Spirv.Ops.RelationalLogical;
+using SpirvNet.Spirv.Ops.RelationalAndLogical;
 using Instruction = SpirvNet.Spirv.Instruction;
 
 namespace SpirvNet.DotNet.SSA
@@ -1145,7 +1145,7 @@ namespace SpirvNet.DotNet.SSA
                     {
                         Result = StackLocationsIncoming[i].ID,
                         ResultType = StackLocationsIncoming[i].Type.TypeID,
-                        IDs = Incoming.SelectMany(s => new[] { s.StackLocations[i].ID, s.Block.BlockStart.BlockID }).ToArray()
+                        Operands = Incoming.SelectMany(s => new[] { s.StackLocations[i].ID, s.Block.BlockStart.BlockID }).ToArray()
                     });
 
             for (var i = 0; i < Frame.VarCount; ++i)
@@ -1155,7 +1155,7 @@ namespace SpirvNet.DotNet.SSA
                     {
                         Result = LocalVarsIncoming[i].ID,
                         ResultType = LocalVarsIncoming[i].Type.TypeID,
-                        IDs = Incoming.SelectMany(s => new[] { s.LocalVars[i].ID, s.Block.BlockStart.BlockID }).ToArray()
+                        Operands = Incoming.SelectMany(s => new[] { s.LocalVars[i].ID, s.Block.BlockStart.BlockID }).ToArray()
                     });
 
             if (Vertex.IsBranchTarget || IsEntryPoint)

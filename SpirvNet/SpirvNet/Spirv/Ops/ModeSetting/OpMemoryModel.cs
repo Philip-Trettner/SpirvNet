@@ -10,7 +10,13 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.ModeSetting
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpMemoryModel
+    /// 
+    /// Set addressing model and memory model for the entire module.
+    /// 
+    /// Addressing Model selects the module&#8217;s addressing model, see Addressing Model.
+    /// 
+    /// Memory Model selects the module&#8217;s memory model, see Memory Model.
     /// </summary>
     public sealed class OpMemoryModel : ModeSettingInstruction
     {

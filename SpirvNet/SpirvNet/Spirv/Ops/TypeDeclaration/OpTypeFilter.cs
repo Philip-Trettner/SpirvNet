@@ -10,7 +10,9 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.TypeDeclaration
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpTypeFilter
+    /// 
+    /// Declare the filter type. Consumed by OpSampler.This type is opaque: values of this type have no defined physical size or bit pattern.
     /// </summary>
     public sealed class OpTypeFilter : TypeDeclarationInstruction
     {

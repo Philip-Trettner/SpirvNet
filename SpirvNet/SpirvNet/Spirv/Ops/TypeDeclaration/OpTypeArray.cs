@@ -10,7 +10,15 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.TypeDeclaration
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpTypeArray
+    /// 
+    /// Declare a new array type: a dynamically-indexable ordered aggregate of elements all having the same type.
+    /// 
+    /// Element Type is the type of each element in the array.
+    /// 
+    /// Length is the number of elements in the array.  It must be at least 1. Length must come from a constant instruction of an Integer-type scalar whose value is at least 1.
+    /// 
+    /// Result &lt;id&gt; is the &lt;id&gt; of the new array type.
     /// </summary>
     public sealed class OpTypeArray : TypeDeclarationInstruction
     {

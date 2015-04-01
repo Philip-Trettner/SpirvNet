@@ -10,7 +10,15 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.Memory
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpImagePointer
+    /// 
+    /// Form a pointer to a texel of an image.  Use of such a pointer is limited to atomic operations.
+    /// 
+    /// Image is a pointer to a variable of type of OpTypeSampler.
+    /// 
+    /// Coordinate and Sample specify which texel and sample within the image to form an address of.
+    /// 
+    /// TBD.  This requires an Image storage class to be added.
     /// </summary>
     public sealed class OpImagePointer : MemoryInstruction
     {

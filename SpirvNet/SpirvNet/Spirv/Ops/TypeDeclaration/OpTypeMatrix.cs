@@ -10,8 +10,17 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.TypeDeclaration
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpTypeMatrix
+    /// 
+    /// Declare a new matrix type.
+    /// 
+    /// Column type is the type of each column in the matrix.  It must be vector type.
+    /// 
+    /// Column count is the number of columns in the new matrix type. It must be at least 2.
+    /// 
+    /// Result &lt;id&gt; is the &lt;id&gt; of the new matrix type.
     /// </summary>
+    [DependsOn(LanguageCapability.Matrix)]
     public sealed class OpTypeMatrix : TypeDeclarationInstruction
     {
         public override bool IsTypeDeclaration => true;

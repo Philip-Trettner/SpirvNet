@@ -10,7 +10,13 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.Arithmetic
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpMatrixTimesMatrix
+    /// 
+    /// Linear-algebraic multiply of LeftMatrix X RightMatrix.
+    /// 
+    /// LeftMatrix and RightMatrix must both have a floating-point matrix type. The number of columns of LeftMatrix must equal the number of rows of RightMatrix.
+    /// 
+    /// Result Type must be a matrix whose number of columns is the number of columns in RightMatrix and whose number of rows is the number of rows of LeftMatrix.
     /// </summary>
     [DependsOn(LanguageCapability.Matrix)]
     public sealed class OpMatrixTimesMatrix : ArithmeticInstruction

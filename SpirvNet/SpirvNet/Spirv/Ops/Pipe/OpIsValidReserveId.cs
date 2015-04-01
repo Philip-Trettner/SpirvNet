@@ -10,7 +10,13 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.Pipe
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpIsValidReserveId
+    /// 
+    /// Return true if reserve_id is a valid reservation ID and false otherwise.
+    /// 
+    /// reserve_id must be a OpTypeReserveId.
+    /// 
+    /// Result Type must be a OpTypeBool.
     /// </summary>
     [DependsOn(LanguageCapability.Kernel)]
     public sealed class OpIsValidReserveId : PipeInstruction
@@ -22,11 +28,11 @@ namespace SpirvNet.Spirv.Ops.Pipe
 
         public ID ResultType;
         public ID Result;
-        public ID ReserveId;
+        public ID Reserve_id;
 
         #region Code
-        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(ResultType) + ", " + StrOf(Result) + ", " + StrOf(ReserveId) + ")";
-        public override string ArgString => "ReserveId: " + StrOf(ReserveId);
+        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(ResultType) + ", " + StrOf(Result) + ", " + StrOf(Reserve_id) + ")";
+        public override string ArgString => "Reserve_id: " + StrOf(Reserve_id);
 
         protected override void FromCode(uint[] codes, int start)
         {
@@ -34,14 +40,14 @@ namespace SpirvNet.Spirv.Ops.Pipe
             var i = start + 1;
             ResultType = new ID(codes[i++]);
             Result = new ID(codes[i++]);
-            ReserveId = new ID(codes[i++]);
+            Reserve_id = new ID(codes[i++]);
         }
 
         protected override void WriteCode(List<uint> code)
         {
             code.Add(ResultType.Value);
             code.Add(Result.Value);
-            code.Add(ReserveId.Value);
+            code.Add(Reserve_id.Value);
         }
 
         public override IEnumerable<ID> AllIDs
@@ -50,7 +56,7 @@ namespace SpirvNet.Spirv.Ops.Pipe
             {
                 yield return ResultType;
                 yield return Result;
-                yield return ReserveId;
+                yield return Reserve_id;
             }
         }
         #endregion

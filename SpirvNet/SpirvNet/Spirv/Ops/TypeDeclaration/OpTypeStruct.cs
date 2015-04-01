@@ -10,7 +10,13 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.TypeDeclaration
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpTypeStruct
+    /// 
+    /// Declare a new structure type: an aggregate of heteregeneous members.
+    /// 
+    /// Member N type is the type of member N of the structure. The first member is member 0, the next is member 1, &#8230;
+    /// 
+    /// Result &lt;id&gt; is the &lt;id&gt; of the new structure type.
     /// </summary>
     public sealed class OpTypeStruct : TypeDeclarationInstruction
     {
@@ -19,11 +25,11 @@ namespace SpirvNet.Spirv.Ops.TypeDeclaration
         public override ID? ResultID => Result;
 
         public ID Result;
-        public ID[] MemberTypes = { };
+        public ID[] Members = { };
 
         #region Code
-        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(Result) + ", " + StrOf(MemberTypes) + ")";
-        public override string ArgString => "MemberTypes: " + StrOf(MemberTypes);
+        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(Result) + ", " + StrOf(Members) + ")";
+        public override string ArgString => "Members: " + StrOf(Members);
 
         protected override void FromCode(uint[] codes, int start)
         {
@@ -31,16 +37,16 @@ namespace SpirvNet.Spirv.Ops.TypeDeclaration
             var i = start + 1;
             Result = new ID(codes[i++]);
             var length = WordCount - (i - start);
-            MemberTypes = new ID[length];
+            Members = new ID[length];
             for (var k = 0; k < length; ++k)
-                MemberTypes[k] = new ID(codes[i++]);
+                Members[k] = new ID(codes[i++]);
         }
 
         protected override void WriteCode(List<uint> code)
         {
             code.Add(Result.Value);
-            if (MemberTypes != null)
-                foreach (var val in MemberTypes)
+            if (Members != null)
+                foreach (var val in Members)
                     code.Add(val.Value);
         }
 
@@ -49,8 +55,8 @@ namespace SpirvNet.Spirv.Ops.TypeDeclaration
             get
             {
                 yield return Result;
-                if (MemberTypes != null)
-                    foreach (var id in MemberTypes)
+                if (Members != null)
+                    foreach (var id in Members)
                         yield return id;
             }
         }

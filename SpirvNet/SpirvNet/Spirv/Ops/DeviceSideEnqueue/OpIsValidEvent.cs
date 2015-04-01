@@ -10,7 +10,13 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.DeviceSideEnqueue
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpIsValidEvent
+    /// 
+    /// Returns true if the event specified by event is a valid event, otherwise returns false.
+    /// 
+    /// event must be a OpTypeDeviceEvent
+    /// 
+    /// Result Type must be a OpTypeBool.
     /// </summary>
     [DependsOn(LanguageCapability.Kernel)]
     public sealed class OpIsValidEvent : DeviceSideEnqueueInstruction

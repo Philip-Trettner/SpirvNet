@@ -10,7 +10,13 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.Derivative
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpDPdxFine
+    /// 
+    /// Result is the partial derivative of P with respect to the window x coordinate.Will use local differencing based on the value of P for the current fragment and its immediate neighbor(s).
+    /// 
+    /// P is the value to take the derivative of.
+    /// 
+    /// Result Type must be the same as the type of P. This type must be a floating-point scalar or floating-point vector.
     /// </summary>
     [DependsOn(LanguageCapability.Shader)]
     public sealed class OpDPdxFine : DerivativeInstruction

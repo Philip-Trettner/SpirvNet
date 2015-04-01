@@ -10,7 +10,16 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.DeviceSideEnqueue
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpGetKernelWorkGroupSize
+    /// 
+    /// Returns the maximum work-group size that can be used to execute the function specified by Invoke on the device.
+    /// 
+    /// Invoke must be a OpTypeFunction with the following signature:
+    /// - Result Type must be OpTypeVoid.
+    /// - The first parameter must be OpTypePointer to 8 bits OpTypeInt.
+    /// - Optional list of parameters that must be OpTypePointer with WorkgroupLocal storage class.
+    /// 
+    /// Result Type must be a 32 bit OpTypeInt.
     /// </summary>
     [DependsOn(LanguageCapability.Kernel)]
     public sealed class OpGetKernelWorkGroupSize : DeviceSideEnqueueInstruction

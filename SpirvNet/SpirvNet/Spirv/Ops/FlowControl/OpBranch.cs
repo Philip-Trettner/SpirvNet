@@ -10,7 +10,13 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.FlowControl
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpBranch
+    /// 
+    /// Unconditional branch to Target Label.
+    /// 
+    /// Target Label must be the Result &lt;id&gt; of an OpLabel instruction in the current function.
+    /// 
+    /// This instruction must be the last instruction in a block.
     /// </summary>
     public sealed class OpBranch : FlowControlInstruction
     {

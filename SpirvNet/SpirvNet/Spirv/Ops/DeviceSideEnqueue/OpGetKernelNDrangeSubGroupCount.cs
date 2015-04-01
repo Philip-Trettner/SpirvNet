@@ -10,7 +10,18 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.DeviceSideEnqueue
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpGetKernelNDrangeSubGroupCount
+    /// 
+    /// Returns the number of subgroups in each workgroup of the dispatch (except for the last in cases where the global size does not divide cleanly into work-groups) given the combination of the passed NDRange descriptor specified by ND Range and the function specified by Invoke.
+    /// 
+    /// ND Range must be a OpTypeStruct created by OpBuildNDRange.
+    /// 
+    /// Invoke must be a OpTypeFunction with the following signature:
+    /// - Result Type must be OpTypeVoid.
+    /// - The first parameter must be OpTypePointer to 8 bits OpTypeInt.
+    /// - Optional list of parameters that must be OpTypePointer with WorkgroupLocal storage class.
+    /// 
+    /// Result Type must be a 32 bit OpTypeInt.
     /// </summary>
     [DependsOn(LanguageCapability.Kernel)]
     public sealed class OpGetKernelNDrangeSubGroupCount : DeviceSideEnqueueInstruction

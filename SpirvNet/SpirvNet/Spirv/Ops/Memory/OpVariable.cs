@@ -10,7 +10,15 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.Memory
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpVariable
+    /// 
+    /// Allocate an object in memory, resulting in a pointer to it, which can be used with OpLoad and OpStore.
+    /// 
+    /// Storage Class is the kind of memory holding the object.
+    /// 
+    /// Initializer is optional.  If Initializer is present, it will be the initial value of the variable&#8217;s memory content. Initializer must be an &lt;id&gt; from a constant instruction. Initializer must have the same type as the type pointed to by Result Type.
+    /// 
+    /// Result Type is a type from OpTypePointer, where the type pointed to is the type of object in memory.
     /// </summary>
     public sealed class OpVariable : MemoryInstruction
     {

@@ -10,7 +10,19 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.Texture
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpTextureSample
+    /// 
+    /// Sample a texture with an implicit level of detail.
+    /// 
+    /// Result Type&#8217;s component type must be the same as Sampled Type of Sampler&#8217;s type. Result Type must be scalar if the Sampler&#8217;s type sets depth-comparison, and must be a vector of four components if the Sampler&#8217;s type does not set depth-comparison.
+    /// 
+    /// Sampler must be an object of a type made by OpTypeSampler.
+    /// 
+    /// Coordinate is a floating-point scalar or vector containing (u[, v] &#8230; [, array layer] [, Dref]) as needed by the definiton of Sampler. It may be a vector larger than needed, but all unused components will appear after all used components.
+    /// 
+    /// Bias is an optional operand.  If present, it is used as a bias to the implicit level of detail.
+    /// 
+    /// This instruction is only allowed under the Fragment Execution Model. In addition, it consumes an implicit derivative that can be affected by code motion.
     /// </summary>
     [DependsOn(LanguageCapability.Shader)]
     public sealed class OpTextureSample : TextureInstruction

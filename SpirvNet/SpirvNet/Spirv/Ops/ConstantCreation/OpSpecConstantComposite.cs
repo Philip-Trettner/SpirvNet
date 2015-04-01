@@ -10,7 +10,17 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.ConstantCreation
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpSpecConstantComposite
+    /// 
+    /// Declare a new composite specialization constant.
+    /// 
+    /// Constituents will become members of a structure, or elements of an array, or components of a vector, or columns of a matrix. There must be exactly one Constituent for each top-level member/element/component/column of the result. The Constituents must appear in the order needed by the definition of the type of the result. The Constituents must be the &lt;id&gt; of other specialization constant or constant declarations.
+    /// 
+    /// This instruction will be specialized to an OpConstantComposite instruction.
+    /// 
+    /// Result Type must be a composite type, whose top-level members/elements/components/columns have the same type as the types of the operands.
+    /// 
+    /// See Specialization.
     /// </summary>
     [DependsOn(LanguageCapability.Shader)]
     public sealed class OpSpecConstantComposite : ConstantCreationInstruction

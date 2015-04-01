@@ -10,7 +10,15 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.Debug
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpMemberName
+    /// 
+    /// Name a member of a structure type. This has no semantic impact and can safely be removed from a module.
+    /// 
+    /// Type is the &lt;id&gt; from an OpTypeStruct instruction.
+    /// 
+    /// Member is the number of the member to name in the structure. The first member is member 0, the next is member 1, &#8230;
+    /// 
+    /// Name is the string to name the member with.
     /// </summary>
     public sealed class OpMemberName : DebugInstruction
     {

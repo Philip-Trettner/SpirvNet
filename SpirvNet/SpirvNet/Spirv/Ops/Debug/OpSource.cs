@@ -10,7 +10,11 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.Debug
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpSource
+    /// 
+    /// Document what source language this module was translated from. This has no semantic impact and can safely be removed from a module.
+    /// 
+    /// Version is the version of the source language.
     /// </summary>
     public sealed class OpSource : DebugInstruction
     {

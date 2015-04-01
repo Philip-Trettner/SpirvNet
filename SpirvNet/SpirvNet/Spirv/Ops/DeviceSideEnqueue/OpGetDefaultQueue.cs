@@ -10,7 +10,11 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.DeviceSideEnqueue
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpGetDefaultQueue
+    /// 
+    /// Returns the default device queue. If a default device queue has not been created, null queue object is returned using the OpConstantNullObject instruction.
+    /// 
+    /// Result Type must be a OpTypeQueue.
     /// </summary>
     [DependsOn(LanguageCapability.Kernel)]
     public sealed class OpGetDefaultQueue : DeviceSideEnqueueInstruction

@@ -10,7 +10,17 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.Composite
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpVectorShuffle
+    /// 
+    /// Select arbitrary components from two vectors to make a new vector.
+    /// 
+    /// Vector 1 and Vector 2 are logically concatenated, forming a single vector with Vector 1&#8217;s components appearing before Vector 2&#8217;s. The components of this logical vector are logically numbered with a single consecutive set of numbers from 0 to one less than the total number of components. These two vectors must be of the same component type, but do not have to have the same number of components.
+    /// 
+    /// Components are these logical numbers (see above), selecting which of the logically numbered components form the result. They can select the components in any order and can repeat components. The first component of the result is selected by the first Component operand,  the second component of the result is selected by the second Component operand, etc.
+    /// 
+    /// Result Type must be a vector of the same component type as the Vector operands' component type.  The number of components in Result Type must be the same as the number of Component operands.
+    /// 
+    /// Note: A vector &#8220;swizzle&#8221; can be done by using the vector for both Vector operands, or using an OpUndef for one of the Vector operands.
     /// </summary>
     public sealed class OpVectorShuffle : CompositeInstruction
     {

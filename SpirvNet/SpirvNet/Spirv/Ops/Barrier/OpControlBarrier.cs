@@ -10,7 +10,15 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.Barrier
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpControlBarrier
+    /// 
+    /// Wait for other invocations of this module to reach this same point of execution.
+    /// 
+    /// All invocations of this module within Scope must reach this point of execution before any will proceed beyond it.
+    /// 
+    /// This instruction is only guaranteed to work correctly if placed strictly within dynamically uniform control flow within Scope. This ensures that if any invocation executes it, all invocations will execute it. If placed elsewhere, an invocation may stall indefinitely.
+    /// 
+    /// It is only valid to use this instruction with Tessellation, Compute, or Kernel execution models.
     /// </summary>
     public sealed class OpControlBarrier : BarrierInstruction
     {

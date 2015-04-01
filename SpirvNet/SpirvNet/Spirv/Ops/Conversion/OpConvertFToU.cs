@@ -10,7 +10,11 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.Conversion
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpConvertFToU
+    /// 
+    /// Convert (value preserving) Float Value from floating point to unsigned integer, with round toward 0.0.
+    /// 
+    ///  Results are computed per component. The operand&#8217;s type and Result Type must     have the same number of components. Result Type cannot be a signed integer type.
     /// </summary>
     public sealed class OpConvertFToU : ConversionInstruction
     {

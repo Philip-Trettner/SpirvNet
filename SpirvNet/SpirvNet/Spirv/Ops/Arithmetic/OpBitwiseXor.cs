@@ -10,7 +10,11 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.Arithmetic
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpBitwiseXor
+    /// 
+    /// Result is 1 if exactly one of Operand 1 or Operand 2 is 1. Result is 0 if Operand 1 and Operand 2 have the same value.
+    /// 
+    ///  Results are computed per component, and within each component, per bit. The operands' types and Result Type must  all be scalars or vectors of integer        types with the same number of components and the same component widths. Works with any mixture of signedness.
     /// </summary>
     public sealed class OpBitwiseXor : ArithmeticInstruction
     {

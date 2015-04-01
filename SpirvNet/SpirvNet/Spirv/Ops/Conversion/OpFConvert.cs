@@ -10,7 +10,11 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.Conversion
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpFConvert
+    /// 
+    /// Convert (value preserving) the width of Float Value.
+    /// 
+    ///  Results are computed per component. The operand&#8217;s type and Result Type must     have the same number of components. The widths of the components of the operand and the Result Type must be different.
     /// </summary>
     public sealed class OpFConvert : ConversionInstruction
     {

@@ -10,7 +10,15 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.Group
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpGroupBroadcast
+    /// 
+    /// Broadcast a value for workitem identified by the local id to all work-items in the group.
+    /// 
+    /// Value and Result Type must be a 32 or 64 bits wise OpTypeInt  or a 16, 32 or 64 OpTypeFloat floating-point scalar datatype.
+    /// 
+    /// LocalId must be an integer datatype. It can be a scalar, or a vector with 2 components or a vector with 3 components. LocalId must be the same for all work-items in the group.
+    /// 
+    /// Scope must be the Workgroup or Subgroup Execution Scope.
     /// </summary>
     [DependsOn(LanguageCapability.Kernel)]
     public sealed class OpGroupBroadcast : GroupInstruction

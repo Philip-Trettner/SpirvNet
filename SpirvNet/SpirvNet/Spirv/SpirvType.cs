@@ -344,7 +344,7 @@ namespace SpirvNet.Spirv
                 case SpirvTypeEnum.Vector: return new OpTypeVector { Result = TypeID, ComponentType = ElementType.TypeID, ComponentCount = { Value = ElementCount } };
                 case SpirvTypeEnum.Matrix: return new OpTypeMatrix { Result = TypeID, ColumnType = ElementType.TypeID, ColumnCount = { Value = ElementCount } };
                 case SpirvTypeEnum.Array: throw new NotImplementedException("Array length is by-ID");
-                case SpirvTypeEnum.Structure: return new OpTypeStruct { Result = TypeID, MemberTypes = Members.Select(m => m.Type.TypeID).ToArray() };
+                case SpirvTypeEnum.Structure: return new OpTypeStruct { Result = TypeID, Members = Members.Select(m => m.Type.TypeID).ToArray() };
                 default:
                     throw new ArgumentOutOfRangeException();
             }

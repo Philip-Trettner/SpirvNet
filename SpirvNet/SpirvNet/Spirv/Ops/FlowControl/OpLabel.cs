@@ -10,7 +10,11 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.FlowControl
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpLabel
+    /// 
+    /// The block label instruction: Any reference to a block is through the Result &lt;id&gt; of its label.
+    /// 
+    /// Must be the first instruction of any block, and appears only as the first instruction of a block.
     /// </summary>
     public sealed class OpLabel : FlowControlInstruction
     {

@@ -32,7 +32,7 @@ namespace OpCodeGen
                     }
                     
                     // Name and Description
-                    var name = t.SelectToken("Name").ToString().Replace("Op", "").Trim();
+                    var name = t.SelectToken("Name").ToString().Substring("Op".Length).Trim();
                     var description = t.SelectToken("DescriptionPlain").ToString();
                     
                     var op = Op(name);
@@ -47,22 +47,33 @@ namespace OpCodeGen
                         {
                             var type = operand.SelectToken("Type").ToString();
                             var operandName = operand.SelectToken("Name").ToString();
-                            if (type == "ID")
-                                op.Fields.Add(Id(operandName));
-                            if (type == "Enum")
-                                op.Fields.Add(Typed(operandName));
-                            if (type == "LiteralNumber")
-                                op.Fields.Add(Nr(operandName));
-                            if (type == "LiteralString")
-                                op.Fields.Add(Str(operandName));
-                            if (type == "LiteralNumber[]")
-                                op.Fields.Add(NrArray(operandName));
-                            if (type == "ID[]")
-                                op.Fields.Add(IdArray(operandName));
-                            if (type == "ID?")
-                                op.Fields.Add(IdOpt(operandName));
-                            if (type == "Pair<LiteralNumber,ID>[]")
-                                op.Fields.Add(PairArray(Nr("Literal"), Id("Label"), operandName));
+                            switch (type)
+                            {
+                                case "ID":
+                                    op.Fields.Add(Id(operandName));
+                                    break;              
+                                case "LiteralNumber":
+                                    op.Fields.Add(Nr(operandName));
+                                    break;
+                                case "LiteralString":
+                                    op.Fields.Add(Str(operandName));
+                                    break;
+                                case "LiteralNumber[]":
+                                    op.Fields.Add(NrArray(operandName));
+                                    break;
+                                case "ID[]":
+                                    op.Fields.Add(IdArray(operandName));
+                                    break;
+                                case "ID?":
+                                    op.Fields.Add(IdOpt(operandName));
+                                    break;
+                                case "Pair<LiteralNumber,ID>[]":
+                                    op.Fields.Add(PairArray(Nr("Literal"), Id("Label"), operandName));
+                                    break;
+                                default:
+                                    op.Fields.Add(Typed(type, operandName));
+                                    break;
+                            }
                         }
                     }
 
@@ -83,7 +94,7 @@ namespace OpCodeGen
 
 
             
-            /*opCategory = "Misc";
+            /*opCategory = "Miscellaneous";
             yield return Op("Nop");
             yield return Op("Undef", Id("ResultType"), Id("Result")); 
 
@@ -251,7 +262,7 @@ namespace OpCodeGen
             yield return Op("BitwiseXor", Id("ResultType"), Id("Result"), Id("Operand1"), Id("Operand2"));
             yield return Op("BitwiseAnd", Id("ResultType"), Id("Result"), Id("Operand1"), Id("Operand2"));
 
-            opCategory = "RelationalLogical";
+            opCategory = "RelationalAndLogical";
             yield return Op("Any", Id("ResultType"), Id("Result"), Id("Vector"));
             yield return Op("All", Id("ResultType"), Id("Result"), Id("Vector"));
             yield return Op("IsNan", Id("ResultType"), Id("Result"), Id("x"));

@@ -10,7 +10,11 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.ConstantCreation
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpConstantTrue
+    /// 
+    /// Declare a true Boolean-type scalar constant.
+    /// 
+    /// Result Type must be the scalar Boolean type.
     /// </summary>
     public sealed class OpConstantTrue : ConstantCreationInstruction
     {

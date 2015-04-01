@@ -10,7 +10,13 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.FlowControl
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpSelectionMerge
+    /// 
+    /// Declare and control a structured control-flow selection construct, used with OpBranchConditional or OpSwitch.
+    /// 
+    /// Label is the label of the merge block for this structured selection construct.
+    /// 
+    /// See Structured Control Flow for more detail.
     /// </summary>
     public sealed class OpSelectionMerge : FlowControlInstruction
     {

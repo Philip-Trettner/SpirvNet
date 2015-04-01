@@ -21,11 +21,11 @@ namespace SpirvNet.Spirv
         public virtual bool IsFunction => false;
         public virtual bool IsGroup => false;
         public virtual bool IsMemory => false;
-        public virtual bool IsMisc => false;
+        public virtual bool IsMiscellaneous => false;
         public virtual bool IsModeSetting => false;
         public virtual bool IsPipe => false;
         public virtual bool IsPrimitive => false;
-        public virtual bool IsRelationalLogical => false;
+        public virtual bool IsRelationalAndLogical => false;
         public virtual bool IsTexture => false;
         public virtual bool IsTypeDeclaration => false;
         public virtual bool IsAnnotation => false;

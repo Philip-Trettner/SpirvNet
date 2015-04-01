@@ -10,7 +10,17 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.Texture
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpTextureFetchTexelOffset
+    /// 
+    /// Fetch a single offset texel from a texture.
+    /// 
+    /// Result Type must be a vector of four components of the same type as Sampled Type of Sampler&#8217;s type.
+    /// 
+    /// Sampler must be an object of a type made by OpTypeSampler. It must have a Dimensionality of 1D, 2D, 3D, or Rect. It cannot have depth-comparison type (the type&#8217;s Compare operand must be 0).
+    /// 
+    /// Coordinate is an integer scalar or vector containing (u[, v] &#8230; [, array layer]) as needed by the definiton of Sampler.
+    /// 
+    /// Offset is added to (u, v, w) before texel lookup. It must be an &lt;id&gt; of an integer-based constant instruction of scalar or vector type. It is a compile-time error if these fall outside a target-dependent allowed range. The number of components in Offset must equal the number of components in Coordinate, minus the array layer component, if present.
     /// </summary>
     [DependsOn(LanguageCapability.Shader)]
     public sealed class OpTextureFetchTexelOffset : TextureInstruction

@@ -10,7 +10,11 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.TypeDeclaration
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpTypeDeviceEvent
+    /// 
+    /// Declare an OpenCL device-side event object.
+    /// 
+    /// Result &lt;id&gt; is the &lt;id&gt; of the new device-side-event type.
     /// </summary>
     [DependsOn(LanguageCapability.Kernel)]
     public sealed class OpTypeDeviceEvent : TypeDeclarationInstruction

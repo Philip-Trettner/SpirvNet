@@ -10,7 +10,15 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.Group
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpGroupSMin
+    /// 
+    /// A signed integer minimum group operation specified for all values of X specified by work-items in the group.
+    /// 
+    /// X and Result Type must be a 32 or 64 bits wide OpTypeInt data type.
+    /// 
+    /// Scope must be the Workgroup or Subgroup Execution Scope.
+    /// 
+    /// The identity I is INT_MAX when X is 32 bits wide and LONG_MAX when X is 64 bits wide.
     /// </summary>
     [DependsOn(LanguageCapability.Kernel)]
     public sealed class OpGroupSMin : GroupInstruction
@@ -23,11 +31,12 @@ namespace SpirvNet.Spirv.Ops.Group
         public ID ResultType;
         public ID Result;
         public ExecutionScope Scope;
+        public GroupOperation Operation;
         public ID X;
 
         #region Code
-        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(ResultType) + ", " + StrOf(Result) + ", " + StrOf(Scope) + ", " + StrOf(X) + ")";
-        public override string ArgString => "Scope: " + StrOf(Scope) + ", " + "X: " + StrOf(X);
+        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(ResultType) + ", " + StrOf(Result) + ", " + StrOf(Scope) + ", " + StrOf(Operation) + ", " + StrOf(X) + ")";
+        public override string ArgString => "Scope: " + StrOf(Scope) + ", " + "Operation: " + StrOf(Operation) + ", " + "X: " + StrOf(X);
 
         protected override void FromCode(uint[] codes, int start)
         {
@@ -36,6 +45,7 @@ namespace SpirvNet.Spirv.Ops.Group
             ResultType = new ID(codes[i++]);
             Result = new ID(codes[i++]);
             Scope = (ExecutionScope)codes[i++];
+            Operation = (GroupOperation)codes[i++];
             X = new ID(codes[i++]);
         }
 
@@ -44,6 +54,7 @@ namespace SpirvNet.Spirv.Ops.Group
             code.Add(ResultType.Value);
             code.Add(Result.Value);
             code.Add((uint)Scope);
+            code.Add((uint)Operation);
             code.Add(X.Value);
         }
 

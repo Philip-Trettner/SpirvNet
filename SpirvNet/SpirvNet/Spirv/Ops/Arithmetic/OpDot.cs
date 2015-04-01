@@ -10,7 +10,13 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.Arithmetic
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpDot
+    /// 
+    /// Dot product of Vector 1 and Vector 2.
+    /// 
+    /// The operands' types must be floating-point vectors with the same component type and the same number of components.
+    /// 
+    /// Result Type must be a scalar of the same type as the operands' component type.
     /// </summary>
     public sealed class OpDot : ArithmeticInstruction
     {

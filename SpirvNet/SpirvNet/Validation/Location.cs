@@ -176,7 +176,7 @@ namespace SpirvNet.Validation
         public void FillFromString(OpString op)
         {
             LocationType = LocationType.String;
-            Name = op.Name.Value;
+            Name = op.String.Value;
         }
 
         /// <summary>
@@ -215,9 +215,9 @@ namespace SpirvNet.Validation
             else if (opFunction != null)
                 SpirvType = new SpirvType(LocationID, SpirvTypeEnum.Function,
                     returnType: typeProvider.TypeFor(opFunction.ReturnType, op),
-                    parameterTypes: opFunction.ParameterTypes.Select(p => typeProvider.TypeFor(p, op)).ToArray());
+                    parameterTypes: opFunction.Parameters.Select(p => typeProvider.TypeFor(p, op)).ToArray());
             else if (opStruct != null)
-                SpirvType = new SpirvType(LocationID, SpirvTypeEnum.Structure, structMembers: opStruct.MemberTypes.Select((t, i) => new StructMember(i, null, typeProvider.TypeFor(t, op))).ToArray());
+                SpirvType = new SpirvType(LocationID, SpirvTypeEnum.Structure, structMembers: opStruct.Members.Select((t, i) => new StructMember(i, null, typeProvider.TypeFor(t, op))).ToArray());
             else throw new NotImplementedException("Unknown type decl: " + op);
             // TODO: More types!
         }

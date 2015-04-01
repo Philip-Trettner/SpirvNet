@@ -10,7 +10,13 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.Memory
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpArrayLength
+    /// 
+    /// Result is the array length of a run-time array.
+    /// 
+    /// Structure must be an object of type OpTypeStruct that contains a member that is a run-time array.
+    /// 
+    /// Array member is a member number of Structure that must have a type from OpTypeRuntimeArray.
     /// </summary>
     [DependsOn(LanguageCapability.Shader)]
     public sealed class OpArrayLength : MemoryInstruction

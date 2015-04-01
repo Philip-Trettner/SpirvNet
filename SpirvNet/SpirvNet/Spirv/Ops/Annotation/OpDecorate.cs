@@ -10,7 +10,11 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.Annotation
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpDecorate
+    /// 
+    /// Add a decoration to another &lt;id&gt;.
+    /// 
+    /// Target is the &lt;id&gt; to decorate.  It can potentially be any &lt;id&gt; that is a forward reference. A set of decorations can be grouped together by having multiple OpDecorate instructions target the same OpDecorationGroup instruction.
     /// </summary>
     public sealed class OpDecorate : AnnotationInstruction
     {
@@ -19,11 +23,11 @@ namespace SpirvNet.Spirv.Ops.Annotation
 
         public ID Target;
         public Decoration Decoration;
-        public LiteralNumber[] Args = { };
+        public LiteralNumber[] ExtraOperands = { };
 
         #region Code
-        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(Target) + ", " + StrOf(Decoration) + ", " + StrOf(Args) + ")";
-        public override string ArgString => "Target: " + StrOf(Target) + ", " + "Decoration: " + StrOf(Decoration) + ", " + "Args: " + StrOf(Args);
+        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(Target) + ", " + StrOf(Decoration) + ", " + StrOf(ExtraOperands) + ")";
+        public override string ArgString => "Target: " + StrOf(Target) + ", " + "Decoration: " + StrOf(Decoration) + ", " + "ExtraOperands: " + StrOf(ExtraOperands);
 
         protected override void FromCode(uint[] codes, int start)
         {
@@ -32,17 +36,17 @@ namespace SpirvNet.Spirv.Ops.Annotation
             Target = new ID(codes[i++]);
             Decoration = (Decoration)codes[i++];
             var length = WordCount - (i - start);
-            Args = new LiteralNumber[length];
+            ExtraOperands = new LiteralNumber[length];
             for (var k = 0; k < length; ++k)
-                Args[k] = new LiteralNumber(codes[i++]);
+                ExtraOperands[k] = new LiteralNumber(codes[i++]);
         }
 
         protected override void WriteCode(List<uint> code)
         {
             code.Add(Target.Value);
             code.Add((uint)Decoration);
-            if (Args != null)
-                foreach (var val in Args)
+            if (ExtraOperands != null)
+                foreach (var val in ExtraOperands)
                     code.Add(val.Value);
         }
 

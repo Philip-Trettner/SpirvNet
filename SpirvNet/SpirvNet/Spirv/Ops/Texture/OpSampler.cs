@@ -10,7 +10,15 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.Texture
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpSampler
+    /// 
+    /// Create a sampler containing both a filter and texture.
+    /// 
+    /// Sampler must be an object whose type is from an OpTypeSampler. Its type must have its Content operand set to 0, indicating a texture with no filter.
+    /// 
+    /// Filter must be an object whose type is OpTypeFilter.
+    /// 
+    /// Result Type must be an OpTypeSampler whose Sampled Type, Dimensionality, Arrayed, Comparison, and Multisampled operands all equal those of this instruction&#8217;s Sampler operand. Further, the Result Type must have its Content operand set to 2, indicating both a texture and filter are present.
     /// </summary>
     public sealed class OpSampler : TextureInstruction
     {

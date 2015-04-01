@@ -10,7 +10,17 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.Texture
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpTextureSampleProjLod
+    /// 
+    /// Sample a texture with a projective coordinate using an explicit level of detail.
+    /// 
+    /// Result Type&#8217;s component type must be the same as Sampled Type of Sampler&#8217;s type. Result Type must be scalar if the Sampler&#8217;s type sets depth-comparison, and must be a vector of four components if the Sampler&#8217;s type does not set depth-comparison.
+    /// 
+    /// Sampler must be an object of a type made by OpTypeSampler.
+    /// 
+    /// Coordinate is a floating-point vector of four components containing (u [, v] [, Dref], q) or (u [, v] [, w], q), as needed by the definiton of Sampler, with the q component consumed for the projective division. That is, the actual sample coordinate will be (u/q [, v/q] [,Dref/q]) or (u/q [, v/q] [, w/q]), as needed by the definiton of Sampler.
+    /// 
+    /// Level of Detail explicitly controls the level of detail used when sampling.
     /// </summary>
     [DependsOn(LanguageCapability.Shader)]
     public sealed class OpTextureSampleProjLod : TextureInstruction
@@ -24,11 +34,11 @@ namespace SpirvNet.Spirv.Ops.Texture
         public ID Result;
         public ID Sampler;
         public ID Coordinate;
-        public ID Lod;
+        public ID LevelOfDetail;
 
         #region Code
-        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(ResultType) + ", " + StrOf(Result) + ", " + StrOf(Sampler) + ", " + StrOf(Coordinate) + ", " + StrOf(Lod) + ")";
-        public override string ArgString => "Sampler: " + StrOf(Sampler) + ", " + "Coordinate: " + StrOf(Coordinate) + ", " + "Lod: " + StrOf(Lod);
+        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(ResultType) + ", " + StrOf(Result) + ", " + StrOf(Sampler) + ", " + StrOf(Coordinate) + ", " + StrOf(LevelOfDetail) + ")";
+        public override string ArgString => "Sampler: " + StrOf(Sampler) + ", " + "Coordinate: " + StrOf(Coordinate) + ", " + "LevelOfDetail: " + StrOf(LevelOfDetail);
 
         protected override void FromCode(uint[] codes, int start)
         {
@@ -38,7 +48,7 @@ namespace SpirvNet.Spirv.Ops.Texture
             Result = new ID(codes[i++]);
             Sampler = new ID(codes[i++]);
             Coordinate = new ID(codes[i++]);
-            Lod = new ID(codes[i++]);
+            LevelOfDetail = new ID(codes[i++]);
         }
 
         protected override void WriteCode(List<uint> code)
@@ -47,7 +57,7 @@ namespace SpirvNet.Spirv.Ops.Texture
             code.Add(Result.Value);
             code.Add(Sampler.Value);
             code.Add(Coordinate.Value);
-            code.Add(Lod.Value);
+            code.Add(LevelOfDetail.Value);
         }
 
         public override IEnumerable<ID> AllIDs
@@ -58,7 +68,7 @@ namespace SpirvNet.Spirv.Ops.Texture
                 yield return Result;
                 yield return Sampler;
                 yield return Coordinate;
-                yield return Lod;
+                yield return LevelOfDetail;
             }
         }
         #endregion

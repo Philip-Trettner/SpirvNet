@@ -10,7 +10,9 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.Arithmetic
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpFNegate
+    /// 
+    /// Floating-point subtract of Operand from zero. The operand&#8217;s type and Result Type must both be scalars or vectors of floating-point types with the same number of components and the same component widths.
     /// </summary>
     public sealed class OpFNegate : ArithmeticInstruction
     {

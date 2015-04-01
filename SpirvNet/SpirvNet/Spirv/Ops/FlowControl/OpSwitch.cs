@@ -10,7 +10,17 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.FlowControl
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpSwitch
+    /// 
+    /// Multi-way branch to one of the operand label &lt;id&gt;.
+    /// 
+    /// Selector must be a scalar integer type.  It will be compared for equality to the Target literals.
+    /// 
+    /// Default must be the &lt;id&gt; of a label.  If Selector does not equal any of the Target literals, control flow will branch to the Default label &lt;id&gt;.
+    /// 
+    /// Target must be alternating scalar-integer literals and the &lt;id&gt; of a label.  If Selector equals one of the literals, control flow will branch to the following label &lt;id&gt;. It is invalid for any two Target literals to be equal to each other. If Target is not present, control flow will branch to the Default label &lt;id&gt;.
+    /// 
+    /// This instruction must be the last instruction in a block.
     /// </summary>
     public sealed class OpSwitch : FlowControlInstruction
     {

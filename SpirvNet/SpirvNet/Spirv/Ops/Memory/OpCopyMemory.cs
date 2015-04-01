@@ -10,7 +10,11 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.Memory
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpCopyMemory
+    /// 
+    /// Copy from the memory pointed to by Source to the memory pointed to by Target. Both operands must be non-void pointers of the same type.  Matching storage class is not required. The amount of memory copied is the size of the type pointed to.
+    /// 
+    /// Memory Access must be a Memory Access literal.  See Memory Access for more detail.
     /// </summary>
     public sealed class OpCopyMemory : MemoryInstruction
     {
@@ -19,7 +23,7 @@ namespace SpirvNet.Spirv.Ops.Memory
 
         public ID Target;
         public ID Source;
-        public MemoryAccess[] MemoryAccess = { };
+        public LiteralNumber[] MemoryAccess = { };
 
         #region Code
         public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(Target) + ", " + StrOf(Source) + ", " + StrOf(MemoryAccess) + ")";
@@ -32,9 +36,9 @@ namespace SpirvNet.Spirv.Ops.Memory
             Target = new ID(codes[i++]);
             Source = new ID(codes[i++]);
             var length = WordCount - (i - start);
-            MemoryAccess = new MemoryAccess[length];
+            MemoryAccess = new LiteralNumber[length];
             for (var k = 0; k < length; ++k)
-                MemoryAccess[k] = (MemoryAccess)codes[i++];
+                MemoryAccess[k] = new LiteralNumber(codes[i++]);
         }
 
         protected override void WriteCode(List<uint> code)
@@ -43,7 +47,7 @@ namespace SpirvNet.Spirv.Ops.Memory
             code.Add(Source.Value);
             if (MemoryAccess != null)
                 foreach (var val in MemoryAccess)
-                    code.Add((uint)val);
+                    code.Add(val.Value);
         }
 
         public override IEnumerable<ID> AllIDs

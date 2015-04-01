@@ -10,7 +10,9 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.Arithmetic
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpFDiv
+    /// 
+    /// Floating-point division of Operand 1 divided by Operand 2. The operands' types and Result Type must  all be scalars or vectors of floating-point types with the same number of components and the same component widths. The resulting value is undefined if Operand 2 is 0.
     /// </summary>
     public sealed class OpFDiv : ArithmeticInstruction
     {

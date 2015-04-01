@@ -10,7 +10,15 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.Memory
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpAccessChain
+    /// 
+    /// Create a pointer into a composite object that can be used with OpLoad and OpStore. 
+    /// 
+    /// Base must be a pointer type, pointing to the base of the object. 
+    /// 
+    /// Indexes walk the type hierarchy to the desired depth, potentially down to scalar granularity. The type of the pointer created will be to the type reached by walking the type hierarchy down to the last provided index.
+    /// 
+    /// The storage class of the pointer created will be the same as the storage class of the base operand.
     /// </summary>
     public sealed class OpAccessChain : MemoryInstruction
     {

@@ -10,7 +10,17 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.Memory
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpVariableArray
+    /// 
+    /// Allocate N objects sequentially in memory, resulting in a pointer to the first such object.
+    /// 
+    /// Storage Class is the kind of memory holding the object.
+    /// 
+    /// N is the number of objects to allocate.
+    /// 
+    /// Result Type is a type from OpTypePointer whose type pointed to is the type of one of the N objects allocated in memory.
+    /// 
+    /// Note: This is not the same thing as allocating a single object that is an array.
     /// </summary>
     [DependsOn(LanguageCapability.Addr)]
     public sealed class OpVariableArray : MemoryInstruction

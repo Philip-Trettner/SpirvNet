@@ -10,7 +10,13 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.Function
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpFunctionParameter
+    /// 
+    /// Declare the &lt;id&gt; for a formal parameter belonging to the current function.
+    /// 
+    /// This instruction must immediately follow an OpFunction or OpFunctionParameter instruction. The order of contiguous OpFunctionParameter instructions is the same order arguments will be listed in an OpFunctionCall instruction to this function. It is also the same order in which Parameter Type operands are listed in the OpTypeFunction of the Function Type operand for this function&#8217;s OpFunction instruction.
+    /// 
+    /// Result Type for all the OpFunctionParameter instructions for a function must be the same as, in order, the Parameter Type operands listed in the OpTypeFunction of the Function Type operand for this function&#8217;s OpFunction instruction.
     /// </summary>
     public sealed class OpFunctionParameter : FunctionInstruction
     {

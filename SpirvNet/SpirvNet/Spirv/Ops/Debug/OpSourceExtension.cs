@@ -10,7 +10,11 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.Debug
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpSourceExtension
+    /// 
+    /// Document an extension to the source language. This has no semantic impact and can safely be removed from a module.
+    /// 
+    /// Extension is a string describing a source-language extension. Its form is dependent on the how the source language describes extensions.
     /// </summary>
     public sealed class OpSourceExtension : DebugInstruction
     {

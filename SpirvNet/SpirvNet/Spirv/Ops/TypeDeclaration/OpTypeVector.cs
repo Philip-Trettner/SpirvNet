@@ -10,7 +10,15 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.TypeDeclaration
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpTypeVector
+    /// 
+    /// Declare a new vector type.
+    /// 
+    /// Component type is the type of each component in the resulting type.
+    /// 
+    /// Component count is the number of compononents in the resulting type.  It must be at least 2.
+    /// 
+    /// Result &lt;id&gt; is the &lt;id&gt; of the new vector type.
     /// </summary>
     public sealed class OpTypeVector : TypeDeclarationInstruction
     {

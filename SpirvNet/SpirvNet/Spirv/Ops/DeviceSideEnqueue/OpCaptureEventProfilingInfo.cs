@@ -10,7 +10,15 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.DeviceSideEnqueue
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpCaptureEventProfilingInfo
+    /// 
+    /// Captures the profiling information specified by info for the command associated with the event specified by event in the memory pointed by value.The profiling information will be available in value once the command identified by event has completed.
+    /// 
+    /// event must be a OpTypeDeviceEvent that was produced by OpEnqueueKernel or OpEnqueueMarker. 
+    /// 
+    /// When info is CmdExecTime value must be a OpTypePointer with WorkgroupGlobal storage class, to two 64-bit OpTypeInt values. The first 64-bit value describes the elapsed time CL_PROFILING_COMMAND_END - CL_PROFLING_COMMAND_START for the command identified by event in nanoseconds. The second 64-bit value describes the elapsed time CL_PROFILING_COMMAND_COMPLETE - CL_PROFILING_COMAMND_START for the command identified by event in nanoseconds.
+    /// 
+    /// Note: The behavior of of this instruction is undefined when called multiple times for the same event.
     /// </summary>
     [DependsOn(LanguageCapability.Kernel)]
     public sealed class OpCaptureEventProfilingInfo : DeviceSideEnqueueInstruction

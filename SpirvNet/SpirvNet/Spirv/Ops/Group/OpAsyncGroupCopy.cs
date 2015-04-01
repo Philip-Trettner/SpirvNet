@@ -10,7 +10,29 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.Group
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpAsyncGroupCopy
+    /// 
+    /// Perform an asynchronous group copy of Num Elements elements from Source to Destination. The asynchronous copy is performed by all work-items in a group.
+    /// 
+    /// Returns an event object that can be used by OpWaitGroupEvents to wait for the copy to finish.
+    /// 
+    /// Event must be OpTypeEvent.
+    /// 
+    /// Event can be used to associate the copy with a previous copy allowing an event to be shared by multiple copies. Otherwise Event should be a OpConstantNullObject.
+    /// 
+    /// If Event argument is not OpConstantNullObject, the event object supplied in event argument will be returned.
+    /// 
+    /// Scope must be the Workgroup or Subgroup Execution Scope.
+    /// 
+    /// Destination and Source should both be pointers to the same integer or floating point scalar or vector data type.
+    /// 
+    /// Destination and Source pointer storage class can be either WorkgroupLocal or WorkgroupGlobal.
+    /// 
+    /// When Destination pointer storage class is WorkgroupLocal, the Source pointer storage class must be WorkgroupGlobal. In this case Stride defines the stride in elements when reading from Source pointer.
+    /// 
+    /// When Destination pointer storage class is WorkgroupGlobal, the Source pointer storage class must be WorkgroupLocal. In this case Stride defines the stride in elements when writing each element to Destination pointer.
+    /// 
+    /// Stride and NumElemens must be a 32 bit OpTypeInt when the Addressing Model is Physical32 and 64 bit OpTypeInt when the Addressing Model is Physical64.
     /// </summary>
     [DependsOn(LanguageCapability.Kernel)]
     public sealed class OpAsyncGroupCopy : GroupInstruction

@@ -10,7 +10,17 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.Composite
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpCompositeInsert
+    /// 
+    /// Insert into a composite object. 
+    /// 
+    /// Object is the object to insert.
+    /// 
+    /// Composite in the composite to insert into.
+    /// 
+    /// Indexes walk the type hierarchy to the desired depth, potentially down to component granularity. All indexes must be in bounds. 
+    /// 
+    /// Result Type must be the same type as Composite, and the instruction result is a modified version of Composite.
     /// </summary>
     public sealed class OpCompositeInsert : CompositeInstruction
     {

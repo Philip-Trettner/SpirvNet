@@ -10,7 +10,15 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.Conversion
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpBitcast
+    /// 
+    /// Bit-pattern preserving type conversion for Numerical-type or pointer-type vectors and scalars.
+    /// 
+    /// Operand is the bit pattern whose type will change.
+    /// 
+    /// Result Type must be different than the type of Operand.  Both Result Type and the type of Operand must be Numerical-types or pointer types. The components of Operand and Result Type must be same bit width. 
+    /// 
+    ///  Results are computed per component. The operand&#8217;s type and Result Type must     have the same number of components.
     /// </summary>
     public sealed class OpBitcast : ConversionInstruction
     {

@@ -10,7 +10,9 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.ModeSetting
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpCompileFlag
+    /// 
+    /// Add a compilation Flag.
     /// </summary>
     [DependsOn(LanguageCapability.Kernel)]
     public sealed class OpCompileFlag : ModeSettingInstruction

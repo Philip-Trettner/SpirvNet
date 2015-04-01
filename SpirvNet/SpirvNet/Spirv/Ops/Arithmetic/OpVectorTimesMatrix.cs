@@ -10,7 +10,15 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.Arithmetic
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpVectorTimesMatrix
+    /// 
+    /// Linear-algebraic Vector X Matrix.
+    /// 
+    /// Vector must have a floating-point vector type.
+    /// 
+    /// Matrix must have a floating-point matrix type.
+    /// 
+    /// Result Type must be a vector whose size is the number of columns in the matrix.
     /// </summary>
     [DependsOn(LanguageCapability.Matrix)]
     public sealed class OpVectorTimesMatrix : ArithmeticInstruction

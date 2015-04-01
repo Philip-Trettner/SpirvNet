@@ -10,7 +10,13 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.Derivative
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpDPdy
+    /// 
+    /// Same result as either OpDPdyFine or OpDPdyCoarse on P. Selection of which one is based on external factors.
+    /// 
+    /// P is the value to take the derivative of.
+    /// 
+    /// Result Type must be the same as the type of P. This type must be a floating-point scalar or floating-point vector.
     /// </summary>
     [DependsOn(LanguageCapability.Shader)]
     public sealed class OpDPdy : DerivativeInstruction

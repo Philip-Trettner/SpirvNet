@@ -10,7 +10,11 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.Primitive
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpEmitVertex
+    /// 
+    /// Emits the current values of all output variables to the current output primitive. After execution, the values of all output variables are undefined.
+    /// 
+    /// This instruction can only be used when only one stream is present.
     /// </summary>
     [DependsOn(LanguageCapability.Geom)]
     public sealed class OpEmitVertex : PrimitiveInstruction

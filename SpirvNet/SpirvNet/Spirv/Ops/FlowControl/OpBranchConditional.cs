@@ -10,7 +10,19 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.FlowControl
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpBranchConditional
+    /// 
+    /// If Condition is true, branch to True Label, otherwise branch to False Label.
+    /// 
+    /// Condition must be a Boolean type scalar.
+    /// 
+    /// True Label must be an OpLabel in the current function.
+    /// 
+    /// False Label must be an OpLabel in the current function.
+    /// 
+    /// Branch weights are unsigned 32-bit integer literals. There must be either no Branch Weights or exactly two branch weights. If present, the first is the weight for branching to True Label, and the second is the weight for branching to False Label. The implied probability that a branch is taken is its weight divided by the sum of the two Branch weights.
+    /// 
+    /// This instruction must be the last instruction in a block.
     /// </summary>
     public sealed class OpBranchConditional : FlowControlInstruction
     {

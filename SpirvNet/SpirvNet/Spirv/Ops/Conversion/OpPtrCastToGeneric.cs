@@ -10,7 +10,11 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.Conversion
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpPtrCastToGeneric
+    /// 
+    /// Converts Source pointer to a pointer value pointing to storage class Generic. Source pointer must point to storage class WorkgroupLocal, WorkgroupGlobal or Private. Result Type must be a pointer type pointing to storage class Generic. 
+    /// 
+    /// Result Type and Source pointer must point to the same type.
     /// </summary>
     [DependsOn(LanguageCapability.Kernel)]
     public sealed class OpPtrCastToGeneric : ConversionInstruction

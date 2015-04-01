@@ -10,7 +10,15 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.Pipe
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpGroupCommitWritePipe
+    /// 
+    /// A group level indication that all writes to num_packets associated with the reservation specified by reserve_id to the pipe object specified by p are completed.
+    /// 
+    /// Scope must be the Workgroup or Subgroup Execution Scope.
+    /// 
+    /// p must be a OpTypePipe with WriteOnly Access Qualifier.
+    /// 
+    /// reserve_id must be a OpTypeReserveId.
     /// </summary>
     [DependsOn(LanguageCapability.Kernel)]
     public sealed class OpGroupCommitWritePipe : PipeInstruction
@@ -20,11 +28,11 @@ namespace SpirvNet.Spirv.Ops.Pipe
 
         public ExecutionScope Scope;
         public ID P;
-        public ID ReserveId;
+        public ID Reserve_id;
 
         #region Code
-        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(Scope) + ", " + StrOf(P) + ", " + StrOf(ReserveId) + ")";
-        public override string ArgString => "Scope: " + StrOf(Scope) + ", " + "P: " + StrOf(P) + ", " + "ReserveId: " + StrOf(ReserveId);
+        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(Scope) + ", " + StrOf(P) + ", " + StrOf(Reserve_id) + ")";
+        public override string ArgString => "Scope: " + StrOf(Scope) + ", " + "P: " + StrOf(P) + ", " + "Reserve_id: " + StrOf(Reserve_id);
 
         protected override void FromCode(uint[] codes, int start)
         {
@@ -32,14 +40,14 @@ namespace SpirvNet.Spirv.Ops.Pipe
             var i = start + 1;
             Scope = (ExecutionScope)codes[i++];
             P = new ID(codes[i++]);
-            ReserveId = new ID(codes[i++]);
+            Reserve_id = new ID(codes[i++]);
         }
 
         protected override void WriteCode(List<uint> code)
         {
             code.Add((uint)Scope);
             code.Add(P.Value);
-            code.Add(ReserveId.Value);
+            code.Add(Reserve_id.Value);
         }
 
         public override IEnumerable<ID> AllIDs
@@ -47,7 +55,7 @@ namespace SpirvNet.Spirv.Ops.Pipe
             get
             {
                 yield return P;
-                yield return ReserveId;
+                yield return Reserve_id;
             }
         }
         #endregion

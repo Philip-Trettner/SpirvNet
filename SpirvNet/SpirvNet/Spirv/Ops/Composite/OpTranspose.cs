@@ -10,7 +10,13 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.Composite
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpTranspose
+    /// 
+    /// Transpose a matrix.
+    /// 
+    /// Matrix must be an intermediate &lt;id&gt; whose type comes from an OpTypeMatrix instruction.
+    /// 
+    /// Result Type must be an &lt;id&gt; from an OpTypeMatrix instruction, where the number of columns and the column size is the reverse of those of the type of Matrix.
     /// </summary>
     [DependsOn(LanguageCapability.Matrix)]
     public sealed class OpTranspose : CompositeInstruction

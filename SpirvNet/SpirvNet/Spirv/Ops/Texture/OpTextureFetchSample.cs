@@ -10,7 +10,17 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.Texture
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpTextureFetchSample
+    /// 
+    /// Fetch a single sample from a multi-sample texture.
+    /// 
+    /// Result Type must be a vector of four components of the same type as Sampled Type of Sampler&#8217;s type.
+    /// 
+    /// Sampler must be an object of a type made by OpTypeSampler. It must be a multi-sample texture.
+    /// 
+    /// Coordinate is an integer scalar or vector containing (u[, v] &#8230; [, array layer]) as needed by the definiton of Sampler.
+    /// 
+    /// Sample is the sample number of the sample to return
     /// </summary>
     [DependsOn(LanguageCapability.Shader)]
     public sealed class OpTextureFetchSample : TextureInstruction

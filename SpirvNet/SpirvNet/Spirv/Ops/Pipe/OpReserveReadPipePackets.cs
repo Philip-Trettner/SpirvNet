@@ -10,7 +10,9 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.Pipe
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpReserveReadPipePackets
+    /// 
+    /// Reserve num_packets entries for reading from the pipe object specified by p. Returns a valid reservation ID if the reservation is successful.
     /// </summary>
     [DependsOn(LanguageCapability.Kernel)]
     public sealed class OpReserveReadPipePackets : PipeInstruction
@@ -23,11 +25,11 @@ namespace SpirvNet.Spirv.Ops.Pipe
         public ID ResultType;
         public ID Result;
         public ID P;
-        public ID NumPackets;
+        public ID Num_packets;
 
         #region Code
-        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(ResultType) + ", " + StrOf(Result) + ", " + StrOf(P) + ", " + StrOf(NumPackets) + ")";
-        public override string ArgString => "P: " + StrOf(P) + ", " + "NumPackets: " + StrOf(NumPackets);
+        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(ResultType) + ", " + StrOf(Result) + ", " + StrOf(P) + ", " + StrOf(Num_packets) + ")";
+        public override string ArgString => "P: " + StrOf(P) + ", " + "Num_packets: " + StrOf(Num_packets);
 
         protected override void FromCode(uint[] codes, int start)
         {
@@ -36,7 +38,7 @@ namespace SpirvNet.Spirv.Ops.Pipe
             ResultType = new ID(codes[i++]);
             Result = new ID(codes[i++]);
             P = new ID(codes[i++]);
-            NumPackets = new ID(codes[i++]);
+            Num_packets = new ID(codes[i++]);
         }
 
         protected override void WriteCode(List<uint> code)
@@ -44,7 +46,7 @@ namespace SpirvNet.Spirv.Ops.Pipe
             code.Add(ResultType.Value);
             code.Add(Result.Value);
             code.Add(P.Value);
-            code.Add(NumPackets.Value);
+            code.Add(Num_packets.Value);
         }
 
         public override IEnumerable<ID> AllIDs
@@ -54,7 +56,7 @@ namespace SpirvNet.Spirv.Ops.Pipe
                 yield return ResultType;
                 yield return Result;
                 yield return P;
-                yield return NumPackets;
+                yield return Num_packets;
             }
         }
         #endregion

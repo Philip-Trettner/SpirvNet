@@ -10,7 +10,15 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.TypeDeclaration
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpTypePointer
+    /// 
+    /// Declare a new pointer type.
+    /// 
+    /// Storage Class is the Storage Class of the memory holding the object pointed to.
+    /// 
+    /// Type is the type of the object pointed to.
+    /// 
+    /// Result &lt;id&gt; is the &lt;id&gt; of the new pointer type.
     /// </summary>
     public sealed class OpTypePointer : TypeDeclarationInstruction
     {

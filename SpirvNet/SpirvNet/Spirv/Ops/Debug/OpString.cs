@@ -10,7 +10,11 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.Debug
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpString
+    /// 
+    /// Name a string for use with other debug instructions (see OpLine). This has no semantic impact and can safely be removed from a module.
+    /// 
+    /// String is the literal string being assigned a Result &lt;id&gt;. It has no result type and no storage.
     /// </summary>
     public sealed class OpString : DebugInstruction
     {
@@ -19,24 +23,24 @@ namespace SpirvNet.Spirv.Ops.Debug
         public override ID? ResultID => Result;
 
         public ID Result;
-        public LiteralString Name;
+        public LiteralString String;
 
         #region Code
-        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(Result) + ", " + StrOf(Name) + ")";
-        public override string ArgString => "Name: " + StrOf(Name);
+        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(Result) + ", " + StrOf(String) + ")";
+        public override string ArgString => "String: " + StrOf(String);
 
         protected override void FromCode(uint[] codes, int start)
         {
             System.Diagnostics.Debug.Assert((codes[start] & 0x0000FFFF) == (uint)OpCode.String);
             var i = start + 1;
             Result = new ID(codes[i++]);
-            Name = LiteralString.FromCode(codes, ref i);
+            String = LiteralString.FromCode(codes, ref i);
         }
 
         protected override void WriteCode(List<uint> code)
         {
             code.Add(Result.Value);
-            Name.WriteCode(code);
+            String.WriteCode(code);
         }
 
         public override IEnumerable<ID> AllIDs

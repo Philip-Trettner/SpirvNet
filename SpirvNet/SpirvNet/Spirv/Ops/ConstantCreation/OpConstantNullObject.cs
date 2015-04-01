@@ -10,7 +10,9 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.ConstantCreation
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpConstantNullObject
+    /// 
+    /// Declare a new null object constant. The objerct can be a queue, event or reservation id.
     /// </summary>
     [DependsOn(LanguageCapability.Kernel)]
     public sealed class OpConstantNullObject : ConstantCreationInstruction

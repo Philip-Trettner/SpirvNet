@@ -10,7 +10,9 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.Arithmetic
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpFSub
+    /// 
+    /// Floating-point subtraction of Operand 2 from Operand 1. The operands' types and Result Type must  all be scalars or vectors of floating-point types with the same number of components and the same component widths.
     /// </summary>
     public sealed class OpFSub : ArithmeticInstruction
     {

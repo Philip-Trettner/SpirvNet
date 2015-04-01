@@ -10,7 +10,11 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.Arithmetic
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpShiftRightArithmetic
+    /// 
+    /// Shift the bits in Operand 1 right by the number of bits specified in Operand 2. The most-significant bits will be filled with the sign bit from Operand 1. Operand 2 is treated as unsigned.  The result is undefined if Operand 2 is greater than the bit width of the components of Operand 1. 
+    /// 
+    /// The number of components and bit width of Result Type must match those Operand 1 type. All types must be integer types. Works with any mixture of signedness.
     /// </summary>
     public sealed class OpShiftRightArithmetic : ArithmeticInstruction
     {

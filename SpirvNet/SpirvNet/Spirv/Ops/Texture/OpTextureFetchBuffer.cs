@@ -10,7 +10,15 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.Texture
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpTextureFetchBuffer
+    /// 
+    /// Fetch an element out of a buffer texture.
+    /// 
+    /// Result Type must be a vector of four components of the same type as Sampled Type of Sampler&#8217;s type.
+    /// 
+    /// Sampler must be an object of a type made by OpTypeSampler. It must have a Dimensionality of Buffer.
+    /// 
+    /// Element is a scalar integer index into the buffer.
     /// </summary>
     [DependsOn(LanguageCapability.Shader)]
     public sealed class OpTextureFetchBuffer : TextureInstruction

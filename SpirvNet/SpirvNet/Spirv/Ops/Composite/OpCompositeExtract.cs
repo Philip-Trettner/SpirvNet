@@ -10,7 +10,15 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.Composite
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpCompositeExtract
+    /// 
+    /// Extract a part of a composite object. 
+    /// 
+    /// Composite in the composite to extract from.
+    /// 
+    /// Indexes walk the type hierarchy, down to component granularity.  All indexes must be in bounds. 
+    /// 
+    /// Result Type must be the type of object selected by the last provided index.  The instruction result is the extracted object.
     /// </summary>
     public sealed class OpCompositeExtract : CompositeInstruction
     {

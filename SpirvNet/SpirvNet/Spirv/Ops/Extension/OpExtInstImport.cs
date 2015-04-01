@@ -10,7 +10,13 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.Extension
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpExtInstImport
+    /// 
+    /// Import an extended set of instructions. It can be later referenced by the Result &lt;id&gt;.
+    /// 
+    /// Name is the extended instruction-set&#8217;s name string.
+    /// 
+    /// See Extended Instruction Sets for more information.
     /// </summary>
     public sealed class OpExtInstImport : ExtensionInstruction
     {

@@ -10,7 +10,11 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.Atomic
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpAtomicLoad
+    /// 
+    /// Atomically load through Pointer using the given Semantics. All subparts of the value that is loaded will be read atomically with respect to all other atomic accesses to it within Scope.
+    /// 
+    /// Result Type must be the same type as the type pointed to by Pointer.
     /// </summary>
     public sealed class OpAtomicLoad : AtomicInstruction
     {

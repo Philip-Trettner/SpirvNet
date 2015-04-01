@@ -10,7 +10,34 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.TypeDeclaration
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpTypeSampler
+    /// 
+    /// Declare a new sampler type. Consumed, for example, by OpTextureSample.This type is opaque: values of this type have no defined physical size or bit pattern.
+    /// 
+    /// Sampled Type is a scalar type, of the type of the components resulting from sampling or loading through this sampler.
+    /// 
+    /// Dim is the texture dimensionality.
+    /// 
+    /// Content must be one of the following indicated values:
+    /// 0 indicates a texture, no filter (no sampling state)
+    /// 1 indicates an image
+    /// 2 indicates both a texture and filter (sampling state), see OpTypeFilter
+    /// 
+    /// Arrayed must be one of the following indicated values:
+    /// 0 indicates non-arrayed content
+    /// 1 indicates arrayed content
+    /// 
+    /// Compare must be one of the following indicated values:
+    /// 0 indicates depth comparisons are not done
+    /// 1 indicates depth comparison are done
+    /// 
+    /// MS is multisampled and must be one of the following indicated values:
+    /// 0 indicates single-sampled content
+    /// 1 indicates multisampled content
+    /// 
+    /// Qualifier is an image access qualifier. See Access Qualifier.
+    /// 
+    /// Result &lt;id&gt; is the &lt;id&gt; of the new sampler type.
     /// </summary>
     public sealed class OpTypeSampler : TypeDeclarationInstruction
     {

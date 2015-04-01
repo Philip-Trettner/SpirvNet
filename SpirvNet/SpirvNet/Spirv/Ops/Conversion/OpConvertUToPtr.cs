@@ -10,7 +10,9 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.Conversion
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpConvertUToPtr
+    /// 
+    /// Converts Integer value to a pointer. A Result Type width smaller than the width of Integer value pointer will truncate. A Result Type width larger than the width of Integer value pointer will zero extend. For same-width source and target, this is the same as OpBitCast.
     /// </summary>
     [DependsOn(LanguageCapability.Addr)]
     public sealed class OpConvertUToPtr : ConversionInstruction

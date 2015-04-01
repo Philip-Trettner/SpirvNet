@@ -10,7 +10,15 @@ using SpirvNet.Spirv.Enums;
 namespace SpirvNet.Spirv.Ops.TypeDeclaration
 {
     /// <summary>
-    /// TODO: Copy comment from https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.pdf
+    /// OpTypePipe
+    /// 
+    /// Declare an OpenCL pipe object type.
+    /// 
+    /// Type is the data type of the pipe.
+    /// 
+    /// Qualifier is the pipe access qualifier.
+    /// 
+    /// Result &lt;id&gt; is the &lt;id&gt; of the new pipe type.
     /// </summary>
     [DependsOn(LanguageCapability.Kernel)]
     public sealed class OpTypePipe : TypeDeclarationInstruction
@@ -21,11 +29,11 @@ namespace SpirvNet.Spirv.Ops.TypeDeclaration
 
         public ID Result;
         public ID Type;
-        public AccessQualifier AccessQualifier;
+        public AccessQualifier Qualifier;
 
         #region Code
-        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(Result) + ", " + StrOf(Type) + ", " + StrOf(AccessQualifier) + ")";
-        public override string ArgString => "Type: " + StrOf(Type) + ", " + "AccessQualifier: " + StrOf(AccessQualifier);
+        public override string ToString() => "(" + OpCode + "(" + (int)OpCode + ")" + ", " + StrOf(Result) + ", " + StrOf(Type) + ", " + StrOf(Qualifier) + ")";
+        public override string ArgString => "Type: " + StrOf(Type) + ", " + "Qualifier: " + StrOf(Qualifier);
 
         protected override void FromCode(uint[] codes, int start)
         {
@@ -33,14 +41,14 @@ namespace SpirvNet.Spirv.Ops.TypeDeclaration
             var i = start + 1;
             Result = new ID(codes[i++]);
             Type = new ID(codes[i++]);
-            AccessQualifier = (AccessQualifier)codes[i++];
+            Qualifier = (AccessQualifier)codes[i++];
         }
 
         protected override void WriteCode(List<uint> code)
         {
             code.Add(Result.Value);
             code.Add(Type.Value);
-            code.Add((uint)AccessQualifier);
+            code.Add((uint)Qualifier);
         }
 
         public override IEnumerable<ID> AllIDs
