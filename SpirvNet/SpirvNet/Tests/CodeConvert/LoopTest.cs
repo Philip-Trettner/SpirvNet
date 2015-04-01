@@ -85,7 +85,9 @@ namespace SpirvNet.Tests.CodeConvert
             mod.SetBoundAutomatically();
             var vmod = mod.Validate();
 
-            //DebugHelper.CreatePage(def, cfg, fbuilder.Frame, mod, vmod).WriteToTempAndOpen();
+            var sgen = new ShaderGenerator(vmod);
+
+            DebugHelper.CreatePage(def, cfg, fbuilder.Frame, mod, vmod, sgen).WriteToTempAndOpen();
         }
 
         [Test]

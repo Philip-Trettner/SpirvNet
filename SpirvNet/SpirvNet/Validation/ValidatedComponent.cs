@@ -23,6 +23,11 @@ namespace SpirvNet.Validation
         public ValidatedBlock EntryBlock { get; private set; }
 
         /// <summary>
+        /// List of all entry blocks
+        /// </summary>
+        public readonly List<ValidatedBlock> EntryBlocks = new List<ValidatedBlock>();
+
+        /// <summary>
         /// All exit blocks
         /// </summary>
         public readonly List<ValidatedBlock> ExitBlocks = new List<ValidatedBlock>();
@@ -62,6 +67,10 @@ namespace SpirvNet.Validation
 
             // all exits
             ExitBlocks.AddRange(Blocks.Where(b => b.OutgoingBlocks.Any(b2 => b2.InnerComponent != this)));
+            // all entries
+            EntryBlocks.AddRange(Blocks.Where(b => b.IncomingBlocks.Any(b2 => b2.InnerComponent != this)));
+            if (Blocks.Contains(Function.StartBlock) && !EntryBlocks.Contains(Function.StartBlock))
+                EntryBlocks.Add(Function.StartBlock);
         }
 
         /// <summary>
@@ -139,7 +148,7 @@ namespace SpirvNet.Validation
                 // ignore non-looping single vertices
                 if (scc.Blocks.Count == 1 && !scc.Blocks[0].OutgoingBlocks.Contains(scc.Blocks[0]))
                     return;
-                
+
                 sccs.Add(scc);
             }
         }
@@ -151,11 +160,6 @@ namespace SpirvNet.Validation
         {
             get
             {
-                if (SubComponents.Count > 0)
-                    throw new InvalidOperationException("Does not work after sub-SCCs exist");
-                if (EntryBlock?.InnerComponent != this)
-                    throw new InvalidOperationException("Invalid entry point");
-
                 var blocks = new List<BlockSubnode>();
 
                 // add blocks
@@ -172,12 +176,26 @@ namespace SpirvNet.Validation
                 // connect blocks
                 foreach (var b1 in Blocks)
                     foreach (var b2 in b1.OutgoingBlocks)
-                        if (b2.InnerComponent == this &&
-                            b2 != EntryBlock) // do not connect to entry point
-                        {
-                            blocks[b1.Index].Outgoing.Add(blocks[b2.Index]);
-                            blocks[b2.Index].Incoming.Add(blocks[b1.Index]);
-                        }
+                        if (b2.Components.Contains(this))
+                            if (b2 != EntryBlock) // do not connect to entry point
+                            {
+                                blocks[b1.Index].Outgoing.Add(blocks[b2.Index]);
+                                blocks[b2.Index].Incoming.Add(blocks[b1.Index]);
+                            }
+                            else
+                            {
+                                blocks[b1.Index].LoopsToEntry = true;
+                            }
+
+                // mark entry/exit
+                foreach (var block in Blocks)
+                {
+                    if (block.OutgoingBlocks.Any(b => !b.Components.Contains(this)))
+                        blocks[block.Index].IsExit = true;
+
+                    if (block.IncomingBlocks.Any(b => !b.Components.Contains(this)))
+                        blocks[block.Index].IsEntry = true;
+                }
 
                 // remove empty entries
                 blocks.RemoveAll(b => b == null);

@@ -30,9 +30,42 @@ namespace SpirvNet.Validation
         public int Lowlink = -1;
         public bool OnStack = false;
 
+        /// <summary>
+        /// True iff this is an entry node
+        /// </summary>
+        public bool IsEntry = false;
+        /// <summary>
+        /// True iff this is an exit node
+        /// </summary>
+        public bool IsExit = false;
+        /// <summary>
+        /// True iff this node loops to an entry node (such connections are not contained in outgoing)
+        /// </summary>
+        public bool LoopsToEntry = false;
+
         public BlockSubnode(ValidatedBlock block)
         {
             Block = block;
+        }
+
+        /// <summary>
+        /// Set of all reachables blocks
+        /// </summary>
+        public HashSet<BlockSubnode> Reachables
+        {
+            get
+            {
+                var blocks = new HashSet<BlockSubnode>();
+                var s = new Stack<BlockSubnode>(Outgoing);
+                while (s.Count > 0)
+                {
+                    var b = s.Pop();
+                    if (blocks.Add(b))
+                        foreach (var ob in b.Outgoing)
+                            s.Push(ob);
+                }
+                return blocks;
+            }
         }
     }
 }
